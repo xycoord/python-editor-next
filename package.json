@@ -19,7 +19,7 @@
     "@codemirror/language": "^0.19.7",
     "@codemirror/lint": "^0.19.3",
     "@codemirror/state": "^0.19.6",
-    "@codemirror/view": "^0.19.42",
+    "@codemirror/view": "file:./codemirror-view-0.19.42.tgz",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.1.5",
     "@microbit/microbit-fs": "^0.9.2",
