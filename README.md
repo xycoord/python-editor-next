@@ -143,3 +143,7 @@ conduct. Please see our [code of conduct](https://microbit.org/safeguarding/)
 which outlines our expectations for all those that participate in our
 community and details on how to report any concerns and what would happen
 should breaches occur.
+
+
+
+Chris was here :c
