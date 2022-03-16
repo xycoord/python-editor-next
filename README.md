@@ -46,7 +46,10 @@ For custom deployments, note that the educational content in the sidebar is curr
 3. Install the dependencies via `npm install`.
 4. Choose from the NPM scripts documented below.
 
-If you're using the devcontainer with Visual Studio Code then the "Clone a repository from GitHub in a Container Volume" action will address steps 1 through 3.
+If you're using VSCode, it is recomended you do the following to complete steps 1-3:
+
+- Install [Docker](https://www.docker.com/get-started) and get the Remote-Containers extention for VSCode.
+- If you have git installed and are logged into GitHub in VSCode (see the Source Control Tab), then you can clone the repo into a Container: Hit Ctrl+Shift+P to open the command palette, run "Clone Repository in Container Volume", choose GitHub and select this repo.
 
 ### `npm start`
 
@@ -147,3 +150,4 @@ should breaches occur.
 
 
 Chris was here :c
+Logan was here :)
