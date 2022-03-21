@@ -108,7 +108,7 @@ const CodeMirror = ({
             rules: [
               //Rule for turning true to false onclick
               {
-                regexp: /True/,
+                regexp: /True/g,
                 cursor: "ew-resize",
                 onClick: (text, setText, e) => {
                   setText("False");
@@ -116,13 +116,14 @@ const CodeMirror = ({
               },
               //Rule to do the opposite
               {
-                regexp: /False/,
+                regexp: /False/g,
                 cursor: "ew-resize",
                 onClick: (text, setText, e) => {
                   setText("True");
                 },
               },
             ],
+            key: "ctrl",
           }),
           client ? languageServer(client, uri, intl, logging) : [],
           // Extensions we enable/disable based on props.
