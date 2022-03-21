@@ -109,7 +109,7 @@ const CodeMirror = ({
               //Rule for turning true to false onclick
               {
                 regexp: /True/g,
-                cursor: "ew-resize",
+                cursor: "pointer",
                 onClick: (text, setText, e) => {
                   setText("False");
                 },
@@ -117,7 +117,7 @@ const CodeMirror = ({
               //Rule to do the opposite
               {
                 regexp: /False/g,
-                cursor: "ew-resize",
+                cursor: "pointer",
                 onClick: (text, setText, e) => {
                   setText("True");
                 },
