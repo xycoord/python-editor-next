@@ -28,6 +28,7 @@ import {
   structureHighlightingCompartment,
 } from "./structure-highlighting";
 import themeExtensions from "./themeExtensions";
+import interact from "@replit/codemirror-interact";
 
 interface CodeMirrorProps {
   className?: string;
@@ -103,6 +104,27 @@ const CodeMirror = ({
           lineNumbers(),
           highlightActiveLineGutter(),
           highlightActiveLine(),
+          interact({
+            rules: [
+              //Rule for turning true to false onclick
+              {
+                regexp: /True/g,
+                cursor: "pointer",
+                onClick: (text, setText, e) => {
+                  setText("False");
+                },
+              },
+              //Rule to do the opposite
+              {
+                regexp: /False/g,
+                cursor: "pointer",
+                onClick: (text, setText, e) => {
+                  setText("True");
+                },
+              },
+            ],
+            key: "ctrl",
+          }),
           client ? languageServer(client, uri, intl, logging) : [],
           // Extensions we enable/disable based on props.
           structureHighlightingCompartment.of(
