@@ -1,4 +1,4 @@
-import { debug as dndDebug, setDragContext } from "../../editor/codemirror/dnd";
+import { debug as dndDebug, setDragContext } from "./dnd";
 import { gutter, GutterMarker } from "@codemirror/gutter";
 import {EditorView} from "@codemirror/view"
 

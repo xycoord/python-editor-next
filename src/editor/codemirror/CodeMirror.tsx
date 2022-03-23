@@ -30,7 +30,7 @@ import {
 import themeExtensions from "./themeExtensions";
 import interact from "@replit/codemirror-interact";
 
-import {dndHandleGutter} from "./dnd-extention";
+import {dndHandleGutter} from "./dnd-extension";
 
 interface CodeMirrorProps {
   className?: string;
