@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { highlightActiveLineGutter, lineNumbers } from "@codemirror/gutter";
+import { highlightActiveLineGutter, lineNumbers} from "@codemirror/gutter";
 import { redoDepth, undoDepth } from "@codemirror/history";
 import { EditorSelection, EditorState, Extension } from "@codemirror/state";
 import { EditorView, highlightActiveLine } from "@codemirror/view";
@@ -29,6 +29,8 @@ import {
 } from "./structure-highlighting";
 import themeExtensions from "./themeExtensions";
 import interact from "@replit/codemirror-interact";
+
+import {dndHandleGutter} from "./dnd-extention";
 
 interface CodeMirrorProps {
   className?: string;
@@ -125,6 +127,7 @@ const CodeMirror = ({
             ],
             key: "ctrl",
           }),
+          dndHandleGutter,
           client ? languageServer(client, uri, intl, logging) : [],
           // Extensions we enable/disable based on props.
           structureHighlightingCompartment.of(
