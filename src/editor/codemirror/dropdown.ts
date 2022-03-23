@@ -39,9 +39,19 @@ function dropdowns(view: EditorView, readonly options: string[]) {
       from, to,
       enter: (type, from, to) => {
         if (type.name == "StringLiteral") {
-          let selected =
+          let stringContent = view.state.doc.sliceString(from, to);
+          for (let i = 0; i < options.length; i++) {
+            if (stringContent == options[i]) {
+              let deco = Decoration.widget({
+                widget: new DropdownWidget(options, i);
+              })
+              widgets.push(deco.range(to));
+              break;
+            }
+          }
         }
       }
     })
   }
+  return Decoration.set(widgets);
 }
