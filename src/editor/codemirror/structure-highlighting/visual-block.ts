@@ -47,6 +47,7 @@ export class VisualBlock {
     let parent: HTMLElement | undefined;
     let body: HTMLElement | undefined;
     let indent: HTMLElement | undefined;
+    let dragger: HTMLElement | undefined;
     let active = this.parent?.cursorActive || this.body?.cursorActive;
     let activeClassname = active ? "cm-cs--active" : undefined;
     if (this.parent) {
@@ -60,13 +61,16 @@ export class VisualBlock {
       // parent in l-shape mode. We could avoid adding the DOM element
       // in all other cases but for now we just style with CSS.
       indent = blockWithClass("cm-cs--indent", activeClassname);
-    }
-    this.adjust(parent, body, indent);
-    const elements = [parent, body, indent].filter(Boolean) as HTMLElement[];
+	  if (activeClassname){
+      	dragger = blockWithClass("cm-cs--dragblock", activeClassname);
+	  }
+	}
+    this.adjust(parent, body, indent, dragger);
+    const elements = [parent, body, indent, dragger].filter(Boolean) as HTMLElement[];
     return elements;
   }
 
-  adjust(parent?: HTMLElement, body?: HTMLElement, indent?: HTMLElement) {
+  adjust(parent?: HTMLElement, body?: HTMLElement, indent?: HTMLElement, dragger?:HTMLElement) {
     // Parent is just the bit before the colon for l-shapes
     // but is the entire compound statement for boxes.
     if (parent && this.parent) {
@@ -91,6 +95,13 @@ export class VisualBlock {
       indent.style.width =
         this.body.left - this.parent.left - bodyPullBack + "px";
       indent.style.height = body.style.height;
+	}
+	if (this.parent && parent && this.body && body && dragger) {
+		dragger.style.width = (this.body.left - this.parent.left)/2 - bodyPullBack + "px";
+		dragger.style.top = this.parent.top + "px";
+		dragger.style.height = this.parent.height + this.body.height + "px";
+
+		dragger.style.left = `calc(100% - ${this.body.left - bodyPullBack}px)`;
     }
   }
 

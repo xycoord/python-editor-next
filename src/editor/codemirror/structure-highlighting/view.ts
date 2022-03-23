@@ -23,6 +23,22 @@ const grammarInfo = {
     "FunctionDefinition",
     "ClassDefinition",
   ]),
+  smallStatement: new Set([
+	"AssignStatement",
+	"UpdateStatement",
+	"ExpressionStatement",
+	"DeleteStatement",
+	"PassStatement",
+	"BreakStatement",
+	"ContinueStatement",
+	"ReturnStatement",
+	"YieldStatement",
+	"PrintStatement",
+	"RaiseStatement",
+	"ImportStatement",
+	"ScopeStatement",
+	"AssertStatement",
+  ]),
 };
 
 interface Measure {

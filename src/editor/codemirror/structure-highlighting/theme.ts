@@ -83,6 +83,11 @@ export const baseTheme = EditorView.baseTheme({
   ".cm-cs--background-block .cm-cs--block": {
     backgroundColor: "var(--chakra-colors-code-blockBackground)",
   },
+  ".cm-cs--dragblock" : {
+    display: "block",
+    position: "absolute",
+	backgroundColor: "var(--chakra-colors-code-blockBorder)"
+  },
   // Enabled independently of .cm-cs--background-block
   ".cm-cs--cursor-background .cm-cs--block.cm-cs--active": {
     backgroundColor: "var(--chakra-colors-code-blockBackgroundActive)",
