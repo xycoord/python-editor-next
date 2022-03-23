@@ -32,7 +32,7 @@ class DropdownWidget extends WidgetType {
   ignoreEvent() { return false }
 }
 
-function dropdowns(view: EditorView, readonly options: string[]) {
+function dropdowns(view: EditorView, options: string[]) {
   let widgets = [];
   for (let {from,to} of view.visibleRanges) {
     syntaxTree(view.state).iterate({
