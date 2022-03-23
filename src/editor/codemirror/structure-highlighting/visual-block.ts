@@ -1,3 +1,5 @@
+import { stat } from "fs";
+
 /**
  * A CoreMirror view extension providing structural highlighting using
  * CodeMirror's syntax tree.
@@ -40,7 +42,8 @@ export class VisualBlock {
   constructor(
     readonly bodyPullBack: boolean,
     readonly parent?: Positions,
-    readonly body?: Positions
+    readonly body?: Positions,
+	readonly isStatement?: boolean,
   ) {}
 
   draw() {
@@ -48,6 +51,7 @@ export class VisualBlock {
     let body: HTMLElement | undefined;
     let indent: HTMLElement | undefined;
     let dragger: HTMLElement | undefined;
+    let statementDragger: HTMLElement | undefined;
     let active = this.parent?.cursorActive || this.body?.cursorActive;
     let activeClassname = active ? "cm-cs--active" : undefined;
     if (this.parent) {
@@ -65,12 +69,15 @@ export class VisualBlock {
       	dragger = blockWithClass("cm-cs--dragblock", activeClassname);
 	  }
 	}
-    this.adjust(parent, body, indent, dragger);
-    const elements = [parent, body, indent, dragger].filter(Boolean) as HTMLElement[];
+	if (this.isStatement){
+		statementDragger = blockWithClass("cm-cs--dragline", activeClassname)
+	}
+    this.adjust(parent, body, indent, dragger, statementDragger);
+    const elements = [parent, body, indent, dragger, statementDragger].filter(Boolean) as HTMLElement[];
     return elements;
   }
 
-  adjust(parent?: HTMLElement, body?: HTMLElement, indent?: HTMLElement, dragger?:HTMLElement) {
+  adjust(parent?: HTMLElement, body?: HTMLElement, indent?: HTMLElement, dragger?:HTMLElement, statementDragger?:HTMLElement) {
     // Parent is just the bit before the colon for l-shapes
     // but is the entire compound statement for boxes.
     if (parent && this.parent) {
@@ -82,7 +89,7 @@ export class VisualBlock {
 
     // Optionally allows nested compound statements some breathing space
     const bodyPullBack = this.bodyPullBack ? 3 : 0;
-    if (body && this.body) {
+    if (body && this.body && !this.isStatement) {
       body.style.left = this.body.left - bodyPullBack + "px";
       body.style.top = this.body.top + "px";
       body.style.height = this.body.height + "px";
@@ -101,8 +108,15 @@ export class VisualBlock {
 		dragger.style.top = this.parent.top + "px";
 		dragger.style.height = this.parent.height + this.body.height + "px";
 
-		dragger.style.left = `calc(100% - ${this.body.left - bodyPullBack}px)`;
+		dragger.style.left = `calc(95% - ${this.body.left - bodyPullBack}px)`;
     }
+	if (this.body && body && this.isStatement && statementDragger){
+		statementDragger.style.width = 'calc(2%)';
+		statementDragger.style.top = this.body.top + "px";
+		statementDragger.style.height = this.body.height + "px";
+
+		statementDragger.style.left = `calc(90%)`;
+	}
   }
 
   eq(other: VisualBlock) {
