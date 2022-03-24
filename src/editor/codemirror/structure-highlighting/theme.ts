@@ -83,15 +83,16 @@ export const baseTheme = EditorView.baseTheme({
   ".cm-cs--background-block .cm-cs--block": {
     backgroundColor: "var(--chakra-colors-code-blockBackground)",
   },
-  ".cm-cs--dragblock" : {
+  ".cm-cs--dragblock": {
     display: "block",
     position: "absolute",
-	backgroundColor: "var(--chakra-colors-code-blockBorder)"
+    backgroundColor: "var(--chakra-colors-code-blockBorder)"
+    // backgroundColor: "orange"
   },
-  ".cm-cs--dragline" : {
+  ".cm-cs--dragline": {
     display: "block",
     position: "absolute",
-	backgroundColor: "orange"
+    backgroundColor: "orange",
   },
   // Enabled independently of .cm-cs--background-block
   ".cm-cs--cursor-background .cm-cs--block.cm-cs--active": {

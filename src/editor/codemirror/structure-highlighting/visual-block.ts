@@ -112,9 +112,9 @@ export class VisualBlock {
     }
 	if (this.body && body && this.isStatement && statementDragger){
 		statementDragger.style.width = 'calc(2%)';
-		statementDragger.style.top = this.body.top + "px";
-		statementDragger.style.height = this.body.height + "px";
-
+		// different statements should be separated by one pixel 
+		statementDragger.style.top = this.body.top + 1 + "px";
+	    statementDragger.style.height = this.body.height - 2 + "px";
 		statementDragger.style.left = `calc(90%)`;
 	}
   }
