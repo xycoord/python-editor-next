@@ -190,11 +190,11 @@ const dndHandlers = () => {
         clearSuppressChildDragEnterLeave(view);
         event.preventDefault();
 
-        revertPreview(view);
-
-        //prepare changes
         const visualLine = view.visualLineAtHeight(event.y);
         const line = view.state.doc.lineAt(visualLine.from);
+
+        revertPreview(view);
+
         let dropTransaction = calculateChanges(
           view.state,
           dragContext.code,
