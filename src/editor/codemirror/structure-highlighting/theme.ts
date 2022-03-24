@@ -94,6 +94,11 @@ export const baseTheme = EditorView.baseTheme({
     position: "absolute",
     backgroundColor: "orange",
   },
+  ".cm-cs--dragparent": {
+    display: "block",
+    position: "absolute",
+    backgroundColor: "red",
+  },
   // Enabled independently of .cm-cs--background-block
   ".cm-cs--cursor-background .cm-cs--block.cm-cs--active": {
     backgroundColor: "var(--chakra-colors-code-blockBackgroundActive)",

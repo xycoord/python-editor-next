@@ -52,6 +52,7 @@ export class VisualBlock {
     let indent: HTMLElement | undefined;
     let dragger: HTMLElement | undefined;
     let statementDragger: HTMLElement | undefined;
+    let parentDragger: HTMLElement | undefined;
     let active = this.parent?.cursorActive || this.body?.cursorActive;
     let activeClassname = active ? "cm-cs--active" : undefined;
     if (this.parent) {
@@ -68,16 +69,17 @@ export class VisualBlock {
 	  if (activeClassname){
       	dragger = blockWithClass("cm-cs--dragblock", activeClassname);
 	  }
+	  parentDragger = blockWithClass("cm-cs--dragparent", activeClassname)
 	}
 	if (this.isStatement){
 		statementDragger = blockWithClass("cm-cs--dragline", activeClassname)
 	}
-    this.adjust(parent, body, indent, dragger, statementDragger);
-    const elements = [parent, body, indent, dragger, statementDragger].filter(Boolean) as HTMLElement[];
+    this.adjust(parent, body, indent, dragger, statementDragger, parentDragger);
+    const elements = [parent, body, indent, dragger, statementDragger, parentDragger].filter(Boolean) as HTMLElement[];
     return elements;
   }
 
-  adjust(parent?: HTMLElement, body?: HTMLElement, indent?: HTMLElement, dragger?:HTMLElement, statementDragger?:HTMLElement) {
+  adjust(parent?: HTMLElement, body?: HTMLElement, indent?: HTMLElement, dragger?:HTMLElement, statementDragger?:HTMLElement, parentDragger?:HTMLElement) {
     // Parent is just the bit before the colon for l-shapes
     // but is the entire compound statement for boxes.
     if (parent && this.parent) {
@@ -117,6 +119,13 @@ export class VisualBlock {
 	    statementDragger.style.height = this.body.height - 2 + "px";
 		statementDragger.style.left = `calc(90%)`;
 	}
+	if (this.parent && parent && this.body && body && parentDragger) {
+		parentDragger.style.width = 'calc(2%)';
+		// different statements should be separated by one pixel 
+		parentDragger.style.top = this.parent.top + 1 + "px";
+	    parentDragger.style.height = this.parent.height - 2 + "px";
+		parentDragger.style.left = `calc(90%)`;
+	  }
   }
 
   eq(other: VisualBlock) {
