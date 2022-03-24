@@ -192,6 +192,7 @@ const dndHandlers = () => {
 
         revertPreview(view);
 
+        //prepare changes
         const visualLine = view.visualLineAtHeight(event.y);
         const line = view.state.doc.lineAt(visualLine.from);
         let dropTransaction = calculateChanges(
@@ -216,6 +217,7 @@ const dndHandlers = () => {
           changes = dragContext.redoToMerge.compose(changes);
         }
 
+        //make changes
         view.dispatch({
           userEvent: `dnd.drop.${dragContext.type}`,
           changes: changes,
