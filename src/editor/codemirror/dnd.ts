@@ -46,6 +46,9 @@ export interface DragContext {
   code: string;
   type: CodeInsertType;
   id?: string;
+  undoToMerge?: ChangeSet;
+  redoToMerge?: ChangeSet;
+  dropCallback?: () => void;
 }
 
 let dragContext: DragContext | undefined;
@@ -171,9 +174,14 @@ const dndHandlers = () => {
         }
       },
       drop(event, view) {
+        if (dragContext && dragContext.dropCallback) {
+          dragContext.dropCallback();
+        }
+
         if (!view.state.facet(EditorView.editable) || !dragContext) {
           return;
         }
+
         deployment.logging.event({
           type: "code-drop",
           message: dragContext.id,
@@ -186,14 +194,35 @@ const dndHandlers = () => {
         const line = view.state.doc.lineAt(visualLine.from);
 
         revertPreview(view);
-        view.dispatch(
-          calculateChanges(
-            view.state,
-            dragContext.code,
-            dragContext.type,
-            line.number
-          )
+
+        let dropTransaction = calculateChanges(
+          view.state,
+          dragContext.code,
+          dragContext.type,
+          line.number
         );
+        let changes = dropTransaction.changes;
+
+        // To have a single undo event, we need to undo the undo actions and then 
+        // compose the redo actions and the drop action into a single ChangeSet.
+        if (dragContext.undoToMerge) {
+          view.dispatch({
+            userEvent: "dnd-undo",
+            changes: dragContext?.undoToMerge,
+            annotations: [Transaction.addToHistory.of(false)],
+          })
+        }
+
+        if (dragContext.redoToMerge) {
+          changes = dragContext.redoToMerge.compose(changes);
+        }
+
+        //make changes
+        view.dispatch({
+          userEvent: `dnd.drop.${dragContext.type}`,
+          changes: changes,
+          selection: dropTransaction.selection,
+        });
         view.focus();
       },
     }),
