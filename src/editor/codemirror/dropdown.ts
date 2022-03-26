@@ -61,7 +61,7 @@ function dropdowns(view: EditorView, options: string[]) {
   return Decoration.set(widgets);
 }
 
-const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
+export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
   class {
     decorations: DecorationSet
 
@@ -120,3 +120,5 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
   view.dispatch({changes: change});
   return true;
 }
+
+//export dropdownPlugin;
