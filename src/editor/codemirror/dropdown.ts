@@ -7,6 +7,7 @@ import {
     DecorationSet,
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
+import { Range } from "@codemirror/rangeset";
 
 class DropdownWidget extends WidgetType {
   constructor(readonly options: string[], readonly selected: number) { super() }
@@ -36,7 +37,7 @@ class DropdownWidget extends WidgetType {
 }
 
 function dropdowns(view: EditorView, options: string[]) {
-  let widgets = [];
+  let widgets: Array<Range<Decoration>> = [];
   for (let {from,to} of view.visibleRanges) {
     syntaxTree(view.state).iterate({
       from, to,
@@ -60,7 +61,7 @@ function dropdowns(view: EditorView, options: string[]) {
   return Decoration.set(widgets);
 }
 
-const dropdownPlugin = options => ViewPlugin.fromClass(
+const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
   class {
     decorations: DecorationSet
 
@@ -79,7 +80,7 @@ const dropdownPlugin = options => ViewPlugin.fromClass(
 
     eventHandlers: {
       mousedown: (e, view) => {
-        let target = e.target as HTMLElement
+        let target = e.target as HTMLSelectElement
         if (target.nodeName == "SELECT" &&
             target.parentElement!.classList.contains("cm-dropdown"))
           return switchDropdown(view, view.posAtDOM(target), options, target.value)
@@ -89,5 +90,33 @@ const dropdownPlugin = options => ViewPlugin.fromClass(
 )
 
 function switchDropdown(view: EditorView, pos: number, options: string[], newVal: string) {
+  //First, find the maximum length over all the options
+  let m = 0;
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].length > m) m = options[i].length;
+  }
 
+  let before = view.state.doc.sliceString(Math.max(0,m), pos);
+  let change;
+
+  //Now replace the slice. This requires knowing the length of the actual string to be
+  //replaced, so they must be iterated.
+
+  let i = 0;
+  while (i < options.length) {
+    if (before.endsWith(options[i])) {
+      change = {
+        from: pos - options[i].length,
+        to: pos,
+        insert: newVal,
+      };
+      break;
+    }
+    i++;
+  }
+  if (i == options.length) return false;
+
+  //Finally, dispatch the change!
+  view.dispatch({changes: change});
+  return true;
 }
