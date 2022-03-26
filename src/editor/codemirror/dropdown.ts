@@ -42,10 +42,13 @@ function dropdowns(view: EditorView, options: string[]) {
     syntaxTree(view.state).iterate({
       from, to,
       enter: (type, from, to) => {
-        if (type.name == "StringLiteral") {
+        console.log(type.name);
+        if (type.name == "MemberExpression") {
           let stringContent = view.state.doc.sliceString(from, to);
+          console.log(stringContent);
           for (let i = 0; i < options.length; i++) {
-            if (stringContent == options[i]) {
+            console.log(stringContent);
+            if (stringContent.includes(options[i])) {
               let deco = Decoration.widget({
                 widget: new DropdownWidget(options, i),
                 side: 1,
@@ -79,11 +82,12 @@ export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
     decorations: v => v.decorations,
 
     eventHandlers: {
-      mousedown: (e, view) => {
+      onchange: (e, view) => {
         let target = e.target as HTMLSelectElement
         if (target.nodeName == "SELECT" &&
             target.parentElement!.classList.contains("cm-dropdown"))
           return switchDropdown(view, view.posAtDOM(target), options, target.value)
+        else return false;
       }
     }
   }
