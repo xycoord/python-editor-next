@@ -42,11 +42,9 @@ function dropdowns(view: EditorView, options: string[]) {
     syntaxTree(view.state).iterate({
       from, to,
       enter: (type, from, to) => {
-        console.log(type.name);
         if (type.name == "MemberExpression") {
           let stringContent = view.state.doc.sliceString(from, to);
           for (let i = 0; i < options.length; i++) {
-            console.log(stringContent);
             if (stringContent.includes(options[i])) {
               let deco = Decoration.widget({
                 widget: new DropdownWidget(options, i),
@@ -83,7 +81,6 @@ export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
     eventHandlers: {
       change: (e, view) => {
         let target = e.target as HTMLSelectElement
-        console.log("boop");
         if (target.nodeName == "SELECT" &&
             target.parentElement!.classList.contains("cm-dropdown"))
           return switchDropdown(view, view.posAtDOM(target), options, target.value)
@@ -101,7 +98,7 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
   }
 
   let before = view.state.doc.sliceString(Math.max(0,m), pos);
-  console.log(before);
+
   let change;
 
   //Now replace the slice. This requires knowing the length of the actual string to be
@@ -126,4 +123,3 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
   return true;
 }
 
-//export dropdownPlugin;
