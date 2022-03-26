@@ -46,11 +46,12 @@ function dropdowns(view: EditorView, options: string[]) {
           let stringContent = view.state.doc.sliceString(from, to);
           for (let i = 0; i < options.length; i++) {
             if (stringContent.includes(options[i])) {
-              let deco = Decoration.widget({
+              let deco = Decoration.replace({
                 widget: new DropdownWidget(options, i),
-                side: 1,
+                //side: 1,
+                inclusive: true,
               })
-              widgets.push(deco.range(to));
+              widgets.push(deco.range(from,to));
               break;
             }
           }
