@@ -48,10 +48,10 @@ function dropdowns(view: EditorView, options: string[]) {
             if (stringContent.includes(options[i])) {
               let deco = Decoration.replace({
                 widget: new DropdownWidget(options, i),
-                //side: 1,
+                side: 1,
                 inclusive: true,
               })
-              widgets.push(deco.range(from,to));
+              widgets.push(deco.range(from, to));
               break;
             }
           }
@@ -98,7 +98,7 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
     if (options[i].length > m) m = options[i].length;
   }
 
-  let before = view.state.doc.sliceString(Math.max(0,m), pos);
+  let before = view.state.doc.sliceString(pos, pos+m);
 
   let change;
 
@@ -107,10 +107,10 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
 
   let i = 0;
   while (i < options.length) {
-    if (before.endsWith(options[i])) {
+    if (before.startsWith(options[i])) {
       change = {
-        from: pos - options[i].length,
-        to: pos,
+        from: pos,
+        to: pos + options[i].length,
         insert: options[~~newVal],
       };
       break;
