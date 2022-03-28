@@ -8,9 +8,9 @@
  */
 import { indentUnit, syntaxTree } from "@codemirror/language";
 import { EditorView, ViewPlugin, ViewUpdate } from "@codemirror/view";
-import { CodeStructureSettings } from ".";
-import { skipBodyTrailers } from "./doc-util";
-import { Positions, VisualBlock } from "./visual-block";
+import { DndStructureSettings } from "./dnd-index";
+import { skipBodyTrailers } from "./structure-highlighting/doc-util";
+import { Positions, DragBlock } from "./dnd-blocks";
 
 // Grammar is defined by https://github.com/lezer-parser/python/blob/master/src/python.grammar
 const grammarInfo = {
@@ -22,19 +22,35 @@ const grammarInfo = {
     "WithStatement",
     "FunctionDefinition",
     "ClassDefinition",
-  ])
+  ]),
+  smallStatements: new Set([
+	"AssignStatement",
+	"UpdateStatement",
+	"ExpressionStatement",
+	"DeleteStatement",
+	"PassStatement",
+	"BreakStatement",
+	"ContinueStatement",
+	"ReturnStatement",
+	"YieldStatement",
+	"PrintStatement",
+	"RaiseStatement",
+	"ImportStatement",
+	"ScopeStatement",
+	"AssertStatement",
+  ]),
 };
 
 interface Measure {
-  blocks: VisualBlock[];
+  blocks: DragBlock[];
 }
 
-export const codeStructureView = (settings: CodeStructureSettings) =>
+export const dndStructureView = (settings: DndStructureSettings) =>
   ViewPlugin.fromClass(
     class {
       measureReq: { read: () => Measure; write: (value: Measure) => void };
       overlayLayer: HTMLElement;
-      blocks: VisualBlock[] = [];
+      blocks: DragBlock[] = [];
       lShape = settings.shape === "l-shape";
 
       constructor(readonly view: EditorView) {
@@ -45,7 +61,7 @@ export const codeStructureView = (settings: CodeStructureSettings) =>
         this.overlayLayer = view.scrollDOM.appendChild(
           document.createElement("div")
         );
-        this.overlayLayer.className = "cm-cs--layer";
+        this.overlayLayer.className = "cm-cs--dnd-layer";
         // Add classes to activate CSS for the various settings.
         this.overlayLayer.classList.add(
           this.lShape ? "cm-cs--lshapes" : "cm-cs--boxes"
@@ -89,11 +105,6 @@ export const codeStructureView = (settings: CodeStructureSettings) =>
           let topLine = view.visualLineAt(start);
           if (body) {
             topLine = view.visualLineAt(topLine.to + 1);
-            if (topLine.from > end) {
-              // If we've fallen out of the scope of the body then the statement is all on
-              // one line, e.g. "if True: pass". Avoid highlighting for now.
-              return undefined;
-            }
           }
           const top = topLine.top;
           const bottomLine = view.visualLineAt(
@@ -118,7 +129,7 @@ export const codeStructureView = (settings: CodeStructureSettings) =>
         const { state } = view;
 
         const bodyPullBack = this.lShape && settings.background !== "none";
-        const blocks: VisualBlock[] = [];
+        const blocks: DragBlock[] = [];
         // We could throw away blocks if we tracked returning to the top-level or started from
         // the closest top-level node. Otherwise we need to render them because they overlap.
         // Should consider switching to tree cursors to avoid allocating syntax nodes.
@@ -168,7 +179,7 @@ export const codeStructureView = (settings: CodeStructureSettings) =>
                       true
                     );
                     blocks.push(
-                      new VisualBlock(
+                      new DragBlock(
                         bodyPullBack,
                         parentPositions,
                         bodyPositions
@@ -187,10 +198,27 @@ export const codeStructureView = (settings: CodeStructureSettings) =>
                     false
                   );
                   blocks.push(
-                    new VisualBlock(bodyPullBack, parentPositions, undefined)
+                    new DragBlock(bodyPullBack, parentPositions, undefined)
                   );
                 }
               }
+			if (grammarInfo.smallStatements.has(type.name)){
+				  const statementPositions = positionsForNode(
+					  view,
+					  start,
+					  end,
+					  depth,
+					  false
+				  )
+				  blocks.push(
+					  new DragBlock(
+						  false,
+						  undefined,
+						  statementPositions,
+						  true,
+					  )
+				  )
+			  }
               // Poke our information into our parent if we need to track it.
               const parent = parents[parents.length - 1];
               if (parent && grammarInfo.compoundStatements.has(parent.name)) {

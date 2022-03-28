@@ -54,13 +54,14 @@ const borderCss = (
 export const baseTheme = EditorView.baseTheme({
   // The layer we add to CM's DOM.
   // We set additional classes here to vary the formatting of the descendant blocks.
-  // See VisualBlock for the element creation code.
-  ".cm-cs--layer": {
+  // See DragBlock for the element creation code.
+  ".cm-cs--dnd-layer": {
     position: "absolute",
     top: 0,
+	left: "90%",
     height: "100%",
-    width: "100%",
-    zIndex: -1,
+    width: "10%",
+    zIndex: 10,
   },
   ".cm-cs--block, .cm-cs--indent": {
     display: "block",
@@ -82,6 +83,21 @@ export const baseTheme = EditorView.baseTheme({
 
   ".cm-cs--background-block .cm-cs--block": {
     backgroundColor: "var(--chakra-colors-code-blockBackground)",
+  },
+  ".cm-cs--dnd-dragblock": {
+    display: "block",
+    position: "absolute",
+    backgroundColor: "var(--chakra-colors-code-blockBorder)"
+  },
+  ".cm-cs--dnd-dragline": {
+    display: "block",
+    position: "absolute",
+    backgroundColor: "green",
+  },
+  ".cm-cs--dnd-dragparent": {
+    display: "block",
+    position: "absolute",
+    backgroundColor: "blue",
   },
   // Enabled independently of .cm-cs--background-block
   ".cm-cs--cursor-background .cm-cs--block.cm-cs--active": {

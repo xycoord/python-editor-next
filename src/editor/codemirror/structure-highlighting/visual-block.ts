@@ -42,17 +42,13 @@ export class VisualBlock {
   constructor(
     readonly bodyPullBack: boolean,
     readonly parent?: Positions,
-    readonly body?: Positions,
-	readonly isStatement?: boolean,
+    readonly body?: Positions
   ) {}
 
   draw() {
     let parent: HTMLElement | undefined;
     let body: HTMLElement | undefined;
     let indent: HTMLElement | undefined;
-    let dragger: HTMLElement | undefined;
-    let statementDragger: HTMLElement | undefined;
-    let parentDragger: HTMLElement | undefined;
     let active = this.parent?.cursorActive || this.body?.cursorActive;
     let activeClassname = active ? "cm-cs--active" : undefined;
     if (this.parent) {
@@ -66,20 +62,13 @@ export class VisualBlock {
       // parent in l-shape mode. We could avoid adding the DOM element
       // in all other cases but for now we just style with CSS.
       indent = blockWithClass("cm-cs--indent", activeClassname);
-	  if (activeClassname){
-      	dragger = blockWithClass("cm-cs--dragblock", activeClassname);
-	  }
-	  parentDragger = blockWithClass("cm-cs--dragparent", activeClassname)
 	}
-	if (this.isStatement){
-		statementDragger = blockWithClass("cm-cs--dragline", activeClassname)
-	}
-    this.adjust(parent, body, indent, dragger, statementDragger, parentDragger);
-    const elements = [parent, body, indent, dragger, statementDragger, parentDragger].filter(Boolean) as HTMLElement[];
+    this.adjust(parent, body, indent);
+    const elements = [parent, body, indent].filter(Boolean) as HTMLElement[];
     return elements;
   }
 
-  adjust(parent?: HTMLElement, body?: HTMLElement, indent?: HTMLElement, dragger?:HTMLElement, statementDragger?:HTMLElement, parentDragger?:HTMLElement) {
+  adjust(parent?: HTMLElement, body?: HTMLElement, indent?: HTMLElement) {
     // Parent is just the bit before the colon for l-shapes
     // but is the entire compound statement for boxes.
     if (parent && this.parent) {
@@ -91,7 +80,7 @@ export class VisualBlock {
 
     // Optionally allows nested compound statements some breathing space
     const bodyPullBack = this.bodyPullBack ? 3 : 0;
-    if (body && this.body && !this.isStatement) {
+    if (body && this.body) {
       body.style.left = this.body.left - bodyPullBack + "px";
       body.style.top = this.body.top + "px";
       body.style.height = this.body.height + "px";
@@ -105,27 +94,6 @@ export class VisualBlock {
         this.body.left - this.parent.left - bodyPullBack + "px";
       indent.style.height = body.style.height;
 	}
-	if (this.parent && parent && this.body && body && dragger) {
-		dragger.style.width = (this.body.left - this.parent.left)/2 - bodyPullBack + "px";
-		dragger.style.top = this.parent.top + "px";
-		dragger.style.height = this.parent.height + this.body.height + "px";
-
-		dragger.style.left = `calc(95% - ${this.body.left - bodyPullBack}px)`;
-    }
-	if (this.body && body && this.isStatement && statementDragger){
-		statementDragger.style.width = 'calc(2%)';
-		// different statements should be separated by one pixel 
-		statementDragger.style.top = this.body.top + 1 + "px";
-	    statementDragger.style.height = this.body.height - 2 + "px";
-		statementDragger.style.left = `calc(90%)`;
-	}
-	if (this.parent && parent && this.body && body && parentDragger) {
-		parentDragger.style.width = 'calc(2%)';
-		// different statements should be separated by one pixel 
-		parentDragger.style.top = this.parent.top + 1 + "px";
-	    parentDragger.style.height = this.parent.height - 2 + "px";
-		parentDragger.style.left = `calc(90%)`;
-	  }
   }
 
   eq(other: VisualBlock) {

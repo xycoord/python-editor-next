@@ -27,6 +27,11 @@ import {
   CodeStructureSettings,
   structureHighlightingCompartment,
 } from "./structure-highlighting";
+import {
+	dndStructure,
+	DndStructureSettings,
+	dndStructureHighlightingCompartment,
+} from "./dnd-index";
 import themeExtensions from "./themeExtensions";
 import interact from "@replit/codemirror-interact";
 
@@ -133,6 +138,9 @@ const CodeMirror = ({
           structureHighlightingCompartment.of(
             codeStructure(options.codeStructureSettings)
           ),
+		  dndStructureHighlightingCompartment.of(
+            dndStructure(options.codeStructureSettings)
+          ),
           themeExtensionsCompartment.of(themeExtensionsForOptions(options)),
         ],
       });
@@ -174,6 +182,9 @@ const CodeMirror = ({
         ),
         structureHighlightingCompartment.reconfigure(
           codeStructure(options.codeStructureSettings)
+        ),
+		dndStructureHighlightingCompartment.reconfigure(
+            dndStructure(options.codeStructureSettings)
         ),
       ],
     });
