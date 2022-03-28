@@ -92,19 +92,7 @@ export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
             target.parentElement!.classList.contains("cm-dropdown"))
           return switchDropdown(view, view.posAtDOM(target), options, target.value)
         else return false;
-      },/*
-      mousedown: (e, view) => {
-        let target = e.target as HTMLSelectElement
-        if (target.nodeName == "SELECT" &&
-            target.parentElement!.classList.contains("cm-dropdown")) {
-          console.log("doot");
-          let evObj = document.createEvent("Events");
-          evObj.initEvent('click', true, false);
-          target.dispatchEvent(evObj);
-          return true;
-        }
-        else return false;
-      },*/
+      },
     }
   }
 )
