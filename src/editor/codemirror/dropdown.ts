@@ -33,7 +33,12 @@ class DropdownWidget extends WidgetType {
     return wrap;
   }
 
-  ignoreEvent() { return false }
+  ignoreEvent(_event : Event) {
+    switch (_event.constructor) {
+      case MouseEvent: return true;
+      default: return false;
+    }
+  }
 }
 
 function dropdowns(view: EditorView, options: string[]) {
@@ -49,6 +54,7 @@ function dropdowns(view: EditorView, options: string[]) {
               let deco = Decoration.replace({
                 widget: new DropdownWidget(options, i),
                 side: 1,
+                //block: true,
                 inclusive: true,
               })
               widgets.push(deco.range(from, to));
@@ -86,7 +92,19 @@ export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
             target.parentElement!.classList.contains("cm-dropdown"))
           return switchDropdown(view, view.posAtDOM(target), options, target.value)
         else return false;
-      }
+      },/*
+      mousedown: (e, view) => {
+        let target = e.target as HTMLSelectElement
+        if (target.nodeName == "SELECT" &&
+            target.parentElement!.classList.contains("cm-dropdown")) {
+          console.log("doot");
+          let evObj = document.createEvent("Events");
+          evObj.initEvent('click', true, false);
+          target.dispatchEvent(evObj);
+          return true;
+        }
+        else return false;
+      },*/
     }
   }
 )
