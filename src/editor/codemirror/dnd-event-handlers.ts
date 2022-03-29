@@ -2,7 +2,7 @@ import { BlockInfo, EditorView } from "@codemirror/view"
 import { ChangeSet, Transaction } from "@codemirror/state";
 import { debug as dndDebug, setDragContext } from "./dnd";
 
-// Very ugly way to check whether item was successfully 
+// Very ugly way to check whether item was successfully dropped
 let dropped = false;
 let notDroppedUndo: ChangeSet | undefined;
 
@@ -27,7 +27,7 @@ const handleDragStart = (view: EditorView, block: BlockInfo) => {
 
   dndDebug("dragstart")
 
-  //magic line to tell dnd.ts to handle the previews and drop
+  // Magic line to tell dnd.ts to handle the previews and drop
   setDragContext({
     code: draggedText,
     type: "rearrangement",
