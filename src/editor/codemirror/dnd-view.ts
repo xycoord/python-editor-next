@@ -24,20 +24,20 @@ const grammarInfo = {
     "ClassDefinition",
   ]),
   smallStatements: new Set([
-	"AssignStatement",
-	"UpdateStatement",
-	"ExpressionStatement",
-	"DeleteStatement",
-	"PassStatement",
-	"BreakStatement",
-	"ContinueStatement",
-	"ReturnStatement",
-	"YieldStatement",
-	"PrintStatement",
-	"RaiseStatement",
-	"ImportStatement",
-	"ScopeStatement",
-	"AssertStatement",
+    "AssignStatement",
+    "UpdateStatement",
+    "ExpressionStatement",
+    "DeleteStatement",
+    "PassStatement",
+    "BreakStatement",
+    "ContinueStatement",
+    "ReturnStatement",
+    "YieldStatement",
+    "PrintStatement",
+    "RaiseStatement",
+    "ImportStatement",
+    "ScopeStatement",
+    "AssertStatement",
   ]),
 };
 
@@ -153,7 +153,7 @@ export const dndStructureView = (settings: DndStructureSettings) =>
               }
               const leaving = parents.pop()!;
               const children = leaving.children;
-			  
+
               if (children) {
                 // Draw an l-shape for each run of non-Body (e.g. keywords, test expressions) followed by Body in the child list.
                 let runStart = 0;
@@ -164,12 +164,12 @@ export const dndStructureView = (settings: DndStructureSettings) =>
 
                     const parentPositions = this.lShape
                       ? positionsForNode(
-                          view,
-                          startNode.start,
-                          bodyNode.start,
-                          depth,
-                          false
-                        )
+                        view,
+                        startNode.start,
+                        bodyNode.start,
+                        depth,
+                        false
+                      )
                       : undefined;
                     const bodyPositions = positionsForNode(
                       view,
@@ -182,7 +182,12 @@ export const dndStructureView = (settings: DndStructureSettings) =>
                       new DragBlock(
                         bodyPullBack,
                         parentPositions,
-                        bodyPositions
+                        bodyPositions,
+                        undefined,
+                        view,
+                        undefined,
+                        startNode.start,
+                        bodyNode.end
                       )
                     );
                     runStart = i + 1;
@@ -198,27 +203,31 @@ export const dndStructureView = (settings: DndStructureSettings) =>
                     false
                   );
                   blocks.push(
-                    new DragBlock(bodyPullBack, parentPositions, undefined)
+                    new DragBlock(bodyPullBack, parentPositions, undefined, undefined, view, undefined, start, end)
                   );
                 }
               }
-			if (grammarInfo.smallStatements.has(type.name)){
-				  const statementPositions = positionsForNode(
-					  view,
-					  start,
-					  end,
-					  depth,
-					  false
-				  )
-				  blocks.push(
-					  new DragBlock(
-						  false,
-						  undefined,
-						  statementPositions,
-						  true,
-					  )
-				  )
-			  }
+              if (grammarInfo.smallStatements.has(type.name)) {
+                const statementPositions = positionsForNode(
+                  view,
+                  start,
+                  end,
+                  depth,
+                  false
+                )
+                blocks.push(
+                  new DragBlock(
+                    false,
+                    undefined,
+                    statementPositions,
+                    true,
+                    view,
+                    undefined,
+                    start,
+                    end
+                  )
+                )
+              }
               // Poke our information into our parent if we need to track it.
               const parent = parents[parents.length - 1];
               if (parent && grammarInfo.compoundStatements.has(parent.name)) {

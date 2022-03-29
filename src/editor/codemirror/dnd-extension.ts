@@ -6,16 +6,16 @@ const preventDefaultHandler = true
 
 const dndHandleGutter = gutter({
   class: "cm-dnd-gutter",
-  lineMarker(view, line) {
-    return handleElement
+  lineMarker() {
+    return handleElement;
   },
   initialSpacer: () => handleElement,
   domEventHandlers: {
     dragstart(view, block) {
-      handleDragStart(view, block)
-      return !preventDefaultHandler 
+      handleDragStart(view, block.from, block.to)
+      return !preventDefaultHandler
     },
-    dragend(view, block) {
+    dragend(view) {
       handleDrop(view)
       return !preventDefaultHandler
     }

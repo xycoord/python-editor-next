@@ -6,20 +6,24 @@ import { debug as dndDebug, setDragContext } from "./dnd";
 let dropped = false;
 let notDroppedUndo: ChangeSet | undefined;
 
-const handleDragStart = (view: EditorView, block: BlockInfo) => {
-  const draggedText = view.state.doc.sliceString(block.from, block.to)
+const handleDragStart = (view: EditorView, start: number, end: number) => {
+  console.log(`${start}, ${end}`)
+  const startLineStart = view.state.doc.lineAt(start).from
+  const endLineEnd = Math.min(
+    view.state.doc.length,
+    view.state.doc.lineAt(end).to + 1
+  )
 
-  let deleteLineChange = view.state.update({
-    changes: {
-      from: block.from,
-      to: Math.min(view.state.doc.length, block.to + 1)
-    }
+  const draggedText = view.state.doc.sliceString(startLineStart, endLineEnd)
+
+  let deleteBlockChange = view.state.update({
+    changes: { from: startLineStart, to: endLineEnd }
   }).changes
-  notDroppedUndo = deleteLineChange.invert(view.state.doc);
+  notDroppedUndo = deleteBlockChange.invert(view.state.doc);
 
   view.dispatch({
-    userEvent: "delete-drag-line",
-    changes: deleteLineChange,
+    userEvent: "delete-drag-block",
+    changes: deleteBlockChange,
     annotations: [Transaction.addToHistory.of(false)],
   })
 
@@ -27,12 +31,11 @@ const handleDragStart = (view: EditorView, block: BlockInfo) => {
 
   dndDebug("dragstart")
 
-  // Magic line to tell dnd.ts to handle the previews and drop
   setDragContext({
     code: draggedText,
     type: "rearrangement",
-    id: "pSlug",
-    redoToMerge: deleteLineChange,
+    id: "pSlug", // What does this do?
+    redoToMerge: deleteBlockChange,
     undoToMerge: notDroppedUndo,
     dropCallback: () => { dropped = true; }
   });
