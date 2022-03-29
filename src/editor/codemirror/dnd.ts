@@ -38,6 +38,10 @@ export type CodeInsertType =
    */
   | "example"
   /**
+   * Rearragement of code by dragging and dropping in the editor.
+   */
+  | "rearrangement"
+  /**
    * A function call.
    */
   | "call";

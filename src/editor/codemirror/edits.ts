@@ -63,11 +63,16 @@ export const calculateChanges = (
   type: CodeInsertType,
   line?: number
 ) => {
-  const parser = python().language.parser;
-  const sourceTree = parser.parse(source);
-  const sourceImports = topLevelImports(sourceTree, (from, to) =>
-    source.slice(from, to)
-  );
+  let sourceImports: ImportNode[] = []
+
+  if (type === "example" || type === "call") {
+    const parser = python().language.parser;
+    const sourceTree = parser.parse(source);
+    sourceImports = topLevelImports(sourceTree, (from, to) =>
+      source.slice(from, to)
+    );
+  }
+
   const sourceImportsTo =
     sourceImports[sourceImports.length - 1]?.node?.to ?? 0;
   const mainCode = source.slice(sourceImportsTo).trim();

@@ -7,12 +7,12 @@ let dropped = false;
 let notDroppedUndo: ChangeSet | undefined;
 
 const handleDragStart = (view: EditorView, block: BlockInfo) => {
-  const draggedText = view.state.doc.sliceString(block.from, block.to) 
+  const draggedText = view.state.doc.sliceString(block.from, block.to)
 
   let deleteLineChange = view.state.update({
-    changes: { 
-      from: block.from, 
-      to: Math.min(view.state.doc.length, block.to + 1) 
+    changes: {
+      from: block.from,
+      to: Math.min(view.state.doc.length, block.to + 1)
     }
   }).changes
   notDroppedUndo = deleteLineChange.invert(view.state.doc);
@@ -30,7 +30,7 @@ const handleDragStart = (view: EditorView, block: BlockInfo) => {
   //magic line to tell dnd.ts to handle the previews and drop
   setDragContext({
     code: draggedText,
-    type: "example",
+    type: "rearrangement",
     id: "pSlug",
     redoToMerge: deleteLineChange,
     undoToMerge: notDroppedUndo,
@@ -51,4 +51,4 @@ const handleDrop = (view: EditorView) => {
   }
 }
 
-export {handleDragStart, handleDrop}
+export { handleDragStart, handleDrop }
