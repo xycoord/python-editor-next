@@ -39,7 +39,28 @@ describe("dropdown", () => {
     expect(plugin.decorations.size).toEqual(0); //Empty dropdown generates nothing
   });
 
+  it("dropdowns are generated", () => {
+    let view = createView();
+    const plugin = new (dropdownPluginInternal(["foo", "bar", "baz"]))(view);
 
+    const update = createViewUpdate(
+      view,
+      true,
+      view.state.update({
+        userEvent: "input.type",
+        changes: [
+          {
+            insert: "foo\n",
+            from: 0,
+          },
+        ],
+      }),
+    );
+    plugin.update(update);
+    view = update.view;
+
+    expect(plugin.decorations.size).toEqual(1);
+  });
 });
 
 const createView = (doc: Text = Text.of([""])): EditorView => {
