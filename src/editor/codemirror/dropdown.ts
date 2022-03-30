@@ -68,20 +68,23 @@ function dropdowns(view: EditorView, options: string[]) {
   return Decoration.set(widgets);
 }
 
+//Exported for unit testing
+export const dropdownPluginInternal = (options: string[]) => class {
+  decorations: DecorationSet
+
+  constructor(view: EditorView) {
+    this.decorations = dropdowns(view, options)
+  }
+
+  update(update: ViewUpdate) {
+    if (update.docChanged || update.viewportChanged) {
+      this.decorations = dropdowns(update.view, options)
+    }
+  }
+}
+
 export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
-  class {
-    decorations: DecorationSet
-
-    constructor(view: EditorView) {
-      this.decorations = dropdowns(view, options)
-    }
-
-    update(update: ViewUpdate) {
-      if (update.docChanged || update.viewportChanged) {
-        this.decorations = dropdowns(update.view, options)
-      }
-    }
-  },
+  dropdownPluginInternal(options),
   {
     decorations: v => v.decorations,
 
