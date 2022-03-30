@@ -14,6 +14,31 @@ describe("dropdown", () => {
     expect(plugin.decorations.size).toEqual(0); //Empty document with no update should still have no dropdowns
   });
 
+  it("empty dropdown", () => {
+    const view = createView();
+    const plugin = new (dropdownPluginInternal([]))(view);
+
+    expect(plugin.decorations.size).toEqual(0); //Empty doc should still have no dropdowns
+
+    plugin.update(
+      createViewUpdate(
+        view,
+        true,
+        view.state.update({
+          userEvent: "input.type",
+          changes: [
+            {
+              insert: "foo bar\n",
+              from: 0,
+            },
+          ],
+        }),
+      )
+    );
+
+    expect(plugin.decorations.size).toEqual(0); //Empty dropdown generates nothing
+  });
+
 
 });
 
