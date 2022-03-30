@@ -126,7 +126,10 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
   if (i === options.length) return false;
 
   //Finally, dispatch the change!
-  view.dispatch({changes: change});
+  view.dispatch({
+    userEvent: "dropdown.change",
+    changes: change,
+  });
   return true;
 }
 
