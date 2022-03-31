@@ -1,4 +1,4 @@
-import { BlockInfo, EditorView } from "@codemirror/view"
+import { EditorView } from "@codemirror/view"
 import { ChangeSet, Transaction } from "@codemirror/state";
 import { debug as dndDebug, setDragContext } from "./dnd";
 

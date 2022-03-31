@@ -29,7 +29,7 @@ import {
 } from "./structure-highlighting";
 import {
 	dndStructure,
-	DndStructureSettings,
+	// DndStructureSettings,
 	dndStructureHighlightingCompartment,
 } from "./dnd-index";
 import themeExtensions from "./themeExtensions";

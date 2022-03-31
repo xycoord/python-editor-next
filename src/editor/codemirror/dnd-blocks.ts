@@ -1,4 +1,3 @@
-import { stat } from "fs";
 import { handleDragStart, handleDrop } from "./dnd-event-handlers"
 import { BlockInfo, EditorView } from "@codemirror/view"
 
