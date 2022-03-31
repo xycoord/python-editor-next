@@ -62,6 +62,7 @@ export const baseTheme = EditorView.baseTheme({
     height: "100%",
     width: "10%",
     zIndex: 10,
+    pointerEvents: "none"
   },
   ".cm-cs--block, .cm-cs--indent": {
     display: "block",
@@ -87,7 +88,7 @@ export const baseTheme = EditorView.baseTheme({
   ".cm-cs--dnd-dragblock": {
     display: "block",
     position: "absolute",
-    backgroundColor: "var(--chakra-colors-code-blockBorder)"
+    backgroundColor: "var(--chakra-colors-code-blockBorder)",
   },
   ".cm-cs--dnd-dragline": {
     display: "block",
@@ -98,6 +99,12 @@ export const baseTheme = EditorView.baseTheme({
     display: "block",
     position: "absolute",
     backgroundColor: "blue",
+  },
+  ".cm-cs--pointer-events-all": {
+    pointerEvents: "all"
+  },
+  ".cm-cs--pointer-events-none": {
+    pointerEvents: "none"
   },
   // Enabled independently of .cm-cs--background-block
   ".cm-cs--cursor-background .cm-cs--block.cm-cs--active": {

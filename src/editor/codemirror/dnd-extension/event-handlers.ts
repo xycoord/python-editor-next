@@ -40,6 +40,11 @@ const handleDragStart = (view: EditorView, start: number, end: number) => {
     dropCallback: () => { dropped = true; }
   });
 
+  const dndOverlayLayer = document.getElementById("dnd-overlay-layer")
+  if (dndOverlayLayer) {
+    dndOverlayLayer.classList.remove("dnd-pointer-events") 
+  }
+
 }
 
 const handleDrop = (view: EditorView) => {
@@ -51,6 +56,10 @@ const handleDrop = (view: EditorView) => {
       changes: notDroppedUndo,
       annotations: [Transaction.addToHistory.of(false)],
     })
+  }
+  const dndOverlayLayer = document.getElementById("dnd-overlay-layer")
+  if (dndOverlayLayer) {
+    dndOverlayLayer.classList.add("dnd-pointer-events") 
   }
 }
 

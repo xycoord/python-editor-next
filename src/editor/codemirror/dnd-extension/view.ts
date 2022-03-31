@@ -77,6 +77,10 @@ export const dndStructureView = (settings: DndStructureSettings) =>
           "cm-cs--cursor-borders-" + settings.cursorBorder
         );
         this.overlayLayer.setAttribute("aria-hidden", "true");
+
+        this.overlayLayer.id = "dnd-overlay-layer"
+        this.overlayLayer.classList.add("dnd-pointer-events") 
+
         view.requestMeasure(this.measureReq);
       }
 

@@ -55,16 +55,16 @@ export class DragBlock {
     let dragger: HTMLElement | undefined;
     let statementDragger: HTMLElement | undefined;
     let parentDragger: HTMLElement | undefined;
-    let active = this.parent?.cursorActive || this.body?.cursorActive;
-    let activeClassname = active ? "cm-cs--active" : undefined;
+
+    const dndOverlayLayer = document.getElementById("dnd-overlay-layer")
+    const pointerEvents = (dndOverlayLayer) ? dndOverlayLayer.classList.contains("dnd-pointer-events") : false
+    const pointerEventsCN = pointerEvents ? "cm-cs--pointer-events-all" : "cm-cs--pointer-events-none";
+
     if (this.parent && this.body) {
-      if (activeClassname) {
-        dragger = draggableBlockWithClass("cm-cs--dnd-dragblock", activeClassname);
-      }
-      parentDragger = draggableBlockWithClass("cm-cs--dnd-dragparent", activeClassname)
+      parentDragger = draggableBlockWithClass("cm-cs--dnd-dragparent", pointerEventsCN)
     }
     if (this.isStatement) {
-      statementDragger = draggableBlockWithClass("cm-cs--dnd-dragline", activeClassname)
+      statementDragger = draggableBlockWithClass("cm-cs--dnd-dragline", pointerEventsCN)
     }
     this.adjust(dragger, statementDragger, parentDragger);
     const elements = [dragger, statementDragger, parentDragger].filter(Boolean) as HTMLElement[];
@@ -91,16 +91,13 @@ export class DragBlock {
       statementDragger.style.top = this.body.top + 1 + "px";
       statementDragger.style.height = this.body.height - 2 + "px";
       statementDragger.style.left = `calc(0%)`;
-      statementDragger.onclick = function() {
-        statementDragger.style.backgroundColor = statementDragger.style.backgroundColor === "green" ? "purple" : "green";
-        return false;
-      }
+      
       statementDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {
           handleDragStart(this.view, this.start, this.end);
         }
       }
-      statementDragger.ondrop = () => {
+      statementDragger.ondragend = () => {
         if (this.view) {
           handleDrop(this.view);
         }
@@ -112,17 +109,14 @@ export class DragBlock {
       parentDragger.style.top = this.parent.top + 1 + "px";
       parentDragger.style.height = this.parent.height - 2 + "px";
       parentDragger.style.left = `calc(0%)`;
-      parentDragger.onclick = function() {
-        parentDragger.style.backgroundColor = parentDragger.style.backgroundColor === "blue" ? "red" : "blue";
-        return false;
-      }
+      
       parentDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {
           // When it is a code block the end includes the start of next line, we don't want to move the next line.
           handleDragStart(this.view, this.start, this.end - 1);
         }
       }
-      parentDragger.ondrop = () => {
+      parentDragger.ondragend = () => {
         if (this.view) {
           handleDrop(this.view);
         }
