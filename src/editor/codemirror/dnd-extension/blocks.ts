@@ -1,4 +1,4 @@
-import { handleDragStart, handleDrop } from "./dnd-event-handlers"
+import { handleDragStart, handleDrop } from "./event-handlers"
 import { BlockInfo, EditorView } from "@codemirror/view"
 
 /**

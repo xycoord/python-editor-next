@@ -30,12 +30,10 @@ import {
 import {
 	dndStructure,
 	// DndStructureSettings,
-	dndStructureHighlightingCompartment,
-} from "./dnd-index";
+	dndStructureHighlightingCompartment
+} from "./dnd-extension";
 import themeExtensions from "./themeExtensions";
 import interact from "@replit/codemirror-interact";
-
-import {dndHandleGutter} from "./dnd-extension";
 
 interface CodeMirrorProps {
   className?: string;
@@ -132,7 +130,6 @@ const CodeMirror = ({
             ],
             key: "ctrl",
           }),
-          dndHandleGutter,
           client ? languageServer(client, uri, intl, logging) : [],
           // Extensions we enable/disable based on props.
           structureHighlightingCompartment.of(

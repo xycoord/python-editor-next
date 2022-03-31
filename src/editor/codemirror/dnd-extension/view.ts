@@ -8,9 +8,9 @@
  */
 import { indentUnit, syntaxTree } from "@codemirror/language";
 import { EditorView, ViewPlugin, ViewUpdate } from "@codemirror/view";
-import { DndStructureSettings } from "./dnd-index";
-import { skipBodyTrailers } from "./structure-highlighting/doc-util";
-import { Positions, DragBlock } from "./dnd-blocks";
+import { DndStructureSettings } from "./index";
+import { skipBodyTrailers } from "../structure-highlighting/doc-util";
+import { Positions, DragBlock } from "./blocks";
 
 // Grammar is defined by https://github.com/lezer-parser/python/blob/master/src/python.grammar
 const grammarInfo = {

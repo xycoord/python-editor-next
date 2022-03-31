@@ -8,8 +8,8 @@
  */
 
 import { Compartment, Extension } from "@codemirror/state";
-import { baseTheme } from "./dnd-theme";
-import { dndStructureView } from "./dnd-view";
+import { baseTheme } from "./theme";
+import { dndStructureView } from "./view";
 
 export const dndStructureHighlightingCompartment = new Compartment();
 

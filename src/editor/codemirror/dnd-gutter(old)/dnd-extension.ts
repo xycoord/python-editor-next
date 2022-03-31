@@ -1,5 +1,5 @@
 import { gutter, GutterMarker } from "@codemirror/gutter";
-import { handleDragStart, handleDrop } from "./dnd-event-handlers";
+import { handleDragStart, handleDrop } from "../dnd-extension/event-handlers";
 import "./dnd-extension.css"
 
 const preventDefaultHandler = true

@@ -1,6 +1,6 @@
 import { EditorView } from "@codemirror/view"
 import { ChangeSet, Transaction } from "@codemirror/state";
-import { debug as dndDebug, setDragContext } from "./dnd";
+import { debug as dndDebug, setDragContext } from "../dnd";
 
 // Very ugly way to check whether item was successfully dropped
 let dropped = false;

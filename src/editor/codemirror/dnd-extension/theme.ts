@@ -58,7 +58,7 @@ export const baseTheme = EditorView.baseTheme({
   ".cm-cs--dnd-layer": {
     position: "absolute",
     top: 0,
-	left: "90%",
+	  left: "90%",
     height: "100%",
     width: "10%",
     zIndex: 10,
