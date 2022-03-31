@@ -13,8 +13,8 @@ class DropdownWidget extends WidgetType {
   constructor(readonly options: string[], readonly selected: number) { super() }
 
   eq(other: DropdownWidget) {
-    if (this.selected != other.selected) return false;
-    return (this.options == other.options);
+    if (this.selected !== other.selected) return false;
+    return (this.options === other.options);
   }
 
   toDOM() {
@@ -26,7 +26,7 @@ class DropdownWidget extends WidgetType {
     for (let i = 0; i < this.options.length; i++) {
       let opt = sel.appendChild(document.createElement("option"));
       opt.value = i.toString();
-      if (i == this.selected) opt.selected = true;
+      if (i === this.selected) opt.selected = true;
       opt.append(this.options[i]);
     }
 
@@ -47,7 +47,7 @@ function dropdowns(view: EditorView, options: string[]) {
     syntaxTree(view.state).iterate({
       from, to,
       enter: (type, from, to) => {
-        if (type.name == "MemberExpression") {
+        if (type.name === "MemberExpression") {
           let stringContent = view.state.doc.sliceString(from, to);
           for (let i = 0; i < options.length; i++) {
             if (stringContent.includes(options[i])) {
@@ -88,7 +88,7 @@ export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
     eventHandlers: {
       change: (e, view) => {
         let target = e.target as HTMLSelectElement
-        if (target.nodeName == "SELECT" &&
+        if (target.nodeName === "SELECT" &&
             target.parentElement!.classList.contains("cm-dropdown"))
           return switchDropdown(view, view.posAtDOM(target), options, target.value)
         else return false;
@@ -123,7 +123,7 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
     }
     i++;
   }
-  if (i == options.length) return false;
+  if (i === options.length) return false;
 
   //Finally, dispatch the change!
   view.dispatch({changes: change});
