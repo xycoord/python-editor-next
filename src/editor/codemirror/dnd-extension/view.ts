@@ -7,6 +7,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { indentUnit, syntaxTree } from "@codemirror/language";
+import { Tree, NodeType } from '@lezer/common';
 import { EditorView, ViewPlugin, ViewUpdate } from "@codemirror/view";
 import { DndStructureSettings } from "./index";
 import { skipBodyTrailers } from "../structure-highlighting/doc-util";
@@ -62,20 +63,6 @@ export const dndStructureView = (settings: DndStructureSettings) =>
           document.createElement("div")
         );
         this.overlayLayer.className = "cm-cs--dnd-layer";
-        // Add classes to activate CSS for the various settings.
-        this.overlayLayer.classList.add(
-          this.lShape ? "cm-cs--lshapes" : "cm-cs--boxes"
-        );
-        this.overlayLayer.classList.add(
-          "cm-cs--background-" + settings.background
-        );
-        if (settings.cursorBackground) {
-          this.overlayLayer.classList.add("cm-cs--cursor-background");
-        }
-        this.overlayLayer.classList.add("cm-cs--borders-" + settings.borders);
-        this.overlayLayer.classList.add(
-          "cm-cs--cursor-borders-" + settings.cursorBorder
-        );
         this.overlayLayer.setAttribute("aria-hidden", "true");
 
         this.overlayLayer.id = "dnd-overlay-layer"
@@ -138,109 +125,116 @@ export const dndStructureView = (settings: DndStructureSettings) =>
         // the closest top-level node. Otherwise we need to render them because they overlap.
         // Should consider switching to tree cursors to avoid allocating syntax nodes.
         let depth = 0;
-        const tree = syntaxTree(state);
-        const parents: {
+        const tree: Tree = syntaxTree(state);
+
+        interface Parent{
           name: string;
           children?: { name: string; start: number; end: number }[];
-        }[] = [];
-        if (tree) {
-          tree.iterate({
-            enter: (type, _start) => {
-              parents.push({ name: type.name });
-              if (type.name === "Body") {
-                depth++;
-              }
-            },
-            leave: (type, start, end) => {
-              if (type.name === "Body") {
-                depth--;
-              }
-              const leaving = parents.pop()!;
-              const children = leaving.children;
+        } 
+        const parents: Parent[] = [];
 
-              if (children) {
-                // Draw an l-shape for each run of non-Body (e.g. keywords, test expressions) followed by Body in the child list.
-                let runStart = 0;
-                for (let i = 0; i < children.length; ++i) {
-                  if (children[i].name === "Body") {
-                    const startNode = children[runStart];
-                    const bodyNode = children[i];
+        const onEnterNode = (type: NodeType, _start: number) => {
+          parents.push({ name: type.name });
+          if (type.name === "Body") {
+            depth++;
+          }
+        }
 
-                    const parentPositions = this.lShape
-                      ? positionsForNode(
-                        view,
-                        startNode.start,
-                        bodyNode.start,
-                        depth,
-                        false
-                      )
-                      : undefined;
-                    const bodyPositions = positionsForNode(
-                      view,
-                      bodyNode.start,
-                      bodyNode.end,
-                      depth + 1,
-                      true
-                    );
-                    blocks.push(
-                      new DragBlock(
-                        bodyPullBack,
-                        parentPositions,
-                        bodyPositions,
-                        undefined,
-                        view,
-                        undefined,
-                        startNode.start,
-                        bodyNode.end
-                      )
-                    );
-                    runStart = i + 1;
-                  }
-                }
-                if (!this.lShape) {
-                  // Draw a box for the parent compound statement as a whole (may have multiple child Bodys)
-                  const parentPositions = positionsForNode(
+        const onLeaveNode = (type: NodeType , start: number, end: number) => {
+          if (type.name === "Body") {
+            depth--;
+          }
+          const leaving = parents.pop()!;
+          const children = leaving.children;
+
+          if (children) {
+            // Draw an l-shape for each run of non-Body (e.g. keywords, test expressions) followed by Body in the child list.
+            let runStart = 0;
+            for (let i = 0; i < children.length; ++i) {
+              if (children[i].name === "Body") {
+                const startNode = children[runStart];
+                const bodyNode = children[i];
+
+                const parentPositions = this.lShape
+                  ? positionsForNode(
                     view,
-                    start,
-                    end,
+                    startNode.start,
+                    bodyNode.start,
                     depth,
                     false
-                  );
-                  blocks.push(
-                    new DragBlock(bodyPullBack, parentPositions, undefined, undefined, view, undefined, start, end)
-                  );
-                }
-              }
-              if (grammarInfo.smallStatements.has(type.name)) {
-                const statementPositions = positionsForNode(
+                  )
+                  : undefined;
+                const bodyPositions = positionsForNode(
                   view,
-                  start,
-                  end,
-                  depth,
-                  false
-                )
+                  bodyNode.start,
+                  bodyNode.end,
+                  depth + 1,
+                  true
+                );
                 blocks.push(
                   new DragBlock(
-                    false,
+                    bodyPullBack,
+                    parentPositions,
+                    bodyPositions,
                     undefined,
-                    statementPositions,
-                    true,
                     view,
                     undefined,
-                    start,
-                    end
+                    startNode.start,
+                    bodyNode.end
                   )
-                )
+                );
+                runStart = i + 1;
               }
-              // Poke our information into our parent if we need to track it.
-              const parent = parents[parents.length - 1];
-              if (parent && grammarInfo.compoundStatements.has(parent.name)) {
-                if (!parent.children) {
-                  parent.children = [];
-                }
-                parent.children.push({ name: type.name, start, end });
-              }
-            },
+            }
+            if (!this.lShape) {
+              // Draw a box for the parent compound statement as a whole (may have multiple child Bodys)
+              const parentPositions = positionsForNode(
+                view,
+                start,
+                end,
+                depth,
+                false
+              );
+              blocks.push(
+                new DragBlock(bodyPullBack, parentPositions, undefined, undefined, view, undefined, start, end)
+              );
+            }
+          }
+          if (grammarInfo.smallStatements.has(type.name)) {
+            const statementPositions = positionsForNode(
+              view,
+              start,
+              end,
+              depth,
+              false
+            )
+            blocks.push(
+              new DragBlock(
+                false,
+                undefined,
+                statementPositions,
+                true,
+                view,
+                undefined,
+                start,
+                end
+              )
+            )
+          }
+          // Poke our information into our parent if we need to track it.
+          const parent = parents[parents.length - 1];
+          if (parent && grammarInfo.compoundStatements.has(parent.name)) {
+            if (!parent.children) {
+              parent.children = [];
+            }
+            parent.children.push({ name: type.name, start, end });
+          }
+        } 
+
+        if (tree) {
+          tree.iterate({
+            enter: onEnterNode,
+            leave: onLeaveNode,
           });
         }
         return { blocks: blocks.reverse() };
