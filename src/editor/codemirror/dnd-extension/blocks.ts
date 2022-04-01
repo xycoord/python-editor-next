@@ -51,13 +51,12 @@ export class DragBlock {
     readonly end?: number
   ) { }
 
-  draw() {
+
+  draw(pointerEvents: boolean) {
     let dragger: HTMLElement | undefined;
     let statementDragger: HTMLElement | undefined;
     let parentDragger: HTMLElement | undefined;
 
-    const dndOverlayLayer = document.getElementById("dnd-overlay-layer")
-    const pointerEvents = (dndOverlayLayer) ? dndOverlayLayer.classList.contains("dnd-pointer-events") : false
     const pointerEventsCN = pointerEvents ? "cm-cs--pointer-events-all" : "cm-cs--pointer-events-none";
 
     if (this.parent && this.body) {

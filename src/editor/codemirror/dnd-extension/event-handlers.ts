@@ -7,7 +7,9 @@ let dropped = false;
 let notDroppedUndo: ChangeSet | undefined;
 
 const handleDragStart = (view: EditorView, start: number, end: number) => {
+
   console.log(`${start}, ${end}`)
+
   const startLineStart = view.state.doc.lineAt(start).from
   const endLineEnd = Math.min(
     view.state.doc.length,
@@ -40,10 +42,7 @@ const handleDragStart = (view: EditorView, start: number, end: number) => {
     dropCallback: () => { dropped = true; }
   });
 
-  const dndOverlayLayer = document.getElementById("dnd-overlay-layer")
-  if (dndOverlayLayer) {
-    dndOverlayLayer.classList.remove("dnd-pointer-events") 
-  }
+  document.getElementById("dnd-overlay-layer")?.setAttribute("dnd-pointer-events", "none")
 
 }
 
@@ -57,10 +56,7 @@ const handleDrop = (view: EditorView) => {
       annotations: [Transaction.addToHistory.of(false)],
     })
   }
-  const dndOverlayLayer = document.getElementById("dnd-overlay-layer")
-  if (dndOverlayLayer) {
-    dndOverlayLayer.classList.add("dnd-pointer-events") 
-  }
+  document.getElementById("dnd-overlay-layer")?.setAttribute("dnd-pointer-events", "all")
 }
 
 export { handleDragStart, handleDrop }

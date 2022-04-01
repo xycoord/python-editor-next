@@ -79,7 +79,7 @@ export const dndStructureView = (settings: DndStructureSettings) =>
         this.overlayLayer.setAttribute("aria-hidden", "true");
 
         this.overlayLayer.id = "dnd-overlay-layer"
-        this.overlayLayer.classList.add("dnd-pointer-events") 
+        this.overlayLayer.setAttribute("dnd-pointer-events", "all") 
 
         view.requestMeasure(this.measureReq);
       }
@@ -253,10 +253,11 @@ export const dndStructureView = (settings: DndStructureSettings) =>
         if (blocksChanged) {
           this.blocks = blocks;
 
+          const pointerEvents = this.overlayLayer.getAttribute("dnd-pointer-events") === "all" 
           // Should be able to adjust old elements here if it's a performance win.
           this.overlayLayer.textContent = "";
           for (const b of blocks) {
-            for (const e of b.draw()) {
+            for (const e of b.draw(pointerEvents)) {
               this.overlayLayer.appendChild(e);
             }
           }
