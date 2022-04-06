@@ -90,7 +90,7 @@ export class DragBlock {
       statementDragger.style.top = this.body.top + 1 + "px";
       statementDragger.style.height = this.body.height - 2 + "px";
       statementDragger.style.left = `calc(0%)`;
-      
+
       statementDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {
           handleDragStart(this.view, this.start, this.end);
@@ -108,7 +108,7 @@ export class DragBlock {
       parentDragger.style.top = this.parent.top + 1 + "px";
       parentDragger.style.height = this.parent.height - 2 + "px";
       parentDragger.style.left = `calc(0%)`;
-      
+
       parentDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {
           // When it is a code block the end includes the start of next line, we don't want to move the next line.

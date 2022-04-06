@@ -21,7 +21,7 @@ const handleDragStart = (view: EditorView, start: number, end: number) => {
   let deleteBlockChange = view.state.update({
     changes: { from: startLineStart, to: endLineEnd }
   }).changes
-  notDroppedUndo = deleteBlockChange.invert(view.state.doc);
+  notDroppedUndo = deleteBlockChange.invert(view.state.doc)
 
   view.dispatch({
     userEvent: "delete-drag-block",

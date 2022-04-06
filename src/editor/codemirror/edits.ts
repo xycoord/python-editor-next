@@ -43,7 +43,7 @@ interface ImportedName {
 }
 
 // CM has more options than this.
-class AliasesNotSupportedError extends Error {}
+class AliasesNotSupportedError extends Error { }
 
 /**
  * Calculate the changes needed to insert the given code into the editor.
@@ -75,7 +75,8 @@ export const calculateChanges = (
 
   const sourceImportsTo =
     sourceImports[sourceImports.length - 1]?.node?.to ?? 0;
-  const mainCode = source.slice(sourceImportsTo).trim();
+  // Remove all new lines at the start and all white spaces at the end, remove indents later
+  let mainCode = source.slice(sourceImportsTo).replace(/^\n+|\s+$/g, "");
   const requiredImports = sourceImports.flatMap(
     convertImportNodeToRequiredImports
   );
@@ -99,7 +100,7 @@ export const calculateChanges = (
 
   let mainPreceedingWhitespace = "";
   let mainChange: SimpleChangeSpec | undefined;
-  let mainIndent = "";
+  let mainIndent = ""
   if (mainCode) {
     let mainFrom: number;
     if (line !== undefined) {
@@ -118,6 +119,11 @@ export const calculateChanges = (
     }
 
     const insertLine = state.doc.lineAt(mainFrom);
+    // Assume indents are done using spaces, maybe a bad idea?
+    const existingIndent = mainCode.match(/^(\s*)/)?.[0] ?? "";
+    mainCode = mainCode.split("\n")
+      .map(line => line.replace(new RegExp("^" + existingIndent), ""))
+      .join("\n");
     mainIndent = insertLine.text.match(/^(\s*)/)?.[0] ?? "";
     mainChange = {
       from: mainFrom,
