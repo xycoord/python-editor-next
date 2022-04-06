@@ -101,12 +101,13 @@ export const calculateChanges = (
   let mainPreceedingWhitespace = "";
   let mainChange: SimpleChangeSpec | undefined;
   let mainIndent = ""
+  let extraLines = 0;
   if (mainCode) {
     let mainFrom: number;
     if (line !== undefined) {
       // Tweak so the addition preview is under the mouse even if we added imports.
       line = Math.max(1, line - importLines);
-      const extraLines = line - state.doc.lines;
+      extraLines = line - state.doc.lines;
       if (extraLines > 0) {
         mainFrom = state.doc.length;
         mainPreceedingWhitespace = "\n".repeat(extraLines);
@@ -119,12 +120,22 @@ export const calculateChanges = (
     }
 
     const insertLine = state.doc.lineAt(mainFrom);
+    const previousLine = state.doc.line(Math.max(insertLine.number - 1, 0))
     // Assume indents are done using spaces, maybe a bad idea?
     const existingIndent = mainCode.match(/^(\s*)/)?.[0] ?? "";
     mainCode = mainCode.split("\n")
       .map(line => line.replace(new RegExp("^" + existingIndent), ""))
       .join("\n");
-    mainIndent = insertLine.text.match(/^(\s*)/)?.[0] ?? "";
+
+    // If previous line is a newly added line, empty, or it is more indented, follow that indentation.
+    const insertLineIndent = insertLine.text.match(/^(\s*)/)?.[0] ?? "";
+    const previousLineIndent = previousLine.text.match(/^(\s*)/)?.[0] ?? "";
+    if (extraLines > 0 || previousLine.text.trim() === "" || previousLineIndent <= insertLineIndent) {
+      mainIndent = insertLineIndent
+    } else {
+      mainIndent = previousLineIndent
+    }
+
     mainChange = {
       from: mainFrom,
       insert: mainPreceedingWhitespace + indentBy(mainCode, mainIndent) + "\n",
