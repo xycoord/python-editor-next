@@ -50,7 +50,7 @@ function dropdowns(view: EditorView, options: string[]) {
         if (type.name === "MemberExpression") {
           let stringContent = view.state.doc.sliceString(from, to);
           for (let i = 0; i < options.length; i++) {
-            if (stringContent.includes(options[i])) {
+            if (stringContent === options[i]) {
               let deco = Decoration.replace({
                 widget: new DropdownWidget(options, i),
                 side: 1,
@@ -114,19 +114,24 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
   //Now replace the slice. This requires knowing the length of the actual string to be
   //replaced, so they must be iterated.
 
-  let i = 0;
+  let i = 0; let chosen = -1;
+
+  //Find the longest option that matches in the substring to replace - the longest must be
+  //picked to account for one option being a subset of another
   while (i < options.length) {
-    if (before.startsWith(options[i])) {
-      change = {
-        from: pos,
-        to: pos + options[i].length,
-        insert: options[~~newVal],
-      };
-      break;
+    if (before.slice(0, options[i].length) === options[i]) {
+      if (chosen === -1 || options[chosen].length < options[i].length) chosen = i;
     }
     i++;
   }
-  if (i === options.length) return false;
+
+  if (chosen === -1) return false;
+
+  change = {
+    from: pos,
+    to: pos + options[chosen].length,
+    insert: options[~~newVal],
+  };
 
   //Finally, dispatch the change!
   view.dispatch({
