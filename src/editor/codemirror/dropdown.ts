@@ -22,6 +22,7 @@ class DropdownWidget extends WidgetType {
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cm-dropdown";
     let sel = wrap.appendChild(document.createElement("select"));
+    sel.className = "cm-dropdown-menu";
 
     for (let i = 0; i < this.options.length; i++) {
       let opt = sel.appendChild(document.createElement("option"));
@@ -29,6 +30,11 @@ class DropdownWidget extends WidgetType {
       if (i === this.selected) opt.selected = true;
       opt.append(this.options[i]);
     }
+
+    //Nightmarish I know...
+    //These numbers are arbitrary but seem to work for things in the range of 2 to 64
+    //characters, which all reasonable selected things probably will be!
+    sel.setAttribute("style","width:"+~~(0.6*this.options[this.selected].length+2)+"em;");
 
     return wrap;
   }
