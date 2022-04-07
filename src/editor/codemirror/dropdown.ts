@@ -52,19 +52,18 @@ function dropdowns(view: EditorView, options: string[]) {
     syntaxTree(view.state).iterate({
       from, to,
       enter: (type, from, to) => {
-        if (type.name === "MemberExpression") {
-          let stringContent = view.state.doc.sliceString(from, to);
-          for (let i = 0; i < options.length; i++) {
-            if (stringContent === options[i]) {
-              let deco = Decoration.replace({
-                widget: new DropdownWidget(options, i),
-                side: 1,
-                //block: true,
-                inclusive: true,
-              })
-              widgets.push(deco.range(from, to));
-              break;
-            }
+        //Slow, but required and seems fine in practice
+        let stringContent = view.state.doc.sliceString(from, to);
+        for (let i = 0; i < options.length; i++) {
+          if (stringContent === options[i]) {
+            let deco = Decoration.replace({
+              widget: new DropdownWidget(options, i),
+              side: 1,
+              //block: true,
+              inclusive: true,
+            })
+            widgets.push(deco.range(from, to));
+            break;
           }
         }
       }
