@@ -22,7 +22,6 @@ class DropdownWidget extends WidgetType {
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cm-dropdown";
     let sel = wrap.appendChild(document.createElement("select"));
-    sel.className = "cm-dropdown-menu";
 
     for (let i = 0; i < this.options.length; i++) {
       let opt = sel.appendChild(document.createElement("option"));
