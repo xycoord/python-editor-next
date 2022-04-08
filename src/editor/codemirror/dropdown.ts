@@ -36,9 +36,9 @@ class DropdownWidget extends WidgetType {
     }
 
     //Nightmarish I know...
-    //These numbers are arbitrary but seem to work for things in the range of 2 to 64
+    //These numbers are arbitrary but seem to work for things in the range of 1 to 64
     //characters, which all reasonable selected things probably will be!
-    sel.setAttribute("style","width:"+~~(0.6*this.options[this.selected].length+2)+"em;");
+    sel.setAttribute("style","width:"+(0.6*this.options[this.selected].length + 1.2)+"em;");
 
     return wrap;
   }
