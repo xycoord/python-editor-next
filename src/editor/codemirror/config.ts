@@ -25,6 +25,7 @@ import { dropCursor } from "./dropcursor";
 import highlightStyle from "./highlightStyle";
 import interact from "@replit/codemirror-interact";
 import { dropdownPlugin } from "./dropdown";
+import { popupPlugin } from "./popup";
 
 const customTabBinding: KeyBinding = {
   key: "Tab",
@@ -145,5 +146,6 @@ export const editorConfig: Extension = [
     },
   ],
   key: "ctrl",
-}),
+  }),
+  popupPlugin,
 ];

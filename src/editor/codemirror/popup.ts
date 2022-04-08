@@ -8,16 +8,17 @@ import {
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { Range } from "@codemirror/rangeset";
+import "./popup.css";
 
 class PopupWidget extends WidgetType {
   visible: boolean;
 
   constructor() {
-    this.visible = true;
     super();
+    this.visible = false;
   }
 
-  eq(other: DropdownWidget) {
+  eq(other: PopupWidget) {
     return this.visible === other.visible;
   }
 
@@ -38,7 +39,7 @@ class PopupWidget extends WidgetType {
 }
 
 //Dummy code to test
-function dropdowns(view: EditorView) {
+function popups(view: EditorView) {
   let widgets: Array<Range<Decoration>> = [];
   for (let {from, to} of view.visibleRanges) {
     syntaxTree(view.state).iterate({
@@ -57,5 +58,20 @@ function dropdowns(view: EditorView) {
   return Decoration.set(widgets)
 }
 
+export const popupPlugin = ViewPlugin.fromClass(
+  class {
+    decorations: DecorationSet
 
+    constructor(view: EditorView) {
+      this.decorations = popups(view)
+    }
+
+    update(update: ViewUpdate) {
+      if (update.docChanged || update.viewportChanged) {
+        this.decorations = popups(update.view)
+      }
+    }
+  },
+  {decorations: v => v.decorations,}
+)
 
