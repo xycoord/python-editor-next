@@ -23,6 +23,8 @@ import {
 import { dndSupport } from "./dnd";
 import { dropCursor } from "./dropcursor";
 import highlightStyle from "./highlightStyle";
+import interact from "@replit/codemirror-interact";
+import { dropdownPlugin } from "./dropdown";
 
 const customTabBinding: KeyBinding = {
   key: "Tab",
@@ -67,4 +69,46 @@ export const editorConfig: Extension = [
   indentUnit.of(" ".repeat(indentSize)),
   python(),
   dndSupport(),
+  dropdownPlugin([
+    "Image.HEART",
+    "Image.HEART_SMALL",
+    "Image.HAPPY",
+    "Image.SMILE",
+    "Image.SAD",
+    "Image.CONFUSED",
+    "Image.ANGRY",
+    "Image.ASLEEP",
+    "Image.SURPRISED",
+    "Image.SILLY",
+    "Image.FABULOUS",
+    "Image.YES",
+    "Image.NO",
+    "Image.MEH",
+    "Image.DUCK",
+    "Image.GIRAFFE",
+    "Image.PACMAN",
+    "Image.GHOST",
+    "Image.SKULL",
+  ]),
+  interact({
+  rules: [
+    //Rule for turning true to false onclick
+    {
+      regexp: /True/g,
+      cursor: "pointer",
+      onClick: (text, setText, e) => {
+        setText("False");
+      },
+    },
+    //Rule to do the opposite
+    {
+      regexp: /False/g,
+      cursor: "pointer",
+      onClick: (text, setText, e) => {
+        setText("True");
+      },
+    },
+  ],
+  key: "ctrl",
+}),
 ];
