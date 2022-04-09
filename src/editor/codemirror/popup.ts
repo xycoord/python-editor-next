@@ -11,15 +11,15 @@ import { Range } from "@codemirror/rangeset";
 import "./popup.css";
 
 class PopupWidget extends WidgetType {
-  visible: boolean;
+  visible: boolean
 
-  constructor() {
+  constructor(readonly checked: boolean[][]) {
     super();
     this.visible = false;
   }
 
   eq(other: PopupWidget) {
-    return this.visible === other.visible;
+    return this.checked === other.checked;
   }
 
   toDOM() {
@@ -30,16 +30,36 @@ class PopupWidget extends WidgetType {
     let btn = wrap.appendChild(document.createElement("input"));
     btn.type = "checkbox";
 
-    //Dummy internals
-    let i = wrap.appendChild(document.createElement("p"));
-    i.className = "cm-popup-text";
-    i.append("Hello, world!");
+    //Actual internals for selecting displays
+    let form = wrap.appendChild(document.createElement("div"));
+    form.className = "cm-popup-text";
+
+    //Five rows of buttons
+    for (let i = 0; i < 5; i++) {
+      let w = form.appendChild(document.createElement("div"));
+      w.className = "cm-popup-btn-row"+i;
+
+      //Five buttons a row
+      for (let j = 0; j < 5; j++) {
+        let b = w.appendChild(document.createElement("input"));
+        b.type = "checkbox";
+        b.checked = this.checked[i][j];
+        b.className = "cm-popup-btn-"+i+"-"+j;
+      }
+    }
 
     return wrap;
   }
 
-  ignoreEvent() {return false;}
+  ignoreEvent() {return this.visible;}
 }
+
+const falsum = [[false,false,false,false,false],
+              [false,false,false,false,false],
+              [false,false,false,false,false],
+              [false,false,false,false,false],
+              [false,false,false,false,false],
+             ]
 
 //Dummy code to test
 function popups(view: EditorView) {
@@ -50,7 +70,7 @@ function popups(view: EditorView) {
       enter: (type, from, to) => {
         if (type.name === "Boolean") {
           let deco = Decoration.widget({
-            widget: new PopupWidget(),
+            widget: new PopupWidget(falsum),
             side: 1,
           })
           widgets.push(deco.range(to));
@@ -80,7 +100,7 @@ export const popupPlugin = ViewPlugin.fromClass(
     eventHandlers: {
       mousedown: (e, view) => {
         let target = e.target as HTMLElement;
-        if (target.nodeName == "INPUT" &&
+        if (target.nodeName === "INPUT" &&
           target.parentElement!.classList.contains("cm-popup")) {
             console.log("boop");
             let ch = target.parentElement!.lastChild as HTMLElement;
