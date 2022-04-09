@@ -27,6 +27,9 @@ class PopupWidget extends WidgetType {
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cm-popup";
 
+    let btn = wrap.appendChild(document.createElement("input"));
+    btn.type = "checkbox";
+
     //Dummy internals
     let i = wrap.appendChild(document.createElement("p"));
     i.className = "cm-popup-text";
@@ -72,6 +75,20 @@ export const popupPlugin = ViewPlugin.fromClass(
       }
     }
   },
-  {decorations: v => v.decorations,}
+  {
+    decorations: v => v.decorations,
+    eventHandlers: {
+      mousedown: (e, view) => {
+        let target = e.target as HTMLElement;
+        if (target.nodeName == "INPUT" &&
+          target.parentElement!.classList.contains("cm-popup")) {
+            console.log("boop");
+            let ch = target.parentElement!.lastChild as HTMLElement;
+            ch.classList.toggle("show");
+            return true;
+          }
+      }
+    },
+  }
 )
 

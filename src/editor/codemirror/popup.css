@@ -1,16 +1,16 @@
 .cm-popup {
   position: relative;
   display: inline-block;
-  /*cursor: pointer;
+  cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  user-select: none;*/
+  user-select: none;
 }
 
 /* The actual popup */
 .cm-popup .cm-popup-text {
-  /*visibility: hidden;*/
+  visibility: hidden;
   width: 180px;
   background-color: #555;
   color: #fff;
@@ -36,7 +36,7 @@
   border-color: #555 transparent transparent transparent;
 }
 
-.popup .show {
+.cm-popup .show {
   visibility: visible;
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
