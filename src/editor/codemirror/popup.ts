@@ -11,7 +11,7 @@ import { Range } from "@codemirror/rangeset";
 import "./popup.css";
 
 class PopupWidget extends WidgetType {
-  visible: boolean
+  visible: boolean;
 
   constructor(readonly checked: boolean[][]) {
     super();
@@ -29,6 +29,7 @@ class PopupWidget extends WidgetType {
 
     let btn = wrap.appendChild(document.createElement("input"));
     btn.type = "checkbox";
+    btn.className = "cm-popup-opener";
 
     //Actual internals for selecting displays
     let form = wrap.appendChild(document.createElement("div"));
@@ -51,7 +52,7 @@ class PopupWidget extends WidgetType {
     return wrap;
   }
 
-  ignoreEvent() {return this.visible;}
+  ignoreEvent() {return false}
 }
 
 const falsum = [[false,false,false,false,false],
@@ -68,12 +69,22 @@ function popups(view: EditorView) {
     syntaxTree(view.state).iterate({
       from, to,
       enter: (type, from, to) => {
-        if (type.name === "Boolean") {
-          let deco = Decoration.widget({
-            widget: new PopupWidget(falsum),
-            side: 1,
-          })
-          widgets.push(deco.range(to));
+        if (type.name === "String") {
+          let stringContent = view.state.doc.sliceString(from, to);
+          if (/'\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d'/.test(stringContent))
+          {
+            let digits = falsum;
+            for (let i = 0; i < 5; i++) {
+              for (let j = 0; j < 5; j++) {
+                digits[i][j] = stringContent.charAt(1 + (6*i) + j) !== "0";
+              }
+            }
+            let deco = Decoration.widget({
+              widget: new PopupWidget(falsum),
+              side: 1,
+            })
+            widgets.push(deco.range(to));
+          }
         }
       }
     })
@@ -101,12 +112,31 @@ export const popupPlugin = ViewPlugin.fromClass(
       mousedown: (e, view) => {
         let target = e.target as HTMLElement;
         if (target.nodeName === "INPUT" &&
-          target.parentElement!.classList.contains("cm-popup")) {
-            console.log("boop");
+          target.parentElement!.classList.contains("cm-popup")){
+          if (target.classList.contains("cm-popup-opener")) {
             let ch = target.parentElement!.lastChild as HTMLElement;
-            ch.classList.toggle("show");
+            let t2 = target as HTMLInputElement
+            if (!t2.checked) ch.classList.add("show");
+            else ch.classList.remove("show");
             return true;
           }
+          else {
+            console.log("doot");
+            for (let i = 0; i < 5; i++) {
+              for (let j  = 0; j < 5; j++) {
+                if (target.classList.contains("cm-popup-btn-"+i+"-"+j)) {
+                  let t2 = target as HTMLInputElement;
+                  let pos = view.posAtDOM(target);
+                  let strTxt = view.state.doc.sliceString(pos-31, pos);
+                  let repC = "0";
+                  if (t2.checked) repC = "9";
+                  let after = strTxt.substring(0, 1 + (6*i) + j) + repC + strTxt.substring(2 + (6*i) + j, 31);
+                  console.log(after);
+                }
+              }
+            }
+          }
+        }
       }
     },
   }
