@@ -109,30 +109,41 @@ export const popupPlugin = ViewPlugin.fromClass(
   {
     decorations: v => v.decorations,
     eventHandlers: {
-      mousedown: (e, view) => {
+      change: (e, view) => {
         let target = e.target as HTMLElement;
         if (target.nodeName === "INPUT" &&
           target.parentElement!.classList.contains("cm-popup")){
           if (target.classList.contains("cm-popup-opener")) {
             let ch = target.parentElement!.lastChild as HTMLElement;
             let t2 = target as HTMLInputElement
-            if (!t2.checked) ch.classList.add("show");
+            if (t2.checked) ch.classList.add("show");
             else ch.classList.remove("show");
             return true;
           }
-          else {
-            console.log("doot");
-            for (let i = 0; i < 5; i++) {
-              for (let j  = 0; j < 5; j++) {
-                if (target.classList.contains("cm-popup-btn-"+i+"-"+j)) {
-                  let t2 = target as HTMLInputElement;
-                  let pos = view.posAtDOM(target);
-                  let strTxt = view.state.doc.sliceString(pos-31, pos);
-                  let repC = "0";
-                  if (t2.checked) repC = "9";
-                  let after = strTxt.substring(0, 1 + (6*i) + j) + repC + strTxt.substring(2 + (6*i) + j, 31);
-                  console.log(after);
-                }
+        }
+        else if (target.nodeName === "INPUT" &&
+          target.parentElement!.parentElement!.classList.contains("cm-popup-text")){
+          console.log("doot");
+          for (let i = 0; i < 5; i++) {
+            for (let j  = 0; j < 5; j++) {
+              if (target.classList.contains("cm-popup-btn-"+i+"-"+j)) {
+                let t2 = target as HTMLInputElement;
+                let pos = view.posAtDOM(target);
+                let strTxt = view.state.doc.sliceString(pos-31, pos);
+                let repC = "0";
+                if (t2.checked) repC = "9";
+                let after = strTxt.substring(0, 1 + (6*i) + j) + repC + strTxt.substring(2 + (6*i) + j, 31);
+                console.log(after);
+                let change = {
+                  from: pos-31,
+                  to: pos,
+                  insert: after,
+                };
+                view.dispatch({
+                  userEvent: "popup.change",
+                  changes: change,
+                });
+                return true;
               }
             }
           }
