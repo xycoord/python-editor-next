@@ -14,6 +14,17 @@ import {
 import { syntaxTree } from "@codemirror/language";
 import { Range } from "@codemirror/rangeset";
 
+export interface OptionMap {
+  text: string,
+  displayText?: string,
+  displayImg?: string,
+}
+
+export interface DropdownConfig {
+  options: OptionMap[],
+  context?: RegExp,
+}
+
 class DropdownWidget extends WidgetType {
   constructor(readonly options: string[], readonly selected: number) { super() }
 
