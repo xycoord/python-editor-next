@@ -2,7 +2,7 @@ import { handleDragStart, handleDrop } from "./event-handlers"
 import { BlockInfo, EditorView } from "@codemirror/view"
 
 /**
- * A CoreMirror view extension providing structural highlighting using
+ * A CoreMirror view extension providing blocks for dragging and dropping using
  * CodeMirror's syntax tree.
  *
  * (c) 2021, Micro:bit Educational Foundation and contributors
@@ -37,7 +37,7 @@ export class Positions {
  * In this case the parent is the entire compound statement rather than
  * a branch.
  *
- * This class is responsible for drawing the highlighting.
+ * This class is responsible for drawing the blocks used for dragging.
  */
 export class DragBlock {
   constructor(
@@ -53,43 +53,31 @@ export class DragBlock {
 
 
   draw(pointerEvents: boolean) {
-    let dragger: HTMLElement | undefined;
     let statementDragger: HTMLElement | undefined;
-    let parentDragger: HTMLElement | undefined;
+    let blockDragger: HTMLElement | undefined;
 
     const pointerEventsCN = pointerEvents ? "cm-cs--pointer-events-all" : "cm-cs--pointer-events-none";
 
     if (this.parent && this.body) {
-      parentDragger = draggableBlockWithClass("cm-cs--dnd-dragparent", pointerEventsCN)
+      blockDragger = draggableBlockWithClass("cm-cs--dnd-dragblock", pointerEventsCN)
     }
     if (this.isStatement) {
       statementDragger = draggableBlockWithClass("cm-cs--dnd-dragline", pointerEventsCN)
     }
-    this.adjust(dragger, statementDragger, parentDragger);
-    const elements = [dragger, statementDragger, parentDragger].filter(Boolean) as HTMLElement[];
+    this.adjust(statementDragger, blockDragger);
+    const elements = [statementDragger, blockDragger].filter(Boolean) as HTMLElement[];
     return elements;
   }
 
-  adjust(dragger?: HTMLElement, statementDragger?: HTMLElement, parentDragger?: HTMLElement) {
-    // Optionally allows nested compound statements some breathing space
-    const bodyPullBack = this.bodyPullBack ? 3 : 0;
-    if (this.parent && this.body && dragger) {
-      dragger.style.width = (this.body.left - this.parent.left) / 2 - bodyPullBack + "px";
-      dragger.style.top = this.parent.top + "px";
-      dragger.style.height = this.parent.height + this.body.height + "px";
+  adjust(statementDragger?: HTMLElement, blockDragger?: HTMLElement) {
 
-      dragger.style.left = `calc(95% - ${this.body.left - bodyPullBack}px)`;
-      dragger.onclick = function() {
-        dragger.style.backgroundColor = dragger.style.backgroundColor === "gray" ? "orange" : "gray";
-        return false;
-      }
-    }
+    // Create a DragBlock for moving a simple statement
     if (this.body && this.isStatement && statementDragger) {
       statementDragger.style.width = 'calc(20%)';
       // different statements should be separated by one pixel
       statementDragger.style.top = this.body.top + 1 + "px";
       statementDragger.style.height = this.body.height - 2 + "px";
-      statementDragger.style.left = `calc(0%)`;
+      statementDragger.style.left = `0`;
 
       statementDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {
@@ -102,20 +90,22 @@ export class DragBlock {
         }
       }
     }
-    if (this.parent && this.body && parentDragger) {
-      parentDragger.style.width = 'calc(20%)';
-      // different statements should be separated by one pixel 
-      parentDragger.style.top = this.parent.top + 1 + "px";
-      parentDragger.style.height = this.parent.height - 2 + "px";
-      parentDragger.style.left = `calc(0%)`;
 
-      parentDragger.ondragstart = () => {
+    // Create a DragBlock for moving a simple statement
+    if (this.parent && this.body && blockDragger) {
+	  blockDragger.style.width = 'calc(20%)';
+      // different statements should be separated by one pixel 
+      blockDragger.style.top = this.parent.top + 1 + "px";
+      blockDragger.style.height = this.parent.height - 2 + "px";
+      blockDragger.style.left = '0';
+
+      blockDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {
           // When it is a code block the end includes the start of next line, we don't want to move the next line.
           handleDragStart(this.view, this.start, this.end - 1);
         }
       }
-      parentDragger.ondragend = () => {
+      blockDragger.ondragend = () => {
         if (this.view) {
           handleDrop(this.view);
         }

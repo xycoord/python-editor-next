@@ -66,7 +66,7 @@ export const dndStructureView = (settings: DndStructureSettings) =>
         this.overlayLayer.setAttribute("aria-hidden", "true");
 
         this.overlayLayer.id = "dnd-overlay-layer"
-        this.overlayLayer.setAttribute("dnd-pointer-events", "all") 
+        this.overlayLayer.setAttribute("dnd-pointer-events", "all")
 
         view.requestMeasure(this.measureReq);
       }
@@ -148,7 +148,6 @@ export const dndStructureView = (settings: DndStructureSettings) =>
           const children = leaving.children;
 
           if (children) {
-            // Draw an l-shape for each run of non-Body (e.g. keywords, test expressions) followed by Body in the child list.
             let runStart = 0;
             for (let i = 0; i < children.length; ++i) {
               if (children[i].name === "Body") {
@@ -185,19 +184,6 @@ export const dndStructureView = (settings: DndStructureSettings) =>
                 );
                 runStart = i + 1;
               }
-            }
-            if (!this.lShape) {
-              // Draw a box for the parent compound statement as a whole (may have multiple child Bodys)
-              const parentPositions = positionsForNode(
-                view,
-                start,
-                end,
-                depth,
-                false
-              );
-              blocks.push(
-                new DragBlock(bodyPullBack, parentPositions, undefined, undefined, view, undefined, start, end)
-              );
             }
           }
           if (grammarInfo.smallStatements.has(type.name)) {
@@ -241,6 +227,12 @@ export const dndStructureView = (settings: DndStructureSettings) =>
       }
 
       drawBlocks({ blocks }: Measure) {
+        // Update the height of the DOM
+		if (this.overlayLayer.parentElement){
+		  this.overlayLayer.style.height = '0px';
+		  this.overlayLayer.style.height = this.overlayLayer.parentElement.scrollHeight+"px";
+		}
+        console.log("drawBlocks!")
         const blocksChanged =
           blocks.length !== this.blocks.length ||
           blocks.some((b, i) => !b.eq(this.blocks[i]));

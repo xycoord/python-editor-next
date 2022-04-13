@@ -10,11 +10,12 @@ export const baseTheme = EditorView.baseTheme({
   // We set additional classes here to vary the formatting of the descendant blocks.
   // See DragBlock for the element creation code.
   ".cm-cs--dnd-layer": {
-    position: "absolute",
+	position: "absolute",
     top: 0,
-	  left: "90%",
-    height: "100%",
+	left: "90%",
+	height: "100%",
     width: "10%",
+	margin: "auto",
     zIndex: 10,
     pointerEvents: "none"
   },
@@ -23,7 +24,7 @@ export const baseTheme = EditorView.baseTheme({
     position: "absolute",
     backgroundColor: "green",
   },
-  ".cm-cs--dnd-dragparent": {
+  ".cm-cs--dnd-dragblock": {
     display: "block",
     position: "absolute",
     backgroundColor: "blue",
