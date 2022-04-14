@@ -30,7 +30,7 @@ import {
 import {
 	dndStructure,
 	// DndStructureSettings,
-	dndStructureHighlightingCompartment
+	dndStructureHighlightingCompartment,
 } from "./dnd-extension";
 import themeExtensions from "./themeExtensions";
 import interact from "@replit/codemirror-interact";
@@ -136,7 +136,8 @@ const CodeMirror = ({
             codeStructure(options.codeStructureSettings)
           ),
 		  dndStructureHighlightingCompartment.of(
-            dndStructure(options.codeStructureSettings)
+            //Changing the settings here doesn't seem to have any impact
+            dndStructure({dragSmallStatements:false, indentHandles: false})
           ),
           themeExtensionsCompartment.of(themeExtensionsForOptions(options)),
         ],
@@ -181,7 +182,7 @@ const CodeMirror = ({
           codeStructure(options.codeStructureSettings)
         ),
 		dndStructureHighlightingCompartment.reconfigure(
-            dndStructure(options.codeStructureSettings)
+            dndStructure({dragSmallStatements: false, indentHandles: false})
         ),
       ],
     });

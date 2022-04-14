@@ -13,17 +13,9 @@ import { dndStructureView } from "./view";
 
 export const dndStructureHighlightingCompartment = new Compartment();
 
-export type CodeStructureShape = "l-shape" | "box";
-export type CodeStructureBackground = "block" | "none";
-export type CodeStructureBorders = "borders" | "none" | "left-edge-only";
-
 export interface DndStructureSettings {
-  shape: CodeStructureShape;
-  background: CodeStructureBackground;
-  borders: CodeStructureBorders;
-
-  cursorBackground?: boolean;
-  cursorBorder?: CodeStructureBorders;
+  indentHandles: boolean;
+  dragSmallStatements: boolean;
 }
 
 /**

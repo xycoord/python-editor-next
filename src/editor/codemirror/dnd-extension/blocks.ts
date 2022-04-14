@@ -1,5 +1,5 @@
 import { handleDragStart, handleDrop } from "./event-handlers"
-import { BlockInfo, EditorView } from "@codemirror/view"
+import { EditorView } from "@codemirror/view"
 
 /**
  * A CoreMirror view extension providing blocks for dragging and dropping using
@@ -41,12 +41,10 @@ export class Positions {
  */
 export class DragBlock {
   constructor(
-    readonly bodyPullBack: boolean,
     readonly parent?: Positions,
     readonly body?: Positions,
     readonly isStatement?: boolean,
     readonly view?: EditorView,
-    readonly block?: BlockInfo,
     readonly start?: number,
     readonly end?: number
   ) { }

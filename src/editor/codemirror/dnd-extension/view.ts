@@ -7,40 +7,13 @@
  * SPDX-License-Identifier: MIT
  */
 import { indentUnit, syntaxTree } from "@codemirror/language";
-import { Tree, NodeType } from '@lezer/common';
+import { Tree } from '@lezer/common';
+import { StructureNode } from './util'
 import { EditorView, ViewPlugin, ViewUpdate } from "@codemirror/view";
 import { DndStructureSettings } from "./index";
 import { skipBodyTrailers } from "../structure-highlighting/doc-util";
 import { Positions, DragBlock } from "./blocks";
-
-// Grammar is defined by https://github.com/lezer-parser/python/blob/master/src/python.grammar
-const grammarInfo = {
-  compoundStatements: new Set([
-    "IfStatement",
-    "WhileStatement",
-    "ForStatement",
-    "TryStatement",
-    "WithStatement",
-    "FunctionDefinition",
-    "ClassDefinition",
-  ]),
-  smallStatements: new Set([
-    "AssignStatement",
-    "UpdateStatement",
-    "ExpressionStatement",
-    "DeleteStatement",
-    "PassStatement",
-    "BreakStatement",
-    "ContinueStatement",
-    "ReturnStatement",
-    "YieldStatement",
-    "PrintStatement",
-    "RaiseStatement",
-    "ImportStatement",
-    "ScopeStatement",
-    "AssertStatement",
-  ]),
-};
+import { iterateOverStructureTree } from "./syntax-tree-iterator"
 
 interface Measure {
   blocks: DragBlock[];
@@ -52,7 +25,8 @@ export const dndStructureView = (settings: DndStructureSettings) =>
       measureReq: { read: () => Measure; write: (value: Measure) => void };
       overlayLayer: HTMLElement;
       blocks: DragBlock[] = [];
-      lShape = settings.shape === "l-shape";
+      indentHandles = settings.indentHandles;
+      dragSmallStatements = settings.dragSmallStatements;
 
       constructor(readonly view: EditorView) {
         this.measureReq = {
@@ -64,7 +38,6 @@ export const dndStructureView = (settings: DndStructureSettings) =>
         );
         this.overlayLayer.className = "cm-cs--dnd-layer";
         this.overlayLayer.setAttribute("aria-hidden", "true");
-
         this.overlayLayer.id = "dnd-overlay-layer"
         this.overlayLayer.setAttribute("dnd-pointer-events", "all")
 
@@ -117,76 +90,14 @@ export const dndStructureView = (settings: DndStructureSettings) =>
         };
 
         const view = this.view;
-        const { state } = view;
+        const {state} = view;
 
-        const bodyPullBack = this.lShape && settings.background !== "none";
         const blocks: DragBlock[] = [];
-        // We could throw away blocks if we tracked returning to the top-level or started from
-        // the closest top-level node. Otherwise we need to render them because they overlap.
-        // Should consider switching to tree cursors to avoid allocating syntax nodes.
-        let depth = 0;
-        const tree: Tree = syntaxTree(state);
 
-        interface Parent{
-          name: string;
-          children?: { name: string; start: number; end: number }[];
-        } 
-        const parents: Parent[] = [];
-
-        const onEnterNode = (type: NodeType, _start: number) => {
-          parents.push({ name: type.name });
-          if (type.name === "Body") {
-            depth++;
-          }
-        }
-
-        const onLeaveNode = (type: NodeType , start: number, end: number) => {
-          if (type.name === "Body") {
-            depth--;
-          }
-          const leaving = parents.pop()!;
-          const children = leaving.children;
-
-          if (children) {
-            let runStart = 0;
-            for (let i = 0; i < children.length; ++i) {
-              if (children[i].name === "Body") {
-                const startNode = children[runStart];
-                const bodyNode = children[i];
-
-                const parentPositions = this.lShape
-                  ? positionsForNode(
-                    view,
-                    startNode.start,
-                    bodyNode.start,
-                    depth,
-                    false
-                  )
-                  : undefined;
-                const bodyPositions = positionsForNode(
-                  view,
-                  bodyNode.start,
-                  bodyNode.end,
-                  depth + 1,
-                  true
-                );
-                blocks.push(
-                  new DragBlock(
-                    bodyPullBack,
-                    parentPositions,
-                    bodyPositions,
-                    undefined,
-                    view,
-                    undefined,
-                    startNode.start,
-                    bodyNode.end
-                  )
-                );
-                runStart = i + 1;
-              }
-            }
-          }
-          if (grammarInfo.smallStatements.has(type.name)) {
+        const addSmallStatementHandle = 
+          (start: number, end:number, depth:number) => {
+            //this if should really be on the definition of the function
+            if(this.dragSmallStatements) {
             const statementPositions = positionsForNode(
               view,
               start,
@@ -196,42 +107,68 @@ export const dndStructureView = (settings: DndStructureSettings) =>
             )
             blocks.push(
               new DragBlock(
-                false,
                 undefined,
                 statementPositions,
                 true,
                 view,
-                undefined,
                 start,
                 end
               )
             )
-          }
-          // Poke our information into our parent if we need to track it.
-          const parent = parents[parents.length - 1];
-          if (parent && grammarInfo.compoundStatements.has(parent.name)) {
-            if (!parent.children) {
-              parent.children = [];
             }
-            parent.children.push({ name: type.name, start, end });
           }
-        } 
+          
+        const addCompoundStatementHandle =
+          (startNode: StructureNode, bodyNode: StructureNode, depth: number) => {
+            const parentPositions = 
+                  positionsForNode(
+                    view,
+                    startNode.start,
+                    bodyNode.start,
+                    depth,
+                    false
+                  );
+
+                // Where should the body block go?
+                const bodyPositions =
+                  positionsForNode(
+                    view,
+                    bodyNode.start,
+                    bodyNode.end,
+                    depth + 1,
+                    true
+                  );
+
+                // Create block and register it
+                blocks.push(
+                  new DragBlock(
+                    parentPositions,
+                    bodyPositions,
+                    undefined,
+                    view,
+                    startNode.start,
+                    bodyNode.end
+                  )
+                );
+          }
+
+        // We could throw away blocks if we tracked returning to the top-level or started from
+        // the closest top-level node. Otherwise we need to render them because they overlap.
+        // Should consider switching to tree cursors to avoid allocating syntax nodes.
+        const tree: Tree = syntaxTree(state);
 
         if (tree) {
-          tree.iterate({
-            enter: onEnterNode,
-            leave: onLeaveNode,
-          });
+          iterateOverStructureTree(addSmallStatementHandle, addCompoundStatementHandle, tree)
         }
         return { blocks: blocks.reverse() };
       }
 
       drawBlocks({ blocks }: Measure) {
         // Update the height of the DOM
-		if (this.overlayLayer.parentElement){
-		  this.overlayLayer.style.height = '0px';
-		  this.overlayLayer.style.height = this.overlayLayer.parentElement.scrollHeight+"px";
-		}
+        if (this.overlayLayer.parentElement){
+          this.overlayLayer.style.height = '0px';
+          this.overlayLayer.style.height = this.overlayLayer.parentElement.scrollHeight+"px";
+        }
         console.log("drawBlocks!")
         const blocksChanged =
           blocks.length !== this.blocks.length ||
