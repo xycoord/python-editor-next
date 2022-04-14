@@ -5,6 +5,8 @@
  */
 import { EditorView } from "@codemirror/view";
 
+const draghandle_width = "1.5rem";
+
 export const baseTheme = EditorView.baseTheme({
   // The layer we add to CM's DOM.
   // We set additional classes here to vary the formatting of the descendant blocks.
@@ -12,10 +14,10 @@ export const baseTheme = EditorView.baseTheme({
   ".cm-cs--dnd-layer": {
 	position: "absolute",
     top: 0,
-	left: "90%",
-	height: "100%",
-    width: "10%",
-	margin: "auto",
+	  height: "100%",
+    width: "100%",
+	  margin: "auto",
+    left: "95px", 
     zIndex: 10,
     pointerEvents: "none"
   },
@@ -23,16 +25,28 @@ export const baseTheme = EditorView.baseTheme({
     display: "block",
     position: "absolute",
     backgroundColor: "green",
+    width: draghandle_width 
   },
   ".cm-cs--dnd-dragblock": {
     display: "block",
     position: "absolute",
     backgroundColor: "blue",
+    width: draghandle_width  
   },
   ".cm-cs--pointer-events-all": {
     pointerEvents: "all"
   },
   ".cm-cs--pointer-events-none": {
     pointerEvents: "none"
+  },
+  ".cm-cs--layer": {
+    left: draghandle_width
+  }
+});
+
+//using theme here seems dodgy, it is needed to superseed default padding:0
+export const theme = EditorView.theme({
+  ".cm-content": {
+    paddingLeft: draghandle_width
   }
 });

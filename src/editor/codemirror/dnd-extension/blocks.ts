@@ -71,7 +71,6 @@ export class DragBlock {
 
     // Create a DragBlock for moving a simple statement
     if (this.body && this.isStatement && statementDragger) {
-      statementDragger.style.width = 'calc(20%)';
       // different statements should be separated by one pixel
       statementDragger.style.top = this.body.top + 1 + "px";
       statementDragger.style.height = this.body.height - 2 + "px";
@@ -91,7 +90,6 @@ export class DragBlock {
 
     // Create a DragBlock for moving a simple statement
     if (this.parent && this.body && blockDragger) {
-	  blockDragger.style.width = 'calc(20%)';
       // different statements should be separated by one pixel 
       blockDragger.style.top = this.parent.top + 1 + "px";
       blockDragger.style.height = this.parent.height - 2 + "px";

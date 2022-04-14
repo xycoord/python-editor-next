@@ -8,7 +8,7 @@
  */
 
 import { Compartment, Extension } from "@codemirror/state";
-import { baseTheme } from "./theme";
+import { baseTheme, theme } from "./theme";
 import { dndStructureView } from "./view";
 
 export const dndStructureHighlightingCompartment = new Compartment();
@@ -26,5 +26,5 @@ export interface DndStructureSettings {
  * @returns A appropriately configured extension.
  */
 export const dndStructure = (settings: DndStructureSettings): Extension => {
-  return [dndStructureView(settings), baseTheme];
+  return [dndStructureView(settings), baseTheme, theme];
 };
