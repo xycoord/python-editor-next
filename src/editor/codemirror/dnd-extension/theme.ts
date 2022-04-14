@@ -25,7 +25,8 @@ export const baseTheme = EditorView.baseTheme({
     display: "block",
     position: "absolute",
     backgroundColor: "green",
-    width: `calc(${draghandle_width} + 1px)`
+    width: `calc(${draghandle_width} + 1px)`,
+    cursor: "grab"
   },
   ".cm-cs--dnd-dragblock": {
     // display: "block",
@@ -37,7 +38,8 @@ export const baseTheme = EditorView.baseTheme({
     width: `calc(${draghandle_width} + 1px)`,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    cursor: "grab"
   },
   ".cm-cs--pointer-events-all": {
     pointerEvents: "all"
