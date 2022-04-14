@@ -62,7 +62,7 @@ class DropdownWidget extends WidgetType {
   }
 }
 
-function dropdowns(view: EditorView, options: string[]) {
+function dropdowns(view: EditorView, config: DropdownConfig) {
   let widgets: Array<Range<Decoration>> = [];
   for (let {from,to} of view.visibleRanges) {
     syntaxTree(view.state).iterate({
@@ -70,18 +70,21 @@ function dropdowns(view: EditorView, options: string[]) {
       enter: (type, from, to) => {
         //Slow, but required and seems fine in practice
         let stringContent = view.state.doc.sliceString(from, to);
-        for (let i = 0; i < options.length; i++) {
-          if (stringContent === options[i]) {
-            let deco = Decoration.replace({
-              widget: new DropdownWidget(options, i),
-              side: 1,
-              //block: true,
-              inclusive: true,
-            })
-            widgets.push(deco.range(from, to));
-            break;
+        if (!config.context) {
+          for (let i = 0; i < options.length; i++) {
+            if (stringContent === options[i]) {
+              let deco = Decoration.replace({
+                widget: new DropdownWidget(options, i),
+                side: 1,
+                //block: true,
+                inclusive: true,
+              })
+              widgets.push(deco.range(from, to));
+              break;
+            }
           }
         }
+        else if (stringContent.match(config.context))
       }
     })
   }
