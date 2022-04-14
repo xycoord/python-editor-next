@@ -1,5 +1,7 @@
 import { handleDragStart, handleDrop } from "./event-handlers"
 import { EditorView } from "@codemirror/view"
+import { DragHandleIcon } from "@chakra-ui/icons";
+import * as ReactDOM from 'react-dom';
 
 /**
  * A CoreMirror view extension providing blocks for dragging and dropping using
@@ -68,13 +70,20 @@ export class DragBlock {
   }
 
   adjust(statementDragger?: HTMLElement, blockDragger?: HTMLElement) {
+    const dragHandleIcon = <DragHandleIcon
+        boxSize={12}
+        color={"var(--chakra-colors-code-blockBorder)"}
+        transition="color .2s"
+      />
 
     // Create a DragBlock for moving a simple statement
     if (this.body && this.isStatement && statementDragger) {
       // different statements should be separated by one pixel
-      statementDragger.style.top = this.body.top + 1 + "px";
-      statementDragger.style.height = this.body.height - 2 + "px";
+      statementDragger.style.top = this.body.top + "px";
+      statementDragger.style.height = this.body.height + 2 + "px";
       statementDragger.style.left = `0`;
+      
+      ReactDOM.render(dragHandleIcon, statementDragger)
 
       statementDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {
@@ -91,9 +100,11 @@ export class DragBlock {
     // Create a DragBlock for moving a simple statement
     if (this.parent && this.body && blockDragger) {
       // different statements should be separated by one pixel 
-      blockDragger.style.top = this.parent.top + 1 + "px";
-      blockDragger.style.height = this.parent.height - 2 + "px";
+      blockDragger.style.top = this.parent.top + "px";
+      blockDragger.style.height = this.parent.height + 2 + "px";
       blockDragger.style.left = '0';
+      
+      ReactDOM.render(dragHandleIcon, blockDragger)
 
       blockDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {

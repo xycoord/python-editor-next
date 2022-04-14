@@ -5,7 +5,7 @@
  */
 import { EditorView } from "@codemirror/view";
 
-const draghandle_width = "1.5rem";
+const draghandle_width = "1.2rem";
 
 export const baseTheme = EditorView.baseTheme({
   // The layer we add to CM's DOM.
@@ -18,20 +18,26 @@ export const baseTheme = EditorView.baseTheme({
     width: "100%",
 	  margin: "auto",
     left: "95px", 
-    zIndex: 10,
+    zIndex: 201,
     pointerEvents: "none"
   },
   ".cm-cs--dnd-dragline": {
     display: "block",
     position: "absolute",
     backgroundColor: "green",
-    width: draghandle_width 
+    width: `calc(${draghandle_width} + 1px)`
   },
   ".cm-cs--dnd-dragblock": {
-    display: "block",
+    // display: "block",
     position: "absolute",
-    backgroundColor: "blue",
-    width: draghandle_width  
+    backgroundColor: "var(--chakra-colors-code-blockBackground)",
+    border: "2px solid var(--chakra-colors-code-blockBorder)",
+    borderRadius: "4px 0 0 4px",
+    // borderRight: "none",
+    width: `calc(${draghandle_width} + 1px)`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
   ".cm-cs--pointer-events-all": {
     pointerEvents: "all"
