@@ -83,6 +83,7 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
       enter: (type, from, to) => {
         //Slow, but required and seems fine in practice
         let stringContent = view.state.doc.sliceString(from, to);
+        //console.log(stringContent);
         if (!config.context) {
           for (let i = 0; i < config.options.length; i++) {
             if (stringContent === config.options[i].text) {
@@ -97,7 +98,32 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
             }
           }
         }
-        //else if (stringContent.match(config.context))
+        //In this case, find the regex in the AST, then simply find the correct substring
+        else if (config.context.test(stringContent)) {
+          console.log("doot");
+          let matches = [] //Find all matches so the longest can be picked
+          for (let i = 0; i < config.options.length; i++) {
+            let ind = stringContent.indexOf(config.options[i].text)
+            if (ind > -1) matches.push(i);
+          }
+
+          //Now select the longest one, if it exists, else just end
+          if (matches.length > 0) {
+            let match = "";
+            for (let i = 0; i < matches.length; i++) {
+              if (config.options[i].text.length > match.length) match = config.options[i].text;
+            }
+            //So match contains the longest matching option, now just find it
+            let ind = stringContent.indexOf(match);
+            //So ind contains the start of the widget, so now we can just add it as before
+            let deco = Decoration.replace({
+              widget: new DropdownWidget(config.options, ind),
+              side: 1,
+              inclusive: true,
+            })
+            widgets.push(deco.range(from+ind, from+ind+match.length));
+          }
+        }
       }
     })
   }

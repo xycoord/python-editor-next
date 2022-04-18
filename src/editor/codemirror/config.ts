@@ -90,7 +90,8 @@ export const editorConfig: Extension = [
       {text: "Image.PACMAN"},
       {text: "Image.GHOST"},
       {text: "Image.SKULL"},
-    ]
+    ],
+    //context: /^display\.show\([^\)\n]*\)/,
 
   }),
   dropdownPlugin({
@@ -116,7 +117,7 @@ export const editorConfig: Extension = [
       {text: "music.RINGTONE"},
       {text: "music.WAWAWAWAA"},
       {text: "music.WEDDING"},
-    ]
+    ],
 
   }),
   dropdownPlugin({
@@ -131,7 +132,7 @@ export const editorConfig: Extension = [
       {text: "Sound.SPRING"},
       {text: "Sound.TWINKLE"},
       {text: "Sound.YAWM"},
-    ]
+    ],
 
   }),
   interact({
