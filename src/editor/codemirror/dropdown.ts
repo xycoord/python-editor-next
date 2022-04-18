@@ -13,6 +13,7 @@ import {
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { Range } from "@codemirror/rangeset";
+import "./dropdown.css";
 
 class DropdownWidget extends WidgetType {
   constructor(readonly options: string[], readonly selected: number) { super() }
@@ -27,6 +28,7 @@ class DropdownWidget extends WidgetType {
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cm-dropdown";
     let sel = wrap.appendChild(document.createElement("select"));
+    sel.className = "cm-dropdown-select";
 
     for (let i = 0; i < this.options.length; i++) {
       let opt = sel.appendChild(document.createElement("option"));
@@ -39,7 +41,6 @@ class DropdownWidget extends WidgetType {
     //These numbers are arbitrary but seem to work for things in the range of 1 to 64
     //characters, which all reasonable selected things probably will be!
     //sel.setAttribute("style","width:"+(0.6*this.options[this.selected].length + 1.2)+"em;");
-    sel.setAttribute("style","width:0.75em");
 
     return wrap;
   }
