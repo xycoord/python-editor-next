@@ -26,7 +26,7 @@ export interface DropdownConfig {
 }
 
 class DropdownWidget extends WidgetType {
-  constructor(readonly options: string[], readonly selected: number) { super() }
+  constructor(readonly options: OptionMap[], readonly selected: number) { super() }
 
   eq(other: DropdownWidget) {
     if (this.selected !== other.selected) return false;
@@ -43,13 +43,26 @@ class DropdownWidget extends WidgetType {
       let opt = sel.appendChild(document.createElement("option"));
       opt.value = i.toString();
       if (i === this.selected) opt.selected = true;
-      opt.append(this.options[i]);
+
+      if (this.options[i].displayImg) {
+        let t = this.options[i].displayImg as string;
+        opt.appendChild(document.createElement("img")).setAttribute("href", t);
+      }
+      else if (this.options[i].displayText) {
+        let t = this.options[i].displayText as string;
+        opt.append(t);
+
+      }
+      else {opt.append(this.options[i].text);}
     }
 
     //Nightmarish I know...
     //These numbers are arbitrary but seem to work for things in the range of 1 to 64
     //characters, which all reasonable selected things probably will be!
-    sel.setAttribute("style","width:"+(0.6*this.options[this.selected].length + 1.2)+"em;");
+    let t;
+    if (this.options[this.selected].displayText) t = this.options[this.selected].displayText as string;
+    else t = this.options[this.selected].text;
+    sel.setAttribute("style","width:"+(0.6*t.length + 1.2)+"em;");
 
     return wrap;
   }
@@ -71,10 +84,10 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
         //Slow, but required and seems fine in practice
         let stringContent = view.state.doc.sliceString(from, to);
         if (!config.context) {
-          for (let i = 0; i < options.length; i++) {
-            if (stringContent === options[i]) {
+          for (let i = 0; i < config.options.length; i++) {
+            if (stringContent === config.options[i].text) {
               let deco = Decoration.replace({
-                widget: new DropdownWidget(options, i),
+                widget: new DropdownWidget(config.options, i),
                 side: 1,
                 //block: true,
                 inclusive: true,
@@ -84,7 +97,7 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
             }
           }
         }
-        else if (stringContent.match(config.context))
+        //else if (stringContent.match(config.context))
       }
     })
   }
@@ -92,22 +105,22 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
 }
 
 //Exported for unit testing
-export const dropdownPluginInternal = (options: string[]) => class {
+export const dropdownPluginInternal = (config: DropdownConfig) => class {
   decorations: DecorationSet
 
   constructor(view: EditorView) {
-    this.decorations = dropdowns(view, options)
+    this.decorations = dropdowns(view, config)
   }
 
   update(update: ViewUpdate) {
     if (update.docChanged || update.viewportChanged) {
-      this.decorations = dropdowns(update.view, options)
+      this.decorations = dropdowns(update.view, config)
     }
   }
 }
 
-export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
-  dropdownPluginInternal(options),
+export const dropdownPlugin = (config: DropdownConfig) => ViewPlugin.fromClass(
+  dropdownPluginInternal(config),
   {
     decorations: v => v.decorations,
 
@@ -116,18 +129,18 @@ export const dropdownPlugin = (options : string[]) => ViewPlugin.fromClass(
         let target = e.target as HTMLSelectElement
         if (target.nodeName === "SELECT" &&
             target.parentElement!.classList.contains("cm-dropdown"))
-          return switchDropdown(view, view.posAtDOM(target), options, target.value)
+          return switchDropdown(view, view.posAtDOM(target), config.options, target.value)
         else return false;
       },
     }
   }
 )
 
-function switchDropdown(view: EditorView, pos: number, options: string[], newVal: string) {
+function switchDropdown(view: EditorView, pos: number, options: OptionMap[], newVal: string) {
   //First, find the maximum length over all the options
   let m = 0;
   for (let i = 0; i < options.length; i++) {
-    if (options[i].length > m) m = options[i].length;
+    if (options[i].text.length > m) m = options[i].text.length;
   }
 
   let before = view.state.doc.sliceString(pos, pos+m);
@@ -142,8 +155,8 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
   //Find the longest option that matches in the substring to replace - the longest must be
   //picked to account for one option being a subset of another
   while (i < options.length) {
-    if (before.slice(0, options[i].length) === options[i]) {
-      if (chosen === -1 || options[chosen].length < options[i].length) chosen = i;
+    if (before.slice(0, options[i].text.length) === options[i].text) {
+      if (chosen === -1 || options[chosen].text.length < options[i].text.length) chosen = i;
     }
     i++;
   }
@@ -152,8 +165,8 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
 
   change = {
     from: pos,
-    to: pos + options[chosen].length,
-    insert: options[~~newVal],
+    to: pos + options[chosen].text.length,
+    insert: options[~~newVal].text,
   };
 
   //Finally, dispatch the change!
