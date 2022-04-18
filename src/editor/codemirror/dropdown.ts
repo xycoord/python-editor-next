@@ -38,7 +38,8 @@ class DropdownWidget extends WidgetType {
     //Nightmarish I know...
     //These numbers are arbitrary but seem to work for things in the range of 1 to 64
     //characters, which all reasonable selected things probably will be!
-    sel.setAttribute("style","width:"+(0.6*this.options[this.selected].length + 1.2)+"em;");
+    //sel.setAttribute("style","width:"+(0.6*this.options[this.selected].length + 1.2)+"em;");
+    sel.setAttribute("style","width:0.75em");
 
     return wrap;
   }
@@ -61,13 +62,13 @@ function dropdowns(view: EditorView, options: string[]) {
         let stringContent = view.state.doc.sliceString(from, to);
         for (let i = 0; i < options.length; i++) {
           if (stringContent === options[i]) {
-            let deco = Decoration.replace({
+            let deco = Decoration.widget({
               widget: new DropdownWidget(options, i),
               side: 1,
               //block: true,
-              inclusive: true,
+              inclusive: false,
             })
-            widgets.push(deco.range(from, to));
+            widgets.push(deco.range(to));
             break;
           }
         }
@@ -116,7 +117,7 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
     if (options[i].length > m) m = options[i].length;
   }
 
-  let before = view.state.doc.sliceString(pos, pos+m);
+  let before = view.state.doc.sliceString(pos-m, pos);
 
   let change;
 
@@ -128,7 +129,7 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
   //Find the longest option that matches in the substring to replace - the longest must be
   //picked to account for one option being a subset of another
   while (i < options.length) {
-    if (before.slice(0, options[i].length) === options[i]) {
+    if (before.slice(m - options[i].length, m) === options[i]) {
       if (chosen === -1 || options[chosen].length < options[i].length) chosen = i;
     }
     i++;
@@ -137,8 +138,8 @@ function switchDropdown(view: EditorView, pos: number, options: string[], newVal
   if (chosen === -1) return false;
 
   change = {
-    from: pos,
-    to: pos + options[chosen].length,
+    from: pos - options[chosen].length ,
+    to: pos,
     insert: options[~~newVal],
   };
 
