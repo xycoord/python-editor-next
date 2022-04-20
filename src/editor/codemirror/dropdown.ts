@@ -13,6 +13,7 @@ import {
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { Range } from "@codemirror/rangeset";
+import "./dropdown.css";
 
 export interface OptionMap {
   text: string,
@@ -38,6 +39,7 @@ class DropdownWidget extends WidgetType {
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cm-dropdown";
     let sel = wrap.appendChild(document.createElement("select"));
+    sel.className = "cm-dropdown-select";
 
     for (let i = 0; i < this.options.length; i++) {
       let opt = sel.appendChild(document.createElement("option"));
@@ -55,15 +57,6 @@ class DropdownWidget extends WidgetType {
       }
       else {opt.append(this.options[i].text);}
     }
-
-    //Nightmarish I know...
-    //These numbers are arbitrary but seem to work for things in the range of 1 to 64
-    //characters, which all reasonable selected things probably will be!
-    let t;
-    if (this.options[this.selected].displayText) t = this.options[this.selected].displayText as string;
-    else t = this.options[this.selected].text;
-    sel.setAttribute("style","width:"+(0.6*t.length + 1.2)+"em;");
-
     return wrap;
   }
 
@@ -83,24 +76,22 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
       enter: (type, from, to) => {
         //Slow, but required and seems fine in practice
         let stringContent = view.state.doc.sliceString(from, to);
-        //console.log(stringContent);
         if (!config.context) {
           for (let i = 0; i < config.options.length; i++) {
             if (stringContent === config.options[i].text) {
-              let deco = Decoration.replace({
+              let deco = Decoration.widget({
                 widget: new DropdownWidget(config.options, i),
                 side: 1,
                 //block: true,
                 inclusive: true,
               })
-              widgets.push(deco.range(from, to));
+              widgets.push(deco.range(to));
               break;
             }
           }
         }
         //In this case, find the regex in the AST, then simply find the correct substring
         else if (config.context.test(stringContent)) {
-          console.log("doot");
           let matches = [] //Find all matches so the longest can be picked
           for (let i = 0; i < config.options.length; i++) {
             let ind = stringContent.indexOf(config.options[i].text)
@@ -116,12 +107,12 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
             //So match contains the longest matching option, now just find it
             let ind = stringContent.indexOf(match);
             //So ind contains the start of the widget, so now we can just add it as before
-            let deco = Decoration.replace({
+            let deco = Decoration.widget({
               widget: new DropdownWidget(config.options, ind),
               side: 1,
               inclusive: true,
             })
-            widgets.push(deco.range(from+ind, from+ind+match.length));
+            widgets.push(deco.range(from+ind+match.length));
           }
         }
       }
@@ -155,7 +146,7 @@ export const dropdownPlugin = (config: DropdownConfig) => ViewPlugin.fromClass(
         let target = e.target as HTMLSelectElement
         if (target.nodeName === "SELECT" &&
             target.parentElement!.classList.contains("cm-dropdown"))
-          return switchDropdown(view, view.posAtDOM(target), config.options, target.value)
+        {return switchDropdown(view, view.posAtDOM(target), config.options, target.value)}
         else return false;
       },
     }
@@ -169,7 +160,7 @@ function switchDropdown(view: EditorView, pos: number, options: OptionMap[], new
     if (options[i].text.length > m) m = options[i].text.length;
   }
 
-  let before = view.state.doc.sliceString(pos, pos+m);
+  let before = view.state.doc.sliceString(pos-m, pos);
 
   let change;
 
@@ -181,7 +172,7 @@ function switchDropdown(view: EditorView, pos: number, options: OptionMap[], new
   //Find the longest option that matches in the substring to replace - the longest must be
   //picked to account for one option being a subset of another
   while (i < options.length) {
-    if (before.slice(0, options[i].text.length) === options[i].text) {
+    if (before.slice(m-options[i].text.length, m) === options[i].text) {
       if (chosen === -1 || options[chosen].text.length < options[i].text.length) chosen = i;
     }
     i++;
@@ -190,8 +181,8 @@ function switchDropdown(view: EditorView, pos: number, options: OptionMap[], new
   if (chosen === -1) return false;
 
   change = {
-    from: pos,
-    to: pos + options[chosen].text.length,
+    from: pos - options[chosen].text.length,
+    to: pos,
     insert: options[~~newVal].text,
   };
 
