@@ -1,5 +1,14 @@
 .cm-dropdown-select {
+/*   width: 1.6em; */
   width: 0.75em;
   background-color: transparent;
+/*   color: red; */
   text-align: left;
+}
+
+.cm-dropdown-select-ios {
+  width: 1.6em;
+  background-color: #00000001;
+  text-align: left;
+
 }

@@ -39,7 +39,12 @@ class DropdownWidget extends WidgetType {
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cm-dropdown";
     let sel = wrap.appendChild(document.createElement("select"));
-    sel.className = "cm-dropdown-select";
+    if (navigator.userAgent.match(/iPhone|iPad/i)) {
+      sel.className ="cm-dropdown-select-ios";
+    }
+    else {
+      sel.className = "cm-dropdown-select";
+    }
     sel.setAttribute("dir","rtl");
 
     for (let i = 0; i < this.options.length; i++) {
