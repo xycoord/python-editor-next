@@ -91,7 +91,7 @@ export const editorConfig: Extension = [
       {text: "Image.GHOST", displayText: "Ghost"},
       {text: "Image.SKULL", displayText: "Skull"},
     ],
-    context: /^display\.show\([^\)\n]*\)/,
+    context: /^display\.show\([^)\n]*\)/,
 
   }),
   dropdownPlugin({
@@ -140,6 +140,33 @@ export const editorConfig: Extension = [
       {text: "get_z", displayText: "z"},
     ],
     context: /accelerometer\..*\(\)|compass\..*\(\)/,
+  }),
+  dropdownPlugin({
+    options: [
+      {text: "button_a", displayText: "A"},
+      {text: "button_b", displayText: "B"},
+    ],
+  }),
+  dropdownPlugin({
+    options: [
+      {text: "'shake'", displayText: "Shake"},
+      {text: "'up'", displayText: "Logo Up"},
+      {text: "'down'", displayText: "Logo Down"},
+      {text: "'face up'", displayText: "Face Up"},
+      {text: "'face down'", displayText: "Face Down"},
+      {text: "'left'", displayText: "Left"},
+      {text: "'right'", displayText: "Right"},
+      {text: "'freefall'", displayText: "Freefall"},
+      {text: "'3g'", displayText: "3G"},
+    ],
+    context: /accelerometer\.(is|was)_gesture\([^)\n]*\)/,
+  }),
+  dropdownPlugin({
+    options: [
+      {text: "pin0", displayText: "0"},
+      {text: "pin1", displayText: "1"},
+      {text: "pin2", displayText: "2"},
+    ],
   }),
   interact({
   rules: [
