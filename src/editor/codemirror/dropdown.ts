@@ -71,9 +71,9 @@ class DropdownWidget extends WidgetType {
 
 function dropdowns(view: EditorView, config: DropdownConfig) {
   let widgets: Array<Range<Decoration>> = [];
+  let validRanges: Array<Array<number>> = [];
   if (config.context) {
     //First, identify all the ast nodes that match the RegExp
-    let validRanges: Array<Array<number>> = [];
     for (let {from,to} of view.visibleRanges) {
       syntaxTree(view.state).iterate({
         from, to,
@@ -84,42 +84,19 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
         }
       })
     }
-
-    //Now we can just iterate through as usual, but automatically reject if the thing isn't
-    //in range
-    for (let {from,to} of view.visibleRanges) {
-      syntaxTree(view.state).iterate({
-        from, to,
-        enter: (type, from, to) => {
-          let flag = false;
-          for (let i = 0; i < validRanges.length; i++) {
-            flag = flag || (validRanges[i][0] <= from && to <= validRanges[i][1]);
-          }
-          if (flag) {
-            let stringContent = view.state.doc.sliceString(from, to);
-            for (let i = 0; i < config.options.length; i++) {
-              if (stringContent === config.options[i].text) {
-                let deco = Decoration.widget({
-                  widget: new DropdownWidget(config.options, i),
-                  side: 1,
-                  //block: true,
-                  inclusive: true,
-                })
-                widgets.push(deco.range(to));
-                break;
-              }
-            }
-          }
-        }
-      })
-    }
   }
-  else {
-    for (let {from,to} of view.visibleRanges) {
-      syntaxTree(view.state).iterate({
-        from, to,
-        enter: (type, from, to) => {
-          //Slow, but required and seems fine in practice
+
+  //Now we can just iterate through as usual, but automatically reject if the thing isn't
+  //in range
+  for (let {from,to} of view.visibleRanges) {
+    syntaxTree(view.state).iterate({
+      from, to,
+      enter: (type, from, to) => {
+        let flag = false;
+        for (let i = 0; i < validRanges.length; i++) {
+          flag = flag || (validRanges[i][0] <= from && to <= validRanges[i][1]);
+        }
+        if (flag || !config.context) {
           let stringContent = view.state.doc.sliceString(from, to);
           for (let i = 0; i < config.options.length; i++) {
             if (stringContent === config.options[i].text) {
@@ -134,8 +111,8 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
             }
           }
         }
-      })
-    }
+      }
+    })
   }
   return Decoration.set(widgets);
 }
@@ -213,4 +190,3 @@ function switchDropdown(view: EditorView, pos: number, options: OptionMap[], new
   return true;
 }
 
-//
