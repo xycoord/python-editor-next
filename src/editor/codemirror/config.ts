@@ -118,7 +118,6 @@ export const editorConfig: Extension = [
       {text: "music.WAWAWAWAA", displayText: "Wa Wa Wa Waa"},
       {text: "music.WEDDING", displayText: "Wedding"},
     ],
-
   }),
   dropdownPlugin({
     options: [
@@ -131,9 +130,15 @@ export const editorConfig: Extension = [
       {text: "Sound.SOARING", displayText: "Soaring"},
       {text: "Sound.SPRING", displayText: "Spring"},
       {text: "Sound.TWINKLE", displayText: "Twinkle"},
-      {text: "Sound.YAWM", displayText: "Yawm"},
+      {text: "Sound.YAWN", displayText: "Yawn"},
     ],
-
+  }),
+  dropdownPlugin({
+    options: [
+      {text: "accelerometer.get_x()", displayText: "x"},
+      {text: "accelerometer.get_y()", displayText: "y"},
+      {text: "accelerometer.get_z()", displayText: "z"},
+    ],
   }),
   interact({
   rules: [
