@@ -91,7 +91,7 @@ export const editorConfig: Extension = [
       {text: "Image.GHOST", displayText: "Ghost"},
       {text: "Image.SKULL", displayText: "Skull"},
     ],
-    //context: /^display\.show\([^\)\n]*\)/,
+    context: /^display\.show\([^\)\n]*\)/,
 
   }),
   dropdownPlugin({
@@ -135,10 +135,11 @@ export const editorConfig: Extension = [
   }),
   dropdownPlugin({
     options: [
-      {text: "accelerometer.get_x()", displayText: "x"},
-      {text: "accelerometer.get_y()", displayText: "y"},
-      {text: "accelerometer.get_z()", displayText: "z"},
+      {text: "get_x", displayText: "x"},
+      {text: "get_y", displayText: "y"},
+      {text: "get_z", displayText: "z"},
     ],
+    context: /accelerometer\..*\(\)|compass\..*\(\)/,
   }),
   interact({
   rules: [
