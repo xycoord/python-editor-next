@@ -71,13 +71,56 @@ class DropdownWidget extends WidgetType {
 
 function dropdowns(view: EditorView, config: DropdownConfig) {
   let widgets: Array<Range<Decoration>> = [];
-  for (let {from,to} of view.visibleRanges) {
-    syntaxTree(view.state).iterate({
-      from, to,
-      enter: (type, from, to) => {
-        //Slow, but required and seems fine in practice
-        let stringContent = view.state.doc.sliceString(from, to);
-        if (!config.context) {
+  if (config.context) {
+    //First, identify all the ast nodes that match the RegExp
+    let validRanges: Array<Array<number>> = [];
+    for (let {from,to} of view.visibleRanges) {
+      syntaxTree(view.state).iterate({
+        from, to,
+        enter: (type, from, to) => {
+          if ((config.context as RegExp).test(view.state.doc.sliceString(from,to))) {
+            validRanges.push([from, to]);
+          }
+        }
+      })
+    }
+
+    //Now we can just iterate through as usual, but automatically reject if the thing isn't
+    //in range
+    for (let {from,to} of view.visibleRanges) {
+      syntaxTree(view.state).iterate({
+        from, to,
+        enter: (type, from, to) => {
+          let flag = false;
+          for (let i = 0; i < validRanges.length; i++) {
+            flag = flag || (validRanges[i][0] <= from && to <= validRanges[i][1]);
+          }
+          if (flag) {
+            let stringContent = view.state.doc.sliceString(from, to);
+            for (let i = 0; i < config.options.length; i++) {
+              if (stringContent === config.options[i].text) {
+                let deco = Decoration.widget({
+                  widget: new DropdownWidget(config.options, i),
+                  side: 1,
+                  //block: true,
+                  inclusive: true,
+                })
+                widgets.push(deco.range(to));
+                break;
+              }
+            }
+          }
+        }
+      })
+    }
+  }
+  else {
+    for (let {from,to} of view.visibleRanges) {
+      syntaxTree(view.state).iterate({
+        from, to,
+        enter: (type, from, to) => {
+          //Slow, but required and seems fine in practice
+          let stringContent = view.state.doc.sliceString(from, to);
           for (let i = 0; i < config.options.length; i++) {
             if (stringContent === config.options[i].text) {
               let deco = Decoration.widget({
@@ -91,33 +134,8 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
             }
           }
         }
-        //In this case, find the regex in the AST, then simply find the correct substring
-        else if (config.context.test(stringContent)) {
-          let matches = [] //Find all matches so the longest can be picked
-          for (let i = 0; i < config.options.length; i++) {
-            let ind = stringContent.indexOf(config.options[i].text)
-            if (ind > -1) matches.push(i);
-          }
-
-          //Now select the longest one, if it exists, else just end
-          if (matches.length > 0) {
-            let match = "";
-            for (let i = 0; i < matches.length; i++) {
-              if (config.options[i].text.length > match.length) match = config.options[i].text;
-            }
-            //So match contains the longest matching option, now just find it
-            let ind = stringContent.indexOf(match);
-            //So ind contains the start of the widget, so now we can just add it as before
-            let deco = Decoration.widget({
-              widget: new DropdownWidget(config.options, ind),
-              side: 1,
-              inclusive: true,
-            })
-            widgets.push(deco.range(from+ind+match.length));
-          }
-        }
-      }
-    })
+      })
+    }
   }
   return Decoration.set(widgets);
 }
