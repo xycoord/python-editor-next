@@ -41,3 +41,10 @@
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
 }
+
+.cm-popup-btn {
+  width: 1em;
+  height: 1em;
+  accent-color: red;
+}
+

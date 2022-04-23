@@ -50,7 +50,8 @@ class PopupWidget extends WidgetType {
         let b = w.appendChild(document.createElement("input"));
         b.type = "checkbox";
         b.checked = this.checked[i][j];
-        b.className = "cm-popup-btn-"+i+"-"+j;
+        b.className = "cm-popup-btn";
+        b.classList.add("cm-popup-btn-"+i+"-"+j);
       }
     }
 
