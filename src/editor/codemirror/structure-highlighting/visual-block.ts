@@ -70,7 +70,7 @@ export class VisualBlock {
     // Parent is just the bit before the colon for l-shapes
     // but is the entire compound statement for boxes.
     if (parent && this.parent) {
-      parent.style.left = this.parent.left + "px";
+      parent.style.left = this.parent.left - 3 + "px";
       parent.style.top = this.parent.top + "px";
       parent.style.height = this.parent.height + "px";
       parent.style.width = `calc(100% - ${this.parent.left}px)`;
@@ -86,10 +86,10 @@ export class VisualBlock {
     }
 
     if (this.parent && parent && this.body && body && indent) {
-      indent.style.left = this.parent.left + "px";
+      indent.style.left = this.parent.left - 3 + "px";
       indent.style.top = body.style.top;
       indent.style.width =
-        this.body.left - this.parent.left - bodyPullBack + "px";
+        this.body.left - this.parent.left + 3 - bodyPullBack + "px";
       indent.style.height = body.style.height;
 	}
   }

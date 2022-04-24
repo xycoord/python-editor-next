@@ -81,7 +81,7 @@ export class DragBlock {
       // different statements should be separated by one pixel
       statementDragger.style.top = this.body.top + "px";
       statementDragger.style.height = this.body.height + 2 + "px";
-      statementDragger.style.left = `0`;
+      statementDragger.style.left = this.body.left - 99 + "px";
       
       ReactDOM.render(dragHandleIcon, statementDragger)
 
@@ -102,7 +102,7 @@ export class DragBlock {
       // different statements should be separated by one pixel 
       blockDragger.style.top = this.parent.top + "px";
       blockDragger.style.height = this.parent.height + 2 + "px";
-      blockDragger.style.left = '0';
+      blockDragger.style.left = this.parent.left - 99 + "px";
       
       ReactDOM.render(dragHandleIcon, blockDragger)
 

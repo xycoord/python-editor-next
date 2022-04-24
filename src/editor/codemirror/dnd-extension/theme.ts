@@ -22,10 +22,19 @@ export const baseTheme = EditorView.baseTheme({
     pointerEvents: "none"
   },
   ".cm-cs--dnd-dragline": {
-    display: "block",
+    // display: "block",
+    // position: "absolute",
+    // backgroundColor: "green",
+    // width: `calc(${draghandle_width} + 1px)`,
+    // cursor: "grab"
     position: "absolute",
-    backgroundColor: "green",
+    backgroundColor: "var(--chakra-colors-code-blockBackground)",
+    border: "2px solid var(--chakra-colors-code-blockBorder)",
+    borderRadius: "4px 0 0 4px",
     width: `calc(${draghandle_width} + 1px)`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     cursor: "grab"
   },
   ".cm-cs--dnd-dragblock": {
