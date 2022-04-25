@@ -164,7 +164,49 @@ export const popupPlugin = ViewPlugin.fromClass(
             return true;
           }
           else if (target.classList.contains("cm-popup-submit")) {
+            let pos = view.posAtDOM(target.parentElement!.parentElement!.parentElement!.firstChild! as HTMLElement)
 
+            let before = view.state.doc.sliceString(pos-31, pos);
+
+            let change;
+
+            //OK, so first we need to figure out all the levels
+            let levels = zeroes;
+            let rows = target.parentElement!.parentElement!.childNodes;
+            for (let i = 0; i < 5; i++) {
+              let btns = rows[i].childNodes;
+              for (let j = 0; j < 5; j++) {
+                let btn = btns[j] as HTMLElement;
+                for (let  l = 0; l < 10; l++) {
+                  if (btn.classList.contains("cm-popup-btn-"+l)) {
+                    levels[i][j] = l;
+                  }
+                }
+              }
+            }
+            console.log(levels);
+            let after = "'";
+            for (let i = 0; i < 5; i++) {
+              for (let j = 0; j < 5; j++) {
+                after = after + levels[i][j];
+              }
+              if (i < 4) after = after + ":";
+            }
+            after = after + "'";
+
+            //Now set the change
+            change = {
+              from: pos-31,
+              to: pos,
+              insert: after
+            };
+
+            //And dispatch
+            view.dispatch({
+              userEvent: "popup.edit",
+              changes: change,
+            });
+            return true;
           }
         }
       }

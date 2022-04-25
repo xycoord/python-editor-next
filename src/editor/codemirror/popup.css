@@ -1,7 +1,7 @@
 .cm-popup {
   position: relative;
   display: inline-block;
-  cursor: pointer;
+/*   cursor: pointer; */
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -47,6 +47,17 @@
   width: 1em;
   height: 1em;
   border: 1px solid white;
+  cursor: cell;
+}
+
+.cm-popup-submit {
+  border: 1px solid black;
+  background-color: white;
+  margin-right: 1em;
+}
+
+.cm-popup-spacer {
+  width: 1em;
 }
 
 .cm-popup-btn-0 {
