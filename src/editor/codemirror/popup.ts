@@ -33,8 +33,7 @@ class PopupWidget extends WidgetType {
     wrap.setAttribute("aria-hidden", "true");
     wrap.className = "cm-popup";
 
-    let btn = wrap.appendChild(document.createElement("input"));
-    btn.type = "checkbox";
+    let btn = wrap.appendChild(document.createElement("button"));
     btn.className = "cm-popup-opener";
 
     //Actual internals for selecting displays
@@ -60,7 +59,7 @@ class PopupWidget extends WidgetType {
 
     let sub = con.appendChild(document.createElement("button"));
     sub.className = "cm-popup-submit";
-    sub.append("Submit");
+    sub.append("Done");
 
     let drop = con.appendChild(document.createElement("select"));
     drop.className = "cm-popup-level";
@@ -138,20 +137,27 @@ export const popupPlugin = ViewPlugin.fromClass(
 
       change: (e, view) => {
         let target = e.target as HTMLElement;
-        if (target.nodeName === "INPUT" &&
-          target.parentElement!.classList.contains("cm-popup")){
-          if (target.classList.contains("cm-popup-opener")) {
-            let ch = target.parentElement!.lastChild as HTMLElement;
-            let t2 = target as HTMLInputElement
-            if (t2.checked) ch.classList.add("show");
-            else ch.classList.remove("show");
-            return true;
-          }
-        }
       },
       click: (e,view) => {
         let target = e.target as HTMLElement;
         if (target.nodeName === "BUTTON" &&
+          target.parentElement!.classList.contains("cm-popup")){
+          if (target.classList.contains("cm-popup-opener")) {
+            console.log("doot");
+            let ch = target.parentElement!.lastChild as HTMLElement;
+            let t = target as HTMLButtonElement;
+            if (t.classList.contains("showing")) {
+              t.classList.remove("showing");
+              ch.classList.remove("show");
+            }
+            else {
+              t.classList.add("showing");
+              ch.classList.add("show");
+            }
+            return true;
+          }
+        }
+        else if (target.nodeName === "BUTTON" &&
             target.parentElement!.parentElement!.classList.contains("cm-popup-text")) {
           if (target.classList.contains("cm-popup-btn")) {
             //This means we've clicked on a button, so change its intensity to the value
