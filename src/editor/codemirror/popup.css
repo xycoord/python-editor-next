@@ -12,7 +12,7 @@
 .cm-popup .cm-popup-text {
   visibility: hidden;
   width: 180px;
-  background-color: #75a8fa;
+  background-color: #000000c0;
   color: #000;
   border: 1px solid black;
   text-align: center;
@@ -43,9 +43,14 @@
   animation: fadeIn 1s;
 }
 
+
+
 .cm-popup-btn {
-  width: 1em;
-  height: 1em;
+  width: 0.75em;
+  height: 1.25em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  margin-bottom: 0.5em;
   border: 1px solid white;
   cursor: cell;
 }
@@ -61,42 +66,53 @@
 }
 
 .cm-popup-btn-0 {
-  background-color: #000000
+  background-color: #202020;
+  border: 1px solid white;
 }
 
 .cm-popup-btn-1 {
-  background-color: #190000
+  background-color: #864b4b;
+  border: 1px solid #551122;
+
 }
 
 .cm-popup-btn-2 {
-  background-color: #320000
+  background-color: #955252;
+  border: 1px solid #631125;
 }
 
 .cm-popup-btn-3 {
-  background-color: #4b0000
+  background-color: #a45858;
+  border: 1px solid #701129;
 }
 
 .cm-popup-btn-4 {
-  background-color: #640000
+  background-color: #b35f5f;
+  border: 1px solid #7e112c;
 }
 
 .cm-popup-btn-5 {
-  background-color: #7d0000
+  background-color: #c36666;
+  border: 1px solid #78122b;
 }
 
 .cm-popup-btn-6 {
-  background-color: #960000
+  background-color: #d26c6c;
+  border: 1px solid #9a1134;
 }
 
 .cm-popup-btn-7 {
-  background-color: #af0000
+  background-color: #e07272;
+  border: 1px solid #a91037;
 }
 
 .cm-popup-btn-8 {
-  background-color: #c80000
+  background-color: #ef7878;
+  border: 1px solid #b7103a;
 }
 
 .cm-popup-btn-9 {
-  background-color: #e10000
+  background-color: #ff7f7f;
+  border: 1px solid #b1123a;
 }
 
