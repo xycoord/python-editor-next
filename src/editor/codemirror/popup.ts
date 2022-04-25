@@ -111,7 +111,6 @@ function popups(view: EditorView) {
         widget: new PopupWidget(digits),
         side: -1,
       })
-      console.log(digits);
       widgets.push(deco.range(reImg.lastIndex));
     }
   }
@@ -170,6 +169,8 @@ export const popupPlugin = ViewPlugin.fromClass(
 
             let startPos = view.state.doc.sliceString(0,endPos).search(/'\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d'$/);
             console.log(view.state.doc.sliceString(startPos, endPos))
+
+            let before = view.state.doc.sliceString(startPos, endPos);
             //OK, so first we need to figure out all the levels
             let levels = [[0,0,0,0,0],
                           [0,0,0,0,0],
@@ -190,12 +191,22 @@ export const popupPlugin = ViewPlugin.fromClass(
               }
             }
 
-            let after = "'";
-            for (let i = 0; i < 5; i++) {
-              for (let j = 0; j < 5; j++) {
-                after = after + levels[i][j];
+            let after = "";
+            let i = 0;
+            let j = 0;
+            for (let head = 0; head < before.length; head++) {
+              if (/\d/.test(before[head])) { //Care about digits, strip out everything else
+                after += levels[i][j];
+                j++;
               }
-              if (i < 4) after = after + ":";
+              else if (/:/.test(before[head])) {
+                after += ":"
+                i++;
+                j = 0;
+              }
+              else {
+                after += before[head];
+              }
             }
             after = after + "'";
 
