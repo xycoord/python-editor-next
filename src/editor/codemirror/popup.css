@@ -57,7 +57,7 @@
   margin-right: 0.5em;
   margin-bottom: 0.5em;
   border: 1px solid white;
-  cursor: cell;
+  cursor: crosshair;
 }
 
 .cm-popup-submit {
