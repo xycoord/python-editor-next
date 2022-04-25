@@ -61,8 +61,8 @@
 }
 
 .cm-popup-submit {
-  border: 1px solid black;
-  background-color: #00000040;
+  border: 1px solid white;
+  background-color: #000000;
   color: white;
   margin-right: 1em;
   width: 5em;
@@ -73,12 +73,14 @@
 .cm-popup-level {
   font-family: "arial";
   color: white;
-  background-color: #00000040;
+  background-color: #000000;
+  border: 1px solid white;
+  border-radius: 5px;
 }
 
-.cm-popup-level option {
+/*.cm-popup-level option {
   background-color: #000000c0;
-}
+}*/
 
 .cm-popup-spacer {
   width: 0.25em;
