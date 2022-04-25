@@ -122,8 +122,13 @@ export class DragBlock {
         }
       }
 
-      blockDragger.ondragstart = () => {
+      blockDragger.ondragstart = (e) => {
         if (this.view && this.start && this.end) {
+          var crt = blockDragger.cloneNode(true) as HTMLElement;
+          crt.style.display = "none"; /* or visibility: hidden, or any of the above */
+          document.body.appendChild(crt);
+          if(e.dataTransfer) e.dataTransfer.setDragImage(crt, 0, 0);
+
           // When it is a code block the end includes the start of next line, we don't want to move the next line.
           handleDragStart(this.view, this.start, this.end - 1);
         }
