@@ -40,7 +40,7 @@ export const baseTheme = EditorView.baseTheme({
   ".cm-cs--dnd-dragblock": {
     // display: "block",
     position: "absolute",
-    backgroundColor: "var(--chakra-colors-code-blockBackground)",
+    backgroundColor: "white",
     border: "2px solid var(--chakra-colors-code-blockBorder)",
     borderRadius: "4px 0 0 4px",
     // borderRight: "none",
@@ -54,7 +54,7 @@ export const baseTheme = EditorView.baseTheme({
     pointerEvents: "all"
   },
   ".cm-cs--pointer-events-none": {
-    pointerEvents: "none"
+    pointerEvents: "none",
   },
   ".cm-cs--layer": {
     left: draghandle_width

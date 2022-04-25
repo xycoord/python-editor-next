@@ -2,6 +2,7 @@ import { handleDragStart, handleDrop } from "./event-handlers"
 import { EditorView } from "@codemirror/view"
 import { DragHandleIcon } from "@chakra-ui/icons";
 import * as ReactDOM from 'react-dom';
+import { makeShadow } from "../../dnd-shadows";
 
 /**
  * A CoreMirror view extension providing blocks for dragging and dropping using
@@ -105,6 +106,21 @@ export class DragBlock {
       blockDragger.style.left = this.parent.left - 99 + "px";
       
       ReactDOM.render(dragHandleIcon, blockDragger)
+
+      let underlayLayer = document.getElementById("dnd-underlay-layer")
+
+      blockDragger.onpointerdown = () => {
+        if(this.view && underlayLayer && this.start && this.end){
+          let state = this.view.state
+          makeShadow (this.view, state, true, false, underlayLayer, this.start, this.end)
+        }
+      }
+
+      blockDragger.onpointerup = () => {
+        if(this.view && underlayLayer && this.start && this.end){
+          makeShadow (this.view, this.view.state, false, true, underlayLayer, this.start, this.end)
+        }
+      }
 
       blockDragger.ondragstart = () => {
         if (this.view && this.start && this.end) {
