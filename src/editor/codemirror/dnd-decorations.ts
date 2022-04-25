@@ -121,7 +121,7 @@ const droppedDone = Decoration.line({
   attributes: { class: "cm-dropped--done" },
 });
 
-const baseColor = "#f7febf";
+// const baseColor = "#f7febf";
 
 export const dndDecorations = () => [
   EditorView.theme({
