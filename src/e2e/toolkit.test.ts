@@ -19,6 +19,14 @@ describe("Browser - toolkit tabs", () => {
     );
   });
 
+  it("Skeleton toolkit navigation", async () => {
+    await app.switchTab("Skeleton");
+    await app.findToolkitTopLevelHeading(
+      "Skeleton",
+      "Skeleton documentation for micro:bit MicroPython"
+    );
+  });
+
   it("Insert code", async () => {
     await app.switchTab("Explore");
     await app.selectToolkitSection("Display");

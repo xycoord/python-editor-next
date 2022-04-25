@@ -15,12 +15,13 @@ import {
 } from "@chakra-ui/react";
 import { ReactNode, useCallback, useMemo } from "react";
 import { IconType } from "react-icons";
-import { RiLightbulbFlashLine } from "react-icons/ri";
+import { RiLightbulbFlashLine, RiSkullLine } from "react-icons/ri";
 import { VscFiles, VscLibrary } from "react-icons/vsc";
 import { useIntl } from "react-intl";
 import ErrorBoundary from "../common/ErrorBoundary";
 import PythonLogo from "../common/PythonLogo";
 import ExploreArea from "../documentation/ExploreArea";
+import SkeletonArea from "../documentation/SkeletonArea";
 import ProjectsArea from "../documentation/ProjectsArea";
 import ReferenceArea from "../documentation/ReferenceArea";
 import FilesArea from "../files/FilesArea";
@@ -69,6 +70,13 @@ const SideBar = ({
         color: "gray.25",
       },
       {
+        id: "skeleton",
+        title: intl.formatMessage({ id: "skeleton-tab" }),
+        icon: RiSkullLine,
+        contents: <SkeletonArea />,
+        color: "gray.25",
+      },
+      {
         id: "projects",
         title: intl.formatMessage({ id: "projects-tab" }),
         icon: RiLightbulbFlashLine,
@@ -100,7 +108,7 @@ const SideBar = ({
     ];
     return result;
   }, [onSelectedFileChanged, selectedFile, intl]);
-  const [{ tab, explore, reference }, setParams] = useRouterState();
+  const [{ tab, explore, reference, skeleton }, setParams] = useRouterState();
   const tabIndexOf = panes.findIndex((p) => p.id === tab);
   const index = tabIndexOf === -1 ? 0 : tabIndexOf;
   const handleTabChange = useCallback(
@@ -115,12 +123,12 @@ const SideBar = ({
     // A click on a tab when it's already selected should
     // reset any other parameters so we go back to the top
     // level.
-    if (explore || reference) {
+    if (explore || reference || skeleton) {
       setParams({
         tab,
       });
     }
-  }, [explore, reference, tab, setParams]);
+  }, [explore, reference, skeleton, tab, setParams]);
 
   return (
     <Flex height="100%" direction="column" {...props} backgroundColor="gray.25">

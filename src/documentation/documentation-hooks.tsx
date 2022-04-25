@@ -6,6 +6,7 @@
 import { RefObject, useEffect, useRef, useState } from "react";
 import useIsUnmounted from "../common/use-is-unmounted";
 import { apiDocs, ApiDocsResponse } from "../language-server/apidocs";
+import { skullDocs, SkullDocsResponse } from "../language-server/skulldocs";
 import { useLanguageServerClient } from "../language-server/language-server-hooks";
 import { useLogging } from "../logging/logging-hooks";
 import { useSettings } from "../settings/settings";
@@ -13,6 +14,7 @@ import dragImage from "./drag-image.svg";
 import { fetchToolkit } from "./explore/api";
 import { Toolkit } from "./explore/model";
 import { pullModulesToTop } from "./reference/apidocs-util";
+import { skullModulesToTop } from "./skeleton/skulldocs-util";
 
 export type ExploreToolkitState =
   | { status: "ok"; toolkit: Toolkit }
@@ -62,6 +64,23 @@ export const useApiDocs = (): ApiDocsResponse | undefined => {
     load();
   }, [client]);
   return apidocs;
+};
+
+export const useSkullDocs = (): SkullDocsResponse | undefined => {
+  const client = useLanguageServerClient();
+  const [skulldocs, setSkullDocs] = useState<SkullDocsResponse | undefined>();
+  useEffect(() => {
+    const load = async () => {
+      if (client) {
+        await client.initialize();
+        const docs = await skullDocs(client);
+        skullModulesToTop(docs);
+        setSkullDocs(docs);
+      }
+    };
+    load();
+  }, [client]);
+  return skulldocs;
 };
 
 let dragImageRefCount = 0;

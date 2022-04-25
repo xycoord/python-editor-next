@@ -518,6 +518,10 @@
     "defaultMessage": "Barre latérale",
     "description": "Aria label for the area on the left"
   },
+  "skeleton-tab": {
+    "defaultMessage": "Squelette",
+    "description": "Skeleton tab button text"
+  },
   "software-versions": {
     "defaultMessage": "Versions logicielles",
     "description": "Heading for a table of software versions in the about dialog"
