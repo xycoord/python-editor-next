@@ -168,7 +168,6 @@ export const popupPlugin = ViewPlugin.fromClass(
             let endPos = view.posAtDOM(target.parentElement!.parentElement!.parentElement!.firstChild! as HTMLElement)
 
             let startPos = view.state.doc.sliceString(0,endPos).search(/'\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d'$/);
-            console.log(view.state.doc.sliceString(startPos, endPos))
 
             let before = view.state.doc.sliceString(startPos, endPos);
             //OK, so first we need to figure out all the levels
@@ -208,7 +207,6 @@ export const popupPlugin = ViewPlugin.fromClass(
                 after += before[head];
               }
             }
-            after = after + "'";
 
             //Now set the change
             let change = {
