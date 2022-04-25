@@ -134,10 +134,6 @@ export const popupPlugin = ViewPlugin.fromClass(
   {
     decorations: v => v.decorations,
     eventHandlers: {
-
-      change: (e, view) => {
-        let target = e.target as HTMLElement;
-      },
       click: (e,view) => {
         let target = e.target as HTMLElement;
         if (target.nodeName === "BUTTON" &&
