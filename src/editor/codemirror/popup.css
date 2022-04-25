@@ -14,7 +14,7 @@
   width: 180px;
   background-color: #75a8fa;
   color: #000;
-  border-style: solid;
+  border: 1px solid black;
   text-align: center;
   border-radius: 6px;
   padding: 8px 0;
