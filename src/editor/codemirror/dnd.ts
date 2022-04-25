@@ -25,6 +25,7 @@ interface LastDragPos {
   /**
    * The last drag position.
    */
+  pos: number;
   line: number;
   /**
    * The inverse set of changes to the changes made for preview.
@@ -91,8 +92,10 @@ const clearSuppressChildDragEnterLeave = (view: EditorView) => {
   findWrappingSection(view).classList.remove("cm-drag-in-progress");
 };
 
+
 const dndHandlers = () => {
   let lastDragPos: LastDragPos | undefined;
+  let lastTransaction: Transaction | undefined;
 
   const revertPreview = (view: EditorView) => {
     if (lastDragPos) {
@@ -117,25 +120,28 @@ const dndHandlers = () => {
 
           const visualLine = view.visualLineAtHeight(event.y);
           const line = view.state.doc.lineAt(visualLine.from);
+          const pos = view.posAtCoords(event, false);
 
-          if (line.number !== lastDragPos?.line) {
+          if (line.number !== lastDragPos?.line || pos !== lastDragPos?.pos) {
             debug("  dragover", line);
             revertPreview(view);
 
-            const transaction = calculateChanges(
+            lastTransaction = calculateChanges(
               view.state,
               dragContext.code,
               dragContext.type,
-              line.number
+              line.number,
+              pos
             );
             lastDragPos = {
+              pos: pos,
               line: line.number,
-              previewUndo: transaction.changes.invert(view.state.doc),
+              previewUndo: lastTransaction.changes.invert(view.state.doc),
             };
             // Take just the changes, skip the selection updates we perform on drop.
             view.dispatch({
               userEvent: "dnd.preview",
-              changes: transaction.changes,
+              changes: lastTransaction.changes,
               annotations: [Transaction.addToHistory.of(false)],
             });
           }
@@ -158,6 +164,7 @@ const dndHandlers = () => {
           event.preventDefault();
           clearSuppressChildDragEnterLeave(view);
           revertPreview(view);
+          lastTransaction = undefined;
           debug(
             "  dragleave",
             {
@@ -199,14 +206,6 @@ const dndHandlers = () => {
 
         revertPreview(view);
 
-        let dropTransaction = calculateChanges(
-          view.state,
-          dragContext.code,
-          dragContext.type,
-          line.number
-        );
-        let changes = dropTransaction.changes;
-
         // To have a single undo event, we need to undo the undo actions and then 
         // compose the redo actions and the drop action into a single ChangeSet.
         if (dragContext.undoToMerge) {
@@ -217,17 +216,21 @@ const dndHandlers = () => {
           })
         }
 
-        if (dragContext.redoToMerge) {
-          changes = dragContext.redoToMerge.compose(changes);
+        let changes;
+        if (lastTransaction && dragContext.redoToMerge) {
+          console.log("yay");
+          changes = dragContext.redoToMerge.compose(lastTransaction.changes);
         }
 
         //make changes
         view.dispatch({
           userEvent: `dnd.drop.${dragContext.type}`,
           changes: changes,
-          selection: dropTransaction.selection,
+          selection: lastTransaction?.selection,
         });
         view.focus();
+
+        lastTransaction = undefined;
       },
     }),
   ];

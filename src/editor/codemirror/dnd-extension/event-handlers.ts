@@ -2,14 +2,11 @@ import { EditorView } from "@codemirror/view"
 import { ChangeSet, Transaction } from "@codemirror/state";
 import { debug as dndDebug, setDragContext } from "../dnd";
 
-// Very ugly way to check whether item was successfully dropped
+// Used to check whether item was successfully dropped
 let dropped = false;
 let notDroppedUndo: ChangeSet | undefined;
 
 const handleDragStart = (view: EditorView, start: number, end: number) => {
-
-  console.log(`${start}, ${end}`)
-
   const startLineStart = view.state.doc.lineAt(start).from
   const endLineEnd = Math.min(
     view.state.doc.length,

@@ -61,7 +61,8 @@ export const calculateChanges = (
   state: EditorState,
   source: string,
   type: CodeInsertType,
-  line?: number
+  line?: number,
+  pos?: number
 ) => {
   let sourceImports: ImportNode[] = []
 
@@ -100,7 +101,7 @@ export const calculateChanges = (
 
   let mainPreceedingWhitespace = "";
   let mainChange: SimpleChangeSpec | undefined;
-  let mainIndent = ""
+  let mainIndent = "";
   let extraLines = 0;
   if (mainCode) {
     let mainFrom: number;
@@ -119,22 +120,33 @@ export const calculateChanges = (
       mainFrom = skipWhitespaceLines(state.doc, importInsertPoint.from);
     }
 
-    const insertLine = state.doc.lineAt(mainFrom);
-    const previousLine = state.doc.line(Math.max(insertLine.number - 1, 0))
-    // Assume indents are done using spaces, maybe a bad idea?
-    const existingIndent = mainCode.match(/^(\s*)/)?.[0] ?? "";
+    const commonIndent = mainCode.match(/^(\s*)/)?.[0] ?? "";
     mainCode = mainCode.split("\n")
-      .map(line => line.replace(new RegExp("^" + existingIndent), ""))
+      .map(line => line.replace(new RegExp("^" + commonIndent), ""))
       .join("\n");
 
-    // If previous line is a newly added line, empty, or it is more indented, follow that indentation.
-    const insertLineIndent = insertLine.text.match(/^(\s*)/)?.[0] ?? "";
-    const previousLineIndent = previousLine.text.match(/^(\s*)/)?.[0] ?? "";
-    if (extraLines > 0 || previousLine.text.trim() === "" || previousLineIndent <= insertLineIndent) {
-      mainIndent = insertLineIndent
+    const insertLine = state.doc.lineAt(mainFrom)
+    const insertLineIndentLength = insertLine.text.match(/^(\s*)/)?.[0].length ?? 0
+    const previousLine = state.doc.line(Math.max(insertLine.number - 1, 1))
+    const previousLineIndentLength = previousLine.text.match(/^(\s*)/)?.[0].length ?? 0
+
+    let colOffset;
+    if (pos && line && line <= state.doc.lines) {
+      colOffset = pos - state.doc.line(line).from
     } else {
-      mainIndent = previousLineIndent
+      colOffset = 0
     }
+
+    let indentLength = Math.floor((2+colOffset) / 4) * 4
+    indentLength = Math.max(indentLength, Math.min(insertLineIndentLength, previousLineIndentLength))
+    indentLength = Math.min(indentLength, Math.max(insertLineIndentLength, previousLineIndentLength+4))
+    mainIndent = " ".repeat(indentLength)
+
+    //if (extraLines > 0 || previousLine.text.trim() === "" || previousLineIndent <= insertLineIndent) {
+    //  mainIndent = insertLineIndent
+    //} else {
+    //  mainIndent = previousLineIndent
+    //}
 
     mainChange = {
       from: mainFrom,
