@@ -11,7 +11,6 @@ import {
     ViewPlugin,
     DecorationSet,
 } from "@codemirror/view";
-import { syntaxTree } from "@codemirror/language";
 import { Range } from "@codemirror/rangeset";
 import "./popup.css";
 
@@ -91,28 +90,24 @@ const zeroes = [[0,0,0,0,0],
 function popups(view: EditorView) {
   let widgets: Array<Range<Decoration>> = [];
   for (let {from, to} of view.visibleRanges) {
-    syntaxTree(view.state).iterate({
-      from, to,
-      enter: (type, from, to) => {
-        if (type.name === "String") {
-          let stringContent = view.state.doc.sliceString(from, to);
-          if (/'\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d'/.test(stringContent))
-          {
-            let digits = zeroes;
-            for (let i = 0; i < 5; i++) {
-              for (let j = 0; j < 5; j++) {
-                digits[i][j] = ~~stringContent.charAt(1 + (6*i) + j);
-              }
-            }
-            let deco = Decoration.widget({
-              widget: new PopupWidget(digits),
-              side: 1,
-            })
-            widgets.push(deco.range(to));
-          }
+    let stringContent = view.state.doc.sliceString(from,to);
+    let reImg = /'\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d'/mg;
+    let res;
+    while ((res = reImg.exec(stringContent)) !== null) {
+      console.log(`Found ${res[0]}. Next starts at ${reImg.lastIndex}.`);
+
+      let digits = zeroes;
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          digits[i][j] = ~~stringContent.charAt(1 + (6*i) + j);
         }
       }
-    })
+      let deco = Decoration.widget({
+        widget: new PopupWidget(digits),
+        side: 1,
+      })
+      widgets.push(deco.range(to));
+    }
   }
   return Decoration.set(widgets)
 }
