@@ -12,8 +12,9 @@
 .cm-popup .cm-popup-text {
   visibility: hidden;
   width: 180px;
-  background-color: #555;
-  color: #fff;
+  background-color: #75a8fa;
+  color: #000;
+  border-style: solid;
   text-align: center;
   border-radius: 6px;
   padding: 8px 0;
@@ -45,6 +46,46 @@
 .cm-popup-btn {
   width: 1em;
   height: 1em;
-  accent-color: red;
+  border: 1px solid white;
+}
+
+.cm-popup-btn-0 {
+  background-color: #000000
+}
+
+.cm-popup-btn-1 {
+  background-color: #190000
+}
+
+.cm-popup-btn-2 {
+  background-color: #320000
+}
+
+.cm-popup-btn-3 {
+  background-color: #4b0000
+}
+
+.cm-popup-btn-4 {
+  background-color: #640000
+}
+
+.cm-popup-btn-5 {
+  background-color: #7d0000
+}
+
+.cm-popup-btn-6 {
+  background-color: #960000
+}
+
+.cm-popup-btn-7 {
+  background-color: #af0000
+}
+
+.cm-popup-btn-8 {
+  background-color: #c80000
+}
+
+.cm-popup-btn-9 {
+  background-color: #e10000
 }
 

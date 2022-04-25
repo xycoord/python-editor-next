@@ -17,14 +17,15 @@ import "./popup.css";
 
 class PopupWidget extends WidgetType {
   visible: boolean;
+  btns: HTMLButtonElement[][] = [[],[],[],[],[]]
 
-  constructor(readonly checked: boolean[][]) {
+  constructor(readonly levels: number[][]) {
     super();
     this.visible = false;
   }
 
   eq(other: PopupWidget) {
-    return this.checked === other.checked;
+    return this.levels === other.levels;
   }
 
   toDOM() {
@@ -47,26 +48,45 @@ class PopupWidget extends WidgetType {
 
       //Five buttons a row
       for (let j = 0; j < 5; j++) {
-        let b = w.appendChild(document.createElement("input"));
-        b.type = "checkbox";
-        b.checked = this.checked[i][j];
-        b.className = "cm-popup-btn";
-        b.classList.add("cm-popup-btn-"+i+"-"+j);
+        let b = w.appendChild(document.createElement("button"));
+        b.className = "cm-popup-btn-"+this.levels[i][j];
+        b.classList.add("cm-popup-btn");
+        this.btns[i].push(b);
       }
+    }
+
+    let con = form.appendChild(document.createElement("div"));
+    con.className = "cm-popup-controls";
+
+    let sub = con.appendChild(document.createElement("button"));
+    sub.className = "cm-popup-submit";
+    sub.append("Submit");
+
+    let drop = con.appendChild(document.createElement("select"));
+    drop.className = "cm-popup-level";
+    for (let i = 0; i < 10; i++) {
+      let opt = drop.appendChild(document.createElement("option"));
+      opt.value = i.toString();
+      opt.append(i.toString());
     }
 
     return wrap;
   }
 
-  ignoreEvent() {return false}
+  ignoreEvent(_event : Event) {
+    switch (_event.constructor) {
+      case MouseEvent: return true;
+      default: return false;
+    }
+  }
 }
 
-const falsum = [[false,false,false,false,false],
-              [false,false,false,false,false],
-              [false,false,false,false,false],
-              [false,false,false,false,false],
-              [false,false,false,false,false],
-             ]
+const zeroes = [[0,0,0,0,0],
+                [0,0,0,0,0],
+                [0,0,0,0,0],
+                [0,0,0,0,0],
+                [0,0,0,0,0],
+              ]
 
 //Dummy code to test
 function popups(view: EditorView) {
@@ -79,14 +99,14 @@ function popups(view: EditorView) {
           let stringContent = view.state.doc.sliceString(from, to);
           if (/'\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d:\d\d\d\d\d'/.test(stringContent))
           {
-            let digits = falsum;
+            let digits = zeroes;
             for (let i = 0; i < 5; i++) {
               for (let j = 0; j < 5; j++) {
-                digits[i][j] = stringContent.charAt(1 + (6*i) + j) !== "0";
+                digits[i][j] = ~~stringContent.charAt(1 + (6*i) + j);
               }
             }
             let deco = Decoration.widget({
-              widget: new PopupWidget(falsum),
+              widget: new PopupWidget(digits),
               side: 1,
             })
             widgets.push(deco.range(to));
@@ -115,6 +135,7 @@ export const popupPlugin = ViewPlugin.fromClass(
   {
     decorations: v => v.decorations,
     eventHandlers: {
+
       change: (e, view) => {
         let target = e.target as HTMLElement;
         if (target.nodeName === "INPUT" &&
@@ -127,31 +148,23 @@ export const popupPlugin = ViewPlugin.fromClass(
             return true;
           }
         }
-        else if (target.nodeName === "INPUT" &&
-          target.parentElement!.parentElement!.classList.contains("cm-popup-text")){
-          console.log("doot");
-          for (let i = 0; i < 5; i++) {
-            for (let j  = 0; j < 5; j++) {
-              if (target.classList.contains("cm-popup-btn-"+i+"-"+j)) {
-                let t2 = target as HTMLInputElement;
-                let pos = view.posAtDOM(target);
-                let strTxt = view.state.doc.sliceString(pos-31, pos);
-                let repC = "0";
-                if (t2.checked) repC = "9";
-                let after = strTxt.substring(0, 1 + (6*i) + j) + repC + strTxt.substring(2 + (6*i) + j, 31);
-                console.log(after);
-                let change = {
-                  from: pos-31,
-                  to: pos,
-                  insert: after,
-                };
-                view.dispatch({
-                  userEvent: "popup.change",
-                  changes: change,
-                });
-                return true;
-              }
-            }
+      },
+      click: (e,view) => {
+        let target = e.target as HTMLElement;
+        if (target.nodeName === "BUTTON" &&
+            target.parentElement!.parentElement!.classList.contains("cm-popup-text")) {
+          if (target.classList.contains("cm-popup-btn")) {
+            //This means we've clicked on a button, so change its intensity to the value
+            //First remove all level classes from the button
+            for (let i = 0; i < 10; i++) target.classList.remove("cm-popup-btn-"+i);
+
+            //Now get the level selected from the dropdown to add
+            let dropdown = target.parentElement!.parentElement!.lastChild!.lastChild! as HTMLSelectElement
+            target.classList.add("cm-popup-btn-"+dropdown.value);
+            return true;
+          }
+          else if (target.classList.contains("cm-popup-submit")) {
+
           }
         }
       }
