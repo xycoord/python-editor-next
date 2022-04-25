@@ -103,7 +103,8 @@ function popups(view: EditorView) {
       for (let head = 0; head < res[0].length; head++) {
         console.log(i,j);
         if (/\d/.test(res[0][head])) { //Care about digits, strip out everything else
-          digits[i][j] = ~~res[0][head];
+          console.log(~~res[0][head]);
+          digits[i][j] = ~~(res[0][head]);
           j++;
         }
         else if (/:/.test(res[0][head])) {
@@ -111,11 +112,7 @@ function popups(view: EditorView) {
           j = 0;
         }
       }
-      for (let i = 0; i < 5; i++) {
-        for (let j = 0; j < 5; j++) {
-          digits[i][j] = ~~res[0].charAt(1 + (6*i) + j);
-        }
-      }
+      console.log(digits);
       let deco = Decoration.widget({
         widget: new PopupWidget(digits),
         side: -1,
