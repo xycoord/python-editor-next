@@ -166,10 +166,6 @@ export const popupPlugin = ViewPlugin.fromClass(
           else if (target.classList.contains("cm-popup-submit")) {
             let pos = view.posAtDOM(target.parentElement!.parentElement!.parentElement!.firstChild! as HTMLElement)
 
-            let before = view.state.doc.sliceString(pos-31, pos);
-
-            let change;
-
             //OK, so first we need to figure out all the levels
             let levels = zeroes;
             let rows = target.parentElement!.parentElement!.childNodes;
@@ -195,7 +191,7 @@ export const popupPlugin = ViewPlugin.fromClass(
             after = after + "'";
 
             //Now set the change
-            change = {
+            let change = {
               from: pos-31,
               to: pos,
               insert: after
