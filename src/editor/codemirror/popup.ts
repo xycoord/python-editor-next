@@ -24,7 +24,7 @@ class PopupWidget extends WidgetType {
   }
 
   eq(other: PopupWidget) {
-    return this.levels === other.levels;
+    return false;
   }
 
   toDOM() {
@@ -79,12 +79,6 @@ class PopupWidget extends WidgetType {
   }
 }
 
-const zeroes = [[0,0,0,0,0],
-                [0,0,0,0,0],
-                [0,0,0,0,0],
-                [0,0,0,0,0],
-                [0,0,0,0,0],
-              ]
 
 //Dummy code to test
 function popups(view: EditorView) {
@@ -94,16 +88,17 @@ function popups(view: EditorView) {
     let reImg = /'\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d'/mg;
     let res;
     while ((res = reImg.exec(stringContent)) !== null) {
-      console.log(`Found ${res[0]}. Next starts at ${reImg.lastIndex}.`);
-
-      let digits = zeroes;
+      let digits = [[0,0,0,0,0],
+                    [0,0,0,0,0],
+                    [0,0,0,0,0],
+                    [0,0,0,0,0],
+                    [0,0,0,0,0],
+                  ];
       let i = 0;
       let j = 0;
       //Due to the regex, wma that string is well formatted
       for (let head = 0; head < res[0].length; head++) {
-        console.log(i,j);
         if (/\d/.test(res[0][head])) { //Care about digits, strip out everything else
-          console.log(~~res[0][head]);
           digits[i][j] = ~~(res[0][head]);
           j++;
         }
@@ -112,11 +107,11 @@ function popups(view: EditorView) {
           j = 0;
         }
       }
-      console.log(digits);
       let deco = Decoration.widget({
         widget: new PopupWidget(digits),
         side: -1,
       })
+      console.log(digits);
       widgets.push(deco.range(reImg.lastIndex));
     }
   }
@@ -145,7 +140,6 @@ export const popupPlugin = ViewPlugin.fromClass(
         if (target.nodeName === "BUTTON" &&
           target.parentElement!.classList.contains("cm-popup")){
           if (target.classList.contains("cm-popup-opener")) {
-            console.log("doot");
             let ch = target.parentElement!.lastChild as HTMLElement;
             let t = target as HTMLButtonElement;
             if (t.classList.contains("showing")) {
@@ -172,10 +166,17 @@ export const popupPlugin = ViewPlugin.fromClass(
             return true;
           }
           else if (target.classList.contains("cm-popup-submit")) {
-            let pos = view.posAtDOM(target.parentElement!.parentElement!.parentElement!.firstChild! as HTMLElement)
+            let endPos = view.posAtDOM(target.parentElement!.parentElement!.parentElement!.firstChild! as HTMLElement)
 
+            let startPos = view.state.doc.sliceString(0,endPos).search(/'\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d'$/);
+            console.log(view.state.doc.sliceString(startPos, endPos))
             //OK, so first we need to figure out all the levels
-            let levels = zeroes;
+            let levels = [[0,0,0,0,0],
+                          [0,0,0,0,0],
+                          [0,0,0,0,0],
+                          [0,0,0,0,0],
+                          [0,0,0,0,0],
+                        ];
             let rows = target.parentElement!.parentElement!.childNodes;
             for (let i = 0; i < 5; i++) {
               let btns = rows[i].childNodes;
@@ -188,7 +189,7 @@ export const popupPlugin = ViewPlugin.fromClass(
                 }
               }
             }
-            console.log(levels);
+
             let after = "'";
             for (let i = 0; i < 5; i++) {
               for (let j = 0; j < 5; j++) {
@@ -200,8 +201,8 @@ export const popupPlugin = ViewPlugin.fromClass(
 
             //Now set the change
             let change = {
-              from: pos-31,
-              to: pos,
+              from: startPos,
+              to: endPos,
               insert: after
             };
 
