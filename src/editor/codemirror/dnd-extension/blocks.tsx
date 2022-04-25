@@ -2,7 +2,7 @@ import { handleDragStart, handleDrop } from "./event-handlers"
 import { EditorView } from "@codemirror/view"
 import { DragHandleIcon } from "@chakra-ui/icons";
 import * as ReactDOM from 'react-dom';
-import { makeShadow } from "../../dnd-shadows";
+import { makeShadow } from "../dnd-shadows";
 
 /**
  * A CoreMirror view extension providing blocks for dragging and dropping using

@@ -12,7 +12,7 @@ import {
 } from "@codemirror/view";
 import { RangeSetBuilder } from "@codemirror/rangeset";
 import { StateEffect } from "@codemirror/state";
-import { makeShadow, dndShadowsTheme } from "../dnd-shadows";
+import { makeShadow, dndShadowsTheme } from "./dnd-shadows";
 
 export const timeoutEffect = StateEffect.define<{}>({});
 
@@ -37,7 +37,7 @@ export class DndDecorationsViewPlugin {
     this.underlayLayer.style.zIndex = "-5"
     this.underlayLayer.style.position = "absolute"
     //WHAT IF THE GUTTER IS LARGER???
-    this.underlayLayer.style.left = "96px"
+    this.underlayLayer.style.left = "93px"
     this.underlayLayer.style.width = "100%"
     this.underlayLayer.style.height = "100%"
   }
@@ -124,7 +124,7 @@ const droppedDone = Decoration.line({
 const baseColor = "#f7febf";
 
 export const dndDecorations = () => [
-  // EditorView.theme({
+  EditorView.theme({
     // ".cm-preview": {
     //   backgroundColor: `${baseColor}55`,
     // },
@@ -134,7 +134,10 @@ export const dndDecorations = () => [
     // ".cm-dropped--done": {
     //   transition: "background-color ease-in 2.9s",
     // },
-  // }),
+    ".cm-gutters": {
+      zIndex: "-6"
+    }
+  }),
   dndShadowsTheme,
   ViewPlugin.fromClass(DndDecorationsViewPlugin, {
     decorations: (v) => v.decorations,
