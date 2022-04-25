@@ -97,16 +97,30 @@ function popups(view: EditorView) {
       console.log(`Found ${res[0]}. Next starts at ${reImg.lastIndex}.`);
 
       let digits = zeroes;
+      let i = 0;
+      let j = 0;
+      //Due to the regex, wma that string is well formatted
+      for (let head = 0; head < res[0].length; head++) {
+        console.log(i,j);
+        if (/\d/.test(res[0][head])) { //Care about digits, strip out everything else
+          digits[i][j] = ~~res[0][head];
+          j++;
+        }
+        else if (/:/.test(res[0][head])) {
+          i++;
+          j = 0;
+        }
+      }
       for (let i = 0; i < 5; i++) {
         for (let j = 0; j < 5; j++) {
-          digits[i][j] = ~~stringContent.charAt(1 + (6*i) + j);
+          digits[i][j] = ~~res[0].charAt(1 + (6*i) + j);
         }
       }
       let deco = Decoration.widget({
         widget: new PopupWidget(digits),
-        side: 1,
+        side: -1,
       })
-      widgets.push(deco.range(to));
+      widgets.push(deco.range(reImg.lastIndex));
     }
   }
   return Decoration.set(widgets)
