@@ -39,15 +39,20 @@ class PopupWidget extends WidgetType {
     let form = wrap.appendChild(document.createElement("div"));
     form.className = "cm-popup-text";
 
-    //Five rows of buttons
-    for (let i = 0; i < 5; i++) {
-      let w = form.appendChild(document.createElement("div"));
-      w.className = "cm-popup-btn-row"+i;
+    let buttonGrid = form.appendChild(document.createElement("div"));
+    buttonGrid.className = "cm-popup-button-grid";
 
-      //Five buttons a row
+    //5*5 grid of buttons
+    for (let i = 0; i < 5; i++) {
       for (let j = 0; j < 5; j++) {
-        let b = w.appendChild(document.createElement("button"));
+        let b = buttonGrid.appendChild(document.createElement("button"));
+        //to find the values of each button
         b.className = "cm-popup-btn-"+this.levels[i][j];
+        b.id = `cm-popup-btn-idx-${i}${j}`
+        //positions
+        b.style.gridColumn =  (j+1) + " / " + (j+1)
+        b.style.gridRow =  (i+1) + " / " + (i+1)
+
         b.classList.add("cm-popup-btn");
         this.btns[i].push(b);
       }
@@ -66,6 +71,8 @@ class PopupWidget extends WidgetType {
       let opt = drop.appendChild(document.createElement("option"));
       opt.value = i.toString();
       opt.append(i.toString());
+      //default val is 9
+      if (i===9) opt.selected = true
     }
 
     return wrap;
@@ -165,6 +172,10 @@ export const popupPlugin = ViewPlugin.fromClass(
             return true;
           }
           else if (target.classList.contains("cm-popup-submit")) {
+            //Hide popup
+            let ch = target.parentElement!.parentElement!.parentElement!.lastChild as HTMLElement;
+            ch.classList.remove("show")
+
             let endPos = view.posAtDOM(target.parentElement!.parentElement!.parentElement!.firstChild! as HTMLElement)
 
             let startPos = view.state.doc.sliceString(0,endPos).search(/'\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d:('\s*')?\d\d\d\d\d'$/);
@@ -177,11 +188,11 @@ export const popupPlugin = ViewPlugin.fromClass(
                           [0,0,0,0,0],
                           [0,0,0,0,0],
                         ];
-            let rows = target.parentElement!.parentElement!.childNodes;
+            let buttonGrid = target.parentElement!.parentElement!.childNodes[0] as HTMLElement;
+            // check each button in the grid
             for (let i = 0; i < 5; i++) {
-              let btns = rows[i].childNodes;
               for (let j = 0; j < 5; j++) {
-                let btn = btns[j] as HTMLElement;
+                let btn = buttonGrid.querySelector(`#cm-popup-btn-idx-${i}${j}`) as HTMLElement;
                 for (let  l = 0; l < 10; l++) {
                   if (btn.classList.contains("cm-popup-btn-"+l)) {
                     levels[i][j] = l;
@@ -214,12 +225,16 @@ export const popupPlugin = ViewPlugin.fromClass(
               to: endPos,
               insert: after
             };
-
-            //And dispatch
-            view.dispatch({
-              userEvent: "popup.edit",
-              changes: change,
-            });
+            
+            //dispatch after the animation to avoid deleting the widget too early
+            setTimeout(() => {
+              //And dispatch
+              view.dispatch({
+                userEvent: "popup.edit",
+                changes: change,
+              }); 
+            }, 300);
+            
             return true;
           }
         }
