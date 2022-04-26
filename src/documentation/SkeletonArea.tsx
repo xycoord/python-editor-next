@@ -9,9 +9,11 @@ import HeadedScrollablePanel from "../common/HeadedScrollablePanel";
 import AreaHeading from "../common/AreaHeading";
 import CodeEmbed from "./explore/CodeEmbed";
 import { Divider } from "@chakra-ui/react";
+import { useDialogs } from "../common/use-dialogs";
 
 const SkeletonArea = () => {
   const intl = useIntl();
+  const dialogs = useDialogs();
   return (
     <HeadedScrollablePanel
       heading={
