@@ -23,7 +23,7 @@ describe("Browser - toolkit tabs", () => {
     await app.switchTab("Skeleton");
     await app.findToolkitTopLevelHeading(
       "Skeleton",
-      "Skeleton documentation for micro:bit MicroPython"
+      "Skeleton code snippets for micro:bit MicroPython"
     );
   });
 

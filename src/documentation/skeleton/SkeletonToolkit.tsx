@@ -8,7 +8,7 @@ import sortBy from "lodash.sortby";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 import { firstParagraph } from "../../editor/codemirror/language-server/docstrings";
-import { SkullDocsEntry, SkullDocsResponse } from "../../language-server/skulldocs";
+import { ApiDocsEntry, ApiDocsResponse } from "../../language-server/apidocs";
 import { Anchor, RouterParam, useRouterParam } from "../../router-hooks";
 import DocString from "../common/DocString";
 import { allowWrapAtPeriods } from "../common/wrap";
@@ -18,10 +18,10 @@ import HeadedScrollablePanel from "../../common/HeadedScrollablePanel";
 import AreaHeading from "../../common/AreaHeading";
 import ToolkitTopLevelListItem from "../explore/ToolkitTopLevelListItem";
 import { resolveModule } from "./skulldocs-util";
-import SkeletonNode from "./SkeletonNode";
+import ReferenceNode from "../reference/ReferenceNode";
 
 interface SkeletonToolkitProps {
-  docs: SkullDocsResponse;
+  docs: ApiDocsResponse;
 }
 
 export const SkeletonToolkit = ({ docs }: SkeletonToolkitProps) => {
@@ -46,7 +46,7 @@ export const SkeletonToolkit = ({ docs }: SkeletonToolkitProps) => {
 
 interface ActiveToolkitLevelProps {
   anchor: Anchor | undefined;
-  docs: SkullDocsResponse;
+  docs: ApiDocsResponse;
   onNavigate: (state: string | undefined) => void;
   direction: "forward" | "back" | "none";
 }
@@ -74,9 +74,9 @@ const ActiveToolkitLevel = ({
         }
       >
         <List flex="1 1 auto">
-          {(module.children ?? []).map((child) => (
+          {(module.children ?? []).map((child: ApiDocsEntry) => (
             <ListItem key={child.id}>
-              <SkeletonNode docs={child} width="100%" anchor={anchor} />
+              <ReferenceNode docs={child} width="100%" anchor={anchor} />
               <Divider />
             </ListItem>
           ))}
@@ -108,7 +108,7 @@ const ActiveToolkitLevel = ({
   );
 };
 
-const ShortModuleDescription = ({ value }: { value: SkullDocsEntry }) =>
+const ShortModuleDescription = ({ value }: { value: ApiDocsEntry }) =>
   value.docString ? (
     <DocString
       value={firstParagraph(value.docString).trim().replace(/\.$/, "")}

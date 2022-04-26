@@ -522,10 +522,6 @@
     "defaultMessage": "Сідебар",
     "description": "Aria label for the area on the left"
   },
-  "skeleton-tab": {
-    "defaultMessage": "Скелетон",
-    "description": "Skeleton tab button text"
-  },
   "software-versions": {
     "defaultMessage": "Софтваре версіонс",
     "description": "Heading for a table of software versions in the about dialog"
