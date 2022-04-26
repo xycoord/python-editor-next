@@ -24,8 +24,8 @@ import { dndSupport } from "./dnd";
 import { dropCursor } from "./dropcursor";
 import highlightStyle from "./highlightStyle";
 import interact from "@replit/codemirror-interact";
-import { dropdownPlugin } from "./dropdown";
 import { popupPlugin } from "./popup";
+import { dropdowns } from "./dropdown-config";
 
 const customTabBinding: KeyBinding = {
   key: "Tab",
@@ -70,62 +70,7 @@ export const editorConfig: Extension = [
   indentUnit.of(" ".repeat(indentSize)),
   python(),
   dndSupport(),
-  dropdownPlugin([
-    "Image.HEART",
-    "Image.HEART_SMALL",
-    "Image.HAPPY",
-    "Image.SMILE",
-    "Image.SAD",
-    "Image.CONFUSED",
-    "Image.ANGRY",
-    "Image.ASLEEP",
-    "Image.SURPRISED",
-    "Image.SILLY",
-    "Image.FABULOUS",
-    "Image.YES",
-    "Image.NO",
-    "Image.MEH",
-    "Image.DUCK",
-    "Image.GIRAFFE",
-    "Image.PACMAN",
-    "Image.GHOST",
-    "Image.SKULL",
-  ]),
-  dropdownPlugin([
-    "music.BA_DING",
-    "music.BADDY",
-    "music.BIRTHDAY",
-    "music.BLUES",
-    "music.CHASE",
-    "music.DADADADUM",
-    "music.ENTERTAINER",
-    "music.FUNERAL",
-    "music.FUNK",
-    "music.JUMP_DOWN",
-    "music.JUMP_UP",
-    "music.NYAN",
-    "music.ODE",
-    "music.POWER_DOWN",
-    "music.POWER_UP",
-    "music.PRELUDE",
-    "music.PUNCHLINE",
-    "music.PYTHON",
-    "music.RINGTONE",
-    "music.WAWAWAWAA",
-    "music.WEDDING",
-  ]),
-  dropdownPlugin([
-    "Sound.GIGGLE",
-    "Sound.HAPPY",
-    "Sound.HELLO",
-    "Sound.MYSTERIOUS",
-    "Sound.SAD",
-    "Sound.SLIDE",
-    "Sound.SOARING",
-    "Sound.SPRING",
-    "Sound.TWINKLE",
-    "Sound.YAWM",
-  ]),
+  dropdowns(),
   interact({
   rules: [
     //Rule for turning true to false onclick
@@ -148,4 +93,5 @@ export const editorConfig: Extension = [
   key: "ctrl",
   }),
   popupPlugin,
+
 ];
