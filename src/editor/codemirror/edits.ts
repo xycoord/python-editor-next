@@ -129,6 +129,7 @@ export const calculateChanges = (
     const insertLineIndentLength = insertLine.text.match(/^(\s*)/)?.[0].length ?? 0
     const previousLine = state.doc.line(Math.max(insertLine.number - 1, 1))
     const previousLineIndentLength = previousLine.text.match(/^(\s*)/)?.[0].length ?? 0
+    const previousLineEndsInColon = /:(#.*)?(\s*)$/.test(previousLine.text)
 
     let colOffset;
     if (pos && line && line <= state.doc.lines) {
@@ -139,14 +140,11 @@ export const calculateChanges = (
 
     let indentLength = Math.floor((2+colOffset) / 4) * 4
     indentLength = Math.max(indentLength, Math.min(insertLineIndentLength, previousLineIndentLength))
-    indentLength = Math.min(indentLength, Math.max(insertLineIndentLength, previousLineIndentLength+4))
+    indentLength = Math.min(
+      indentLength,
+      Math.max(insertLineIndentLength, previousLineIndentLength + (previousLineEndsInColon ? 4 : 0))
+    )
     mainIndent = " ".repeat(indentLength)
-
-    //if (extraLines > 0 || previousLine.text.trim() === "" || previousLineIndent <= insertLineIndent) {
-    //  mainIndent = insertLineIndent
-    //} else {
-    //  mainIndent = previousLineIndent
-    //}
 
     mainChange = {
       from: mainFrom,
