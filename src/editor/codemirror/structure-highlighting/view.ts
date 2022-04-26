@@ -23,6 +23,22 @@ const grammarInfo = {
     "FunctionDefinition",
     "ClassDefinition",
   ]),
+  smallStatements: new Set([
+	"AssignStatement",
+	"UpdateStatement",
+	"ExpressionStatement",
+	"DeleteStatement",
+	"PassStatement",
+	"BreakStatement",
+	"ContinueStatement",
+	"ReturnStatement",
+	"YieldStatement",
+	"PrintStatement",
+	"RaiseStatement",
+	"ImportStatement",
+	"ScopeStatement",
+	"AssertStatement",
+  ]),
 };
 
 interface Measure {
@@ -89,11 +105,11 @@ export const codeStructureView = (settings: CodeStructureSettings) =>
           let topLine = view.visualLineAt(start);
           if (body) {
             topLine = view.visualLineAt(topLine.to + 1);
-            if (topLine.from > end) {
-              // If we've fallen out of the scope of the body then the statement is all on
-              // one line, e.g. "if True: pass". Avoid highlighting for now.
-              return undefined;
-            }
+            // if (topLine.from > end) {
+            //   // If we've fallen out of the scope of the body then the statement is all on
+            //   // one line, e.g. "if True: pass". Avoid highlighting for now.
+            //   return undefined;
+            // }
           }
           const top = topLine.top;
           const bottomLine = view.visualLineAt(
@@ -140,9 +156,9 @@ export const codeStructureView = (settings: CodeStructureSettings) =>
               if (type.name === "Body") {
                 depth--;
               }
-
               const leaving = parents.pop()!;
               const children = leaving.children;
+			  
               if (children) {
                 // Draw an l-shape for each run of non-Body (e.g. keywords, test expressions) followed by Body in the child list.
                 let runStart = 0;
@@ -191,7 +207,23 @@ export const codeStructureView = (settings: CodeStructureSettings) =>
                   );
                 }
               }
-
+			if (grammarInfo.smallStatements.has(type.name)){
+				  const statementPositions = positionsForNode(
+					  view,
+					  start,
+					  end,
+					  depth,
+					  false
+				  )
+				  blocks.push(
+					  new VisualBlock(
+						  false,
+						  undefined,
+						  statementPositions,
+						  true
+					  )
+				  )
+			  }
               // Poke our information into our parent if we need to track it.
               const parent = parents[parents.length - 1];
               if (parent && grammarInfo.compoundStatements.has(parent.name)) {

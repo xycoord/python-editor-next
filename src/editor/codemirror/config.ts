@@ -24,6 +24,7 @@ import { dndSupport } from "./dnd";
 import { dropCursor } from "./dropcursor";
 import highlightStyle from "./highlightStyle";
 import interact from "@replit/codemirror-interact";
+import { popupPlugin } from "./popup";
 import { dropdowns } from "./dropdown-config";
 
 const customTabBinding: KeyBinding = {
@@ -90,5 +91,7 @@ export const editorConfig: Extension = [
     },
   ],
   key: "ctrl",
-}),
+  }),
+  popupPlugin,
+
 ];

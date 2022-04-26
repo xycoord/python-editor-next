@@ -1,0 +1,139 @@
+.cm-popup {
+  position: relative;
+  display: inline-block;
+/*   cursor: pointer; */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.cm-popup .cm-popup-text {
+  visibility: hidden;
+  width: 180px;
+  background-color: #000000c0;
+  color: #000;
+  border: 1px solid black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 20px;
+  left: 50%;
+  margin-left: -90px;
+}
+
+/* Popup arrow */
+.cm-popup .cm-popup-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.cm-popup .show {
+  visibility: visible;
+}
+
+.cm-popup-opener {
+  border: 1px solid black;
+  border-radius: 1em;
+  width:0.75em;
+  height:0.75em;
+
+}
+
+
+.cm-popup-btn {
+  width: 0.75em;
+  height: 1.25em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  margin-bottom: 0.5em;
+  border: 1px solid white;
+  cursor: crosshair;
+}
+
+.cm-popup-submit {
+  border: 1px solid white;
+  background-color: #000000;
+  color: white;
+  margin-right: 1em;
+  width: 5em;
+  border-radius: 1em;
+  font-family: "arial";
+}
+
+.cm-popup-level {
+  font-family: "arial";
+  color: white;
+  background-color: #000000;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+/*.cm-popup-level option {
+  background-color: #000000c0;
+}*/
+
+.cm-popup-spacer {
+  width: 0.25em;
+}
+
+.cm-popup-btn-0 {
+  background-color: #202020;
+  border: 1px solid white;
+}
+
+.cm-popup-btn-1 {
+  background-color: #864b4b;
+  border: 1px solid #551122;
+
+}
+
+.cm-popup-btn-2 {
+  background-color: #955252;
+  border: 1px solid #631125;
+}
+
+.cm-popup-btn-3 {
+  background-color: #a45858;
+  border: 1px solid #701129;
+}
+
+.cm-popup-btn-4 {
+  background-color: #b35f5f;
+  border: 1px solid #7e112c;
+}
+
+.cm-popup-btn-5 {
+  background-color: #c36666;
+  border: 1px solid #78122b;
+}
+
+.cm-popup-btn-6 {
+  background-color: #d26c6c;
+  border: 1px solid #9a1134;
+}
+
+.cm-popup-btn-7 {
+  background-color: #e07272;
+  border: 1px solid #a91037;
+}
+
+.cm-popup-btn-8 {
+  background-color: #ef7878;
+  border: 1px solid #b7103a;
+}
+
+.cm-popup-btn-9 {
+  background-color: #ff7f7f;
+  border: 1px solid #b1123a;
+}
+

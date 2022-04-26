@@ -13,6 +13,7 @@ import {
 } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { Range } from "@codemirror/rangeset";
+
 import "./dropdown.css";
 
 export interface OptionMap {
@@ -97,6 +98,7 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
     syntaxTree(view.state).iterate({
       from, to,
       enter: (type, from, to) => {
+
         let flag = false;
         for (let i = 0; i < validRanges.length; i++) {
           flag = flag || (validRanges[i][0] <= from && to <= validRanges[i][1]);
@@ -123,6 +125,7 @@ function dropdowns(view: EditorView, config: DropdownConfig) {
 }
 
 //Exported for unit testing
+
 export const dropdownPluginInternal = (config: DropdownConfig) => class {
   decorations: DecorationSet
 
@@ -136,6 +139,7 @@ export const dropdownPluginInternal = (config: DropdownConfig) => class {
     }
   }
 }
+
 
 export const dropdownPlugin = (config: DropdownConfig) => ViewPlugin.fromClass(
   dropdownPluginInternal(config),
