@@ -23,7 +23,6 @@ import {
 import { dndSupport } from "./dnd";
 import { dropCursor } from "./dropcursor";
 import highlightStyle from "./highlightStyle";
-import interact from "@replit/codemirror-interact";
 import { popupPlugin } from "./popup";
 import { dropdowns } from "./dropdown-config";
 
@@ -71,27 +70,6 @@ export const editorConfig: Extension = [
   python(),
   dndSupport(),
   dropdowns(),
-  interact({
-  rules: [
-    //Rule for turning true to false onclick
-    {
-      regexp: /True/g,
-      cursor: "pointer",
-      onClick: (text, setText, e) => {
-        setText("False");
-      },
-    },
-    //Rule to do the opposite
-    {
-      regexp: /False/g,
-      cursor: "pointer",
-      onClick: (text, setText, e) => {
-        setText("True");
-      },
-    },
-  ],
-  key: "ctrl",
-  }),
   popupPlugin,
 
 ];
