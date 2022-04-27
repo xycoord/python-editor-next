@@ -122,7 +122,7 @@ const dndHandlers = () => {
           const line = view.state.doc.lineAt(visualLine.from);
           const pos = view.posAtCoords(event, false);
 
-          if (line.number !== lastDragPos?.line || pos !== lastDragPos?.pos) {
+          if (line.number !== lastDragPos?.line || (pos+2)/4 !== (lastDragPos?.pos+2)/4) {
             debug("  dragover", line);
             revertPreview(view);
 
