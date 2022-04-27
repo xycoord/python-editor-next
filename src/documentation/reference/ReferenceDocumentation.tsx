@@ -6,17 +6,20 @@
 import { Box, Divider, List, ListItem } from "@chakra-ui/layout";
 import { useCallback } from "react";
 import { Anchor, RouterParam, useRouterParam } from "../../router-hooks";
-import { getTopicAndEntry } from "./api";
-import { isV2Only, Toolkit } from "./model";
-import { useAnimationDirection } from "./toolkit-hooks";
-import ToolkitBreadcrumbHeading from "./ToolkitBreadcrumbHeading";
-import ToolkitContent from "./ToolkitContent";
+import { getTopicAndEntry } from "./content";
+import { Toolkit } from "./model";
+import { useAnimationDirection } from "../common/documentation-animation-hooks";
+import DocumentationBreadcrumbHeading from "../common/DocumentationBreadcrumbHeading";
+import DocumentationContent from "../common/DocumentationContent";
 import HeadedScrollablePanel from "../../common/HeadedScrollablePanel";
-import ToolkitTopicEntry from "./ToolkitTopicEntry";
+import ReferenceTopicEntry from "./ReferenceTopicEntry";
 import AreaHeading from "../../common/AreaHeading";
-import ToolkitTopLevelListItem from "./ToolkitTopLevelListItem";
+import DocumentationTopLevelItem from "../common/DocumentationTopLevelItem";
+import { useIntl } from "react-intl";
+import { isV2Only } from "../common/model";
+import { docStyles } from "../../common/documentation-styles";
 
-interface ExploreToolkitProps {
+interface ReferenceDocumentationProps {
   toolkit: Toolkit;
 }
 
@@ -24,23 +27,23 @@ interface ExploreToolkitProps {
  * A data-driven toolkit component.
  *
  * The components used here are also used with the API data to
- * generate the reference documentation.
+ * generate the API documentation.
  */
-const ExploreToolkit = ({ toolkit }: ExploreToolkitProps) => {
-  const [anchor, setAnchor] = useRouterParam(RouterParam.explore);
+const ReferenceToolkit = ({ toolkit }: ReferenceDocumentationProps) => {
+  const [anchor, setAnchor] = useRouterParam(RouterParam.reference);
   const direction = useAnimationDirection(anchor);
   const topicOrEntryId = anchor?.id;
   const handleNavigate = useCallback(
     (topicOrEntryId: string | undefined) => {
       setAnchor(
         topicOrEntryId ? { id: topicOrEntryId } : undefined,
-        "toolkit-user"
+        "documentation-user"
       );
     },
     [setAnchor]
   );
   return (
-    <ActiveToolkitLevel
+    <ActiveLevel
       key={anchor ? 0 : 1}
       anchor={anchor}
       topicOrEntryId={topicOrEntryId}
@@ -51,22 +54,23 @@ const ExploreToolkit = ({ toolkit }: ExploreToolkitProps) => {
   );
 };
 
-interface ActiveToolkitLevelProps extends ExploreToolkitProps {
+interface ActiveLevelProps extends ReferenceDocumentationProps {
   anchor: Anchor | undefined;
   topicOrEntryId: string | undefined;
   onNavigate: (topicOrEntryId: string | undefined) => void;
   direction: "forward" | "back" | "none";
 }
 
-const ActiveToolkitLevel = ({
+const ActiveLevel = ({
   anchor,
   topicOrEntryId,
   onNavigate,
   toolkit,
   direction,
-}: ActiveToolkitLevelProps) => {
+}: ActiveLevelProps) => {
   const [topic, activeItem] = getTopicAndEntry(toolkit, topicOrEntryId);
-
+  const intl = useIntl();
+  const referenceString = intl.formatMessage({ id: "reference-tab" });
   if (topic) {
     return (
       <HeadedScrollablePanel
@@ -75,8 +79,8 @@ const ActiveToolkitLevel = ({
         key={topic.name}
         direction={direction}
         heading={
-          <ToolkitBreadcrumbHeading
-            parent={toolkit.name}
+          <DocumentationBreadcrumbHeading
+            parent={referenceString}
             title={topic.name}
             onBack={() => onNavigate(undefined)}
             subtitle={topic.subtitle}
@@ -85,14 +89,21 @@ const ActiveToolkitLevel = ({
         }
       >
         {topic.introduction && (
-          <Box p={5} pb={1} fontSize="sm">
-            <ToolkitContent content={topic.introduction} />
+          <Box
+            p={5}
+            pb={1}
+            fontSize="sm"
+            sx={{
+              ...docStyles,
+            }}
+          >
+            <DocumentationContent content={topic.introduction} />
           </Box>
         )}
         <List flex="1 1 auto">
           {topic.contents?.map((item) => (
             <ListItem key={item.name}>
-              <ToolkitTopicEntry
+              <ReferenceTopicEntry
                 topic={topic}
                 entry={item}
                 anchor={anchor}
@@ -109,12 +120,12 @@ const ActiveToolkitLevel = ({
     <HeadedScrollablePanel
       direction={direction}
       heading={
-        <AreaHeading name={toolkit.name} description={toolkit.description} />
+        <AreaHeading name={referenceString} description={toolkit.description} />
       }
     >
       <List flex="1 1 auto" m={3}>
         {toolkit.contents?.map((topic) => (
-          <ToolkitTopLevelListItem
+          <DocumentationTopLevelItem
             key={topic.name}
             name={topic.name}
             isV2Only={isV2Only(topic)}
@@ -128,4 +139,4 @@ const ActiveToolkitLevel = ({
   );
 };
 
-export default ExploreToolkit;
+export default ReferenceToolkit;

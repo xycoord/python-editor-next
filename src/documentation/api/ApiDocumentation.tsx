@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { List, ListItem, Divider } from "@chakra-ui/layout";
+import { List, ListItem, Divider, BoxProps } from "@chakra-ui/layout";
 import sortBy from "lodash.sortby";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
@@ -12,29 +12,30 @@ import { ApiDocsEntry, ApiDocsResponse } from "../../language-server/apidocs";
 import { Anchor, RouterParam, useRouterParam } from "../../router-hooks";
 import DocString from "../common/DocString";
 import { allowWrapAtPeriods } from "../common/wrap";
-import { useAnimationDirection } from "../explore/toolkit-hooks";
-import ToolkitBreadcrumbHeading from "../explore/ToolkitBreadcrumbHeading";
+import { useAnimationDirection } from "../common/documentation-animation-hooks";
+import DocumentationBreadcrumbHeading from "../common/DocumentationBreadcrumbHeading";
 import HeadedScrollablePanel from "../../common/HeadedScrollablePanel";
 import AreaHeading from "../../common/AreaHeading";
-import ToolkitTopLevelListItem from "../explore/ToolkitTopLevelListItem";
+import DocumentationTopLevelItem from "../common/DocumentationTopLevelItem";
 import { resolveModule } from "./apidocs-util";
-import ReferenceNode from "./ReferenceNode";
+import ApiNode from "./ApiNode";
+import { docStyles } from "../../common/documentation-styles";
 
-interface ReferenceToolkitProps {
+interface ApiDocumentationProps {
   docs: ApiDocsResponse;
 }
 
-export const ReferenceToolkit = ({ docs }: ReferenceToolkitProps) => {
-  const [anchor, setAnchor] = useRouterParam(RouterParam.reference);
+export const ApiDocumentation = ({ docs }: ApiDocumentationProps) => {
+  const [anchor, setAnchor] = useRouterParam(RouterParam.api);
   const handleNavigate = useCallback(
     (id: string | undefined) => {
-      setAnchor(id ? { id } : undefined, "toolkit-user");
+      setAnchor(id ? { id } : undefined, "documentation-user");
     },
     [setAnchor]
   );
   const direction = useAnimationDirection(anchor);
   return (
-    <ActiveToolkitLevel
+    <ActiveLevel
       key={anchor ? 0 : 1}
       anchor={anchor}
       onNavigate={handleNavigate}
@@ -44,39 +45,46 @@ export const ReferenceToolkit = ({ docs }: ReferenceToolkitProps) => {
   );
 };
 
-interface ActiveToolkitLevelProps {
+interface ActiveLevelProps {
   anchor: Anchor | undefined;
   docs: ApiDocsResponse;
   onNavigate: (state: string | undefined) => void;
   direction: "forward" | "back" | "none";
 }
 
-const ActiveToolkitLevel = ({
+const ActiveLevel = ({
   anchor,
   onNavigate,
   docs,
   direction,
-}: ActiveToolkitLevelProps) => {
+}: ActiveLevelProps) => {
   const intl = useIntl();
-  const referenceString = intl.formatMessage({ id: "reference-tab" });
+  const apiString = intl.formatMessage({ id: "api-tab" });
   const module = anchor ? resolveModule(docs, anchor.id) : undefined;
   if (module) {
     return (
       <HeadedScrollablePanel
         direction={direction}
         heading={
-          <ToolkitBreadcrumbHeading
-            parent={referenceString}
+          <DocumentationBreadcrumbHeading
+            parent={apiString}
             title={module.name}
             onBack={() => onNavigate(undefined)}
-            subtitle={<ShortModuleDescription value={module} />}
+            subtitle={<ShortModuleDescription value={module} as="span" />}
           />
         }
       >
         <List flex="1 1 auto">
           {(module.children ?? []).map((child) => (
             <ListItem key={child.id}>
-              <ReferenceNode docs={child} width="100%" anchor={anchor} />
+              <ApiNode
+                docs={child}
+                width="100%"
+                anchor={anchor}
+                sx={{
+                  ...docStyles,
+                }}
+              />
               <Divider />
             </ListItem>
           ))}
@@ -89,14 +97,14 @@ const ActiveToolkitLevel = ({
       direction={direction}
       heading={
         <AreaHeading
-          name={referenceString}
-          description={intl.formatMessage({ id: "reference-description" })}
+          name={apiString}
+          description={intl.formatMessage({ id: "api-description" })}
         />
       }
     >
       <List flex="1 1 auto" m={3}>
         {sortBy(Object.values(docs), (m) => m.fullName).map((module) => (
-          <ToolkitTopLevelListItem
+          <DocumentationTopLevelItem
             key={module.id}
             name={allowWrapAtPeriods(module.fullName)}
             description={<ShortModuleDescription value={module} />}
@@ -108,9 +116,17 @@ const ActiveToolkitLevel = ({
   );
 };
 
-const ShortModuleDescription = ({ value }: { value: ApiDocsEntry }) =>
+interface ShortModuleDescriptionProps extends BoxProps {
+  value: ApiDocsEntry;
+}
+
+const ShortModuleDescription = ({
+  value,
+  ...props
+}: ShortModuleDescriptionProps) =>
   value.docString ? (
     <DocString
       value={firstParagraph(value.docString).trim().replace(/\.$/, "")}
+      {...props}
     />
   ) : null;
