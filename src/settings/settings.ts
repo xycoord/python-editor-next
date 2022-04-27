@@ -41,10 +41,24 @@ export const minimumFontSize = 4;
 export const maximumFontSize = 154;
 export const fontSizeStep = 3;
 
+export type ParameterHelpOption = "automatic" | "manual";
+export const parameterHelpOptions: ParameterHelpOption[] = [
+  "automatic",
+  "manual",
+];
+
+export const getLanguageFromQuery = (): string => {
+  const searchParams = new URLSearchParams(window.location.search);
+  const l = searchParams.get("l");
+  const supportedLanguage = supportedLanguages.find((x) => x.id === l);
+  return supportedLanguage?.id || supportedLanguages[0].id;
+};
+
 export const defaultSettings: Settings = {
-  languageId: supportedLanguages[0].id,
+  languageId: getLanguageFromQuery(),
   fontSize: defaultCodeFontSizePt,
   codeStructureHighlight: "full",
+  parameterHelp: "automatic",
 };
 
 export const isValidSettingsObject = (value: unknown): value is Settings => {
@@ -59,6 +73,9 @@ export const isValidSettingsObject = (value: unknown): value is Settings => {
     return false;
   }
   if (codeStructureOptions.indexOf(object.codeStructureHighlight) === -1) {
+    return false;
+  }
+  if (parameterHelpOptions.indexOf(object.parameterHelp) === -1) {
     return false;
   }
   return true;
@@ -110,6 +127,7 @@ export interface Settings {
   languageId: string;
   fontSize: number;
   codeStructureHighlight: CodeStructureOption;
+  parameterHelp: ParameterHelpOption;
 }
 
 type SettingsContextValue = [Settings, (settings: Settings) => void];
