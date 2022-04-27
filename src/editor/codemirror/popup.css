@@ -10,19 +10,20 @@
 
 /* The actual popup */
 .cm-popup .cm-popup-text {
-  visibility: hidden;
-  width: 180px;
-  background-color: #000000c0;
+  width: fit-content;
+  background-color: var(--chakra-colors-gray-700);
   color: #000;
-  border: 1px solid black;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
   text-align: center;
   border-radius: 6px;
-  padding: 8px 0;
   position: absolute;
   z-index: 1;
   bottom: 20px;
-  left: 50%;
-  margin-left: -90px;
+  left: calc(-81.578px - 12px);
+  padding: 20px;
+  transform: scale(0);
+  transform-origin: center bottom;
+  transition: transform 0.3s ease-in-out;
 }
 
 /* Popup arrow */
@@ -30,15 +31,15 @@
   content: "";
   position: absolute;
   top: 100%;
-  left: 50%;
-  margin-left: -5px;
+  left: calc(50% - 5.2px);
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: var(--chakra-colors-gray-700) transparent transparent transparent;
+  pointer-events: none;
 }
 
 .cm-popup .show {
-  visibility: visible;
+  transform: scale(1);
 }
 
 .cm-popup-opener {
@@ -46,36 +47,52 @@
   border-radius: 1em;
   width:0.75em;
   height:0.75em;
-
+  pointer-events: all;
 }
 
+.cm-popup-button-grid {
+  display: grid;
+  width: fit-content;
+  row-gap: 0.6em;
+  column-gap: 1.1em;
+  grid-template-columns: repeat(5,1fr);
+  grid-template-rows: repeat(5,1fr);
+}
 
 .cm-popup-btn {
-  width: 0.75em;
-  height: 1.25em;
-  margin-left: 0.5em;
-  margin-right: 0.5em;
-  margin-bottom: 0.5em;
-  border: 1px solid white;
+  width: 0.65em;
+  height: 1.15em;
   cursor: crosshair;
+  border-style: none;
+  border-width: 2px;
+  border-radius: 2px;
+  place-self: center;
+  transition: background-color 0.1s, box-shadow 0.1s;
+}
+
+.cm-popup-controls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between
 }
 
 .cm-popup-submit {
-  border: 1px solid white;
-  background-color: #000000;
-  color: white;
-  margin-right: 1em;
+  background-color: var(--chakra-colors-gray-10);
+  color: black;
   width: 5em;
-  border-radius: 1em;
-  font-family: "arial";
+  border-radius: 6px;
+  font-family: "Helvetica";
+  font-weight: 600;
 }
 
 .cm-popup-level {
-  font-family: "arial";
-  color: white;
-  background-color: #000000;
-  border: 1px solid white;
-  border-radius: 5px;
+  font-family: "Helvetica";
+  color: black;
+  background-color: var(--chakra-colors-gray-10);
+  padding-inline: 5px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 /*.cm-popup-level option {
@@ -88,52 +105,62 @@
 
 .cm-popup-btn-0 {
   background-color: #202020;
-  border: 1px solid white;
+  color: #202020;
+  box-shadow: none;
 }
 
 .cm-popup-btn-1 {
-  background-color: #864b4b;
-  border: 1px solid #551122;
-
+  color: #392424;
+  background-color: #392B2A;
+  box-shadow: 0px 0px 5px 0px currentColor;
 }
 
 .cm-popup-btn-2 {
-  background-color: #955252;
-  border: 1px solid #631125;
+  color: #522929;
+  background-color: #523535;
+  box-shadow: 0px 0px 5px 0px currentColor;
 }
 
 .cm-popup-btn-3 {
-  background-color: #a45858;
-  border: 1px solid #701129;
+  color: #6A2D2D;
+  background-color: #6A403F;
+  box-shadow: 0px 0px 5px 1px currentColor;
+
 }
 
 .cm-popup-btn-4 {
-  background-color: #b35f5f;
-  border: 1px solid #7e112c;
+  color: #833131;
+  background-color: #834A4A;
+  box-shadow: 0px 0px 5px 1px currentColor;
 }
 
 .cm-popup-btn-5 {
-  background-color: #c36666;
-  border: 1px solid #78122b;
+  color: #9C3636;
+  background-color: #9C5554;
+  box-shadow: 0px 0px 5px 2px currentColor;
 }
 
 .cm-popup-btn-6 {
-  background-color: #d26c6c;
-  border: 1px solid #9a1134;
+  color: #B53A3A;
+  background-color: #B55F5F;
+  box-shadow: 0px 0px 5px 2px currentColor;
 }
 
 .cm-popup-btn-7 {
-  background-color: #e07272;
-  border: 1px solid #a91037;
+  color: #CD3E3E;
+  background-color: #CD6A69;
+  box-shadow: 0px 0px 5px 3px currentColor;
 }
 
 .cm-popup-btn-8 {
-  background-color: #ef7878;
-  border: 1px solid #b7103a;
+  color: #E64343;
+  background-color: #E67474;
+  box-shadow: 0px 0px 5px 3px currentColor;
 }
 
 .cm-popup-btn-9 {
-  background-color: #ff7f7f;
-  border: 1px solid #b1123a;
+  color: #ff4747;
+  background-color: #ff7f7e;
+  box-shadow: 0px 0px 5px 4px currentColor;
 }
 
