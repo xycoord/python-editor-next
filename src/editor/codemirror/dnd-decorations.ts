@@ -37,7 +37,7 @@ export class DndDecorationsViewPlugin {
     this.underlayLayer.style.zIndex = "-5"
     this.underlayLayer.style.position = "absolute"
     //WHAT IF THE GUTTER IS LARGER???
-    this.underlayLayer.style.left = "93px"
+    this.underlayLayer.style.left = "76px"
     this.underlayLayer.style.width = "100%"
     this.underlayLayer.style.height = "100%"
   }
