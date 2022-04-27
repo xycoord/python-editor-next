@@ -27,6 +27,7 @@ export const dndStructureView = (settings: DndStructureSettings) =>
       blocks: DragBlock[] = [];
       indentHandles = settings.indentHandles;
       dragSmallStatements = settings.dragSmallStatements;
+      lastPointerEvents:boolean = true
 
       constructor(readonly view: EditorView) {
         this.measureReq = {
@@ -169,14 +170,18 @@ export const dndStructureView = (settings: DndStructureSettings) =>
           this.overlayLayer.style.height = '0px';
           this.overlayLayer.style.height = this.overlayLayer.parentElement.scrollHeight+"px";
         }
-        console.log("drawBlocks!")
         const blocksChanged =
           blocks.length !== this.blocks.length ||
           blocks.some((b, i) => !b.eq(this.blocks[i]));
-        if (blocksChanged) {
-          this.blocks = blocks;
 
-          const pointerEvents = this.overlayLayer.getAttribute("dnd-pointer-events") === "all" 
+        //If pointer events changes we want to redraw anyway
+        const pointerEvents = this.overlayLayer.getAttribute("dnd-pointer-events") === "all" 
+        const pointerEventsChanged = !(pointerEvents===this.lastPointerEvents)
+        this.lastPointerEvents = pointerEvents
+
+        if (blocksChanged || pointerEventsChanged) {
+          this.blocks = blocks;
+          
           // Should be able to adjust old elements here if it's a performance win.
           this.overlayLayer.textContent = "";
           for (const b of blocks) {
@@ -184,7 +189,7 @@ export const dndStructureView = (settings: DndStructureSettings) =>
               this.overlayLayer.appendChild(e);
             }
           }
-        }
+        }  
       }
 
       destroy() {
