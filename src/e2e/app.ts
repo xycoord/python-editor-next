@@ -43,6 +43,10 @@ interface Options {
    * URL fragment including the #.
    */
   fragment?: string;
+  /**
+   * Language parameter passed via URL.
+   */
+  language?: string;
 }
 
 /**
@@ -68,20 +72,36 @@ export class App {
   );
 
   constructor(options: Options = {}) {
+    this.url = this.optionsToURL(options);
+    this.browser = puppeteer.launch();
+    this.page = this.createPage();
+  }
+
+  setOptions(options: Options) {
+    this.url = this.optionsToURL(options);
+  }
+
+  private optionsToURL(options: Options): string {
     const flags = new Set<string>([
       "none",
       "noWelcome",
       ...(options.flags ?? []),
     ]);
-    this.url =
+    const params: Array<[string, string]> = Array.from(flags).map((f) => [
+      "flag",
+      f,
+    ]);
+    if (options.language) {
+      params.push(["l", options.language]);
+    }
+    return (
       baseUrl +
       // We don't use PUBLIC_URL here as CRA seems to set it to "" before running jest.
       (process.env.E2E_PUBLIC_URL ?? "/") +
       "?" +
-      new URLSearchParams(Array.from(flags).map((f) => ["flag", f])) +
-      (options.fragment ?? "");
-    this.browser = puppeteer.launch();
-    this.page = this.createPage();
+      new URLSearchParams(params) +
+      (options.fragment ?? "")
+    );
   }
 
   async createPage() {
@@ -170,7 +190,7 @@ export class App {
     filePath: string,
     options: { acceptDialog: LoadDialogType }
   ): Promise<void> {
-    await this.switchTab("Files");
+    await this.switchTab("Project");
     const document = await this.document();
     const openInput = await document.getAllByTestId("open-input");
     await openInput[0].uploadFile(filePath);
@@ -178,25 +198,25 @@ export class App {
   }
 
   /**
-   * Create a new file using the files tab.
+   * Add a new file using the files tab.
    *
    * @param name The name to enter in the dialog.
    */
-  async createNewFile(name: string): Promise<void> {
-    await this.switchTab("Files");
+  async addNewFile(name: string): Promise<void> {
+    await this.switchTab("Project");
     const document = await this.document();
-    const newButton = await document.findByRole("button", {
-      name: "Create new file",
+    const addFileButton = await document.findByRole("button", {
+      name: "Add file",
     });
-    await newButton.click();
+    await addFileButton.click();
     const nameField = await document.findByRole("textbox", {
       name: "Name",
     });
     await nameField.type(name);
-    const createButton = await document.findByRole("button", {
-      name: "Create",
+    const addButton = await document.findByRole("button", {
+      name: "Add",
     });
-    await createButton.click();
+    await addButton.click();
   }
 
   /**
@@ -472,7 +492,7 @@ export class App {
     }, defaultWaitForOptions);
   }
 
-  async findActiveToolkitEntry(text: string): Promise<void> {
+  async findActiveDocumentationEntry(text: string): Promise<void> {
     // We need to make sure it's actually visible as it's scroll-based navigation.
     const document = await this.document();
     return waitFor(async () => {
@@ -492,23 +512,36 @@ export class App {
     }, defaultWaitForOptions);
   }
 
-  async findToolkitTopLevelHeading(
+  async findDocumentationTopLevelHeading(
     title: string,
-    description: string
+    description?: string
   ): Promise<void> {
     const document = await this.document();
     await document.findByText(title, {
       selector: "h2",
     });
-    await document.findByText(description);
+    if (description) {
+      await document.findByText(description);
+    }
   }
 
-  async selectToolkitSection(name: string): Promise<void> {
+  async selectDocumentationSection(name: string): Promise<void> {
     const document = await this.document();
     const button = await document.findByRole("button", {
       name: `View ${name} documentation`,
     });
     return button.click();
+  }
+
+  async selectDocumentationIdea(name: string): Promise<void> {
+    const document = await this.document();
+    const heading = await document.findByText(name, {
+      selector: "h3",
+    });
+    const handle = heading.asElement();
+    await handle!.evaluate((element) => {
+      element.parentElement?.click();
+    });
   }
 
   async insertToolkitCode(name: string): Promise<void> {
@@ -603,6 +636,12 @@ export class App {
   async findSerialCompactTraceback(text: Matcher): Promise<void> {
     const document = await this.document();
     await document.findByText(text);
+  }
+
+  async flash() {
+    const document = await this.document();
+    const flash = await document.findByRole("button", { name: "Flash" });
+    return flash.click();
   }
 
   async followSerialCompactTracebackLink(): Promise<void> {
@@ -712,12 +751,12 @@ export class App {
 
   /**
    * Follow the documentation link shown in the signature help or autocomplete tooltips.
-   * This will update the "Reference" tab and switch to it.
+   * This will update the "API" tab and switch to it.
    */
   async followCompletionOrSignatureDocumentionLink(): Promise<void> {
     const document = await this.document();
     const button = await document.findByRole("button", {
-      name: "Show reference documentation",
+      name: "Show API documentation",
     });
     return button.click();
   }
@@ -729,7 +768,7 @@ export class App {
    * @param name The name of the section.
    * @param targetLine The target line (1-based).
    */
-  async dragDropToolkitCode(name: string, targetLine: number) {
+  async dragDropCodeEmbed(name: string, targetLine: number) {
     const page = await this.page;
     const document = await this.document();
     const heading = await document.findByRole("heading", {
@@ -794,7 +833,7 @@ export class App {
    * Prefer more specific navigation actions, but this is useful to check initial state
    * and that tab state is remembered.
    */
-  async switchTab(tabName: "Files" | "Reference" | "Explore") {
+  async switchTab(tabName: "Project" | "API" | "Reference" | "Ideas") {
     const document = await this.document();
     const tab = await document.getByRole("tab", {
       name: tabName,
@@ -860,7 +899,7 @@ export class App {
   }
 
   private async openFileActionsMenu(filename: string): Promise<void> {
-    await this.switchTab("Files");
+    await this.switchTab("Project");
     const document = await this.document();
     const actions = await document.findByRole("button", {
       name: `${filename} file actions`,

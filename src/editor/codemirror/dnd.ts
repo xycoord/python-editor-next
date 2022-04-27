@@ -202,9 +202,6 @@ const dndHandlers = () => {
         clearSuppressChildDragEnterLeave(view);
         event.preventDefault();
 
-        const visualLine = view.visualLineAtHeight(event.y);
-        const line = view.state.doc.lineAt(visualLine.from);
-
         revertPreview(view);
 
         // To have a single undo event, we need to undo the undo actions and then 

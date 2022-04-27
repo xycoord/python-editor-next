@@ -5,6 +5,7 @@
  */
 import { highlightActiveLineGutter, lineNumbers} from "@codemirror/gutter";
 import { redoDepth, undoDepth } from "@codemirror/history";
+import { lintGutter } from "./lint/lint";
 import { EditorSelection, EditorState, Extension } from "@codemirror/state";
 import { EditorView, highlightActiveLine } from "@codemirror/view";
 import { useEffect, useMemo, useRef } from "react";
@@ -13,6 +14,7 @@ import { createUri } from "../../language-server/client";
 import { useLanguageServerClient } from "../../language-server/language-server-hooks";
 import { useLogging } from "../../logging/logging-hooks";
 import { useRouterState } from "../../router-hooks";
+import { ParameterHelpOption } from "../../settings/settings";
 import { WorkbenchSelection } from "../../workbench/use-selection";
 import {
   EditorActions,
@@ -20,20 +22,16 @@ import {
   useActiveEditorInfoState,
 } from "../active-editor-hooks";
 import "./CodeMirror.css";
-import { editorConfig, themeExtensionsCompartment } from "./config";
+import { compartment, editorConfig } from "./config";
 import { languageServer } from "./language-server/view";
-import {
-  codeStructure,
-  CodeStructureSettings,
-  structureHighlightingCompartment,
-} from "./structure-highlighting";
 import {
 	dndStructure,
 	// DndStructureSettings,
 	dndStructureHighlightingCompartment,
 } from "./dnd-extension";
+import { codeStructure, CodeStructureSettings } from "./structure-highlighting";
 import themeExtensions from "./themeExtensions";
-import interact from "@replit/codemirror-interact";
+
 
 interface CodeMirrorProps {
   className?: string;
@@ -43,6 +41,7 @@ interface CodeMirrorProps {
   selection: WorkbenchSelection;
   fontSize: number;
   codeStructureSettings: CodeStructureSettings;
+  parameterHelpOption: ParameterHelpOption;
 }
 
 /**
@@ -60,6 +59,7 @@ const CodeMirror = ({
   selection,
   fontSize,
   codeStructureSettings,
+  parameterHelpOption,
 }: CodeMirrorProps) => {
   // Really simple model for now as we only have one editor at a time.
   const [, setActiveEditor] = useActiveEditorActionsState();
@@ -84,8 +84,9 @@ const CodeMirror = ({
     () => ({
       fontSize,
       codeStructureSettings,
+      parameterHelpOption,
     }),
-    [fontSize, codeStructureSettings]
+    [fontSize, codeStructureSettings, parameterHelpOption]
   );
 
   useEffect(() => {
@@ -106,40 +107,27 @@ const CodeMirror = ({
           notify,
           editorConfig,
           // Extensions only relevant for editing:
+          // Order of lintGutter and lineNumbers determines how they are displayed.
+          lintGutter(),
           lineNumbers(),
           highlightActiveLineGutter(),
           highlightActiveLine(),
-          interact({
-            rules: [
-              //Rule for turning true to false onclick
-              {
-                regexp: /True/g,
-                cursor: "pointer",
-                onClick: (text, setText, e) => {
-                  setText("False");
-                },
-              },
-              //Rule to do the opposite
-              {
-                regexp: /False/g,
-                cursor: "pointer",
-                onClick: (text, setText, e) => {
-                  setText("True");
-                },
-              },
-            ],
-            key: "ctrl",
-          }),
-          client ? languageServer(client, uri, intl, logging) : [],
           // Extensions we enable/disable based on props.
-          structureHighlightingCompartment.of(
-            codeStructure(options.codeStructureSettings)
-          ),
-		  dndStructureHighlightingCompartment.of(
+          dndStructureHighlightingCompartment.of(
             //Changing the settings here doesn't seem to have any impact
             dndStructure({dragSmallStatements:false, indentHandles: false})
           ),
-          themeExtensionsCompartment.of(themeExtensionsForOptions(options)),
+          compartment.of([
+            client
+              ? languageServer(client, uri, intl, logging, {
+                  signatureHelp: {
+                    automatic: parameterHelpOption === "automatic",
+                  },
+                })
+              : [],
+            codeStructure(options.codeStructureSettings),
+            themeExtensionsForOptions(options),
+          ]),
         ],
       });
       const view = new EditorView({
@@ -151,15 +139,16 @@ const CodeMirror = ({
       setActiveEditor(new EditorActions(view, logging));
     }
   }, [
-    options,
-    defaultValue,
-    onChange,
     client,
-    setActiveEditor,
-    uri,
+    defaultValue,
     intl,
-    setEditorInfo,
     logging,
+    onChange,
+    options,
+    setActiveEditor,
+    setEditorInfo,
+    parameterHelpOption,
+    uri,
   ]);
   useEffect(() => {
     // Do this separately as we don't want to destroy the view whenever options needed for initialization change.
@@ -175,18 +164,23 @@ const CodeMirror = ({
   useEffect(() => {
     viewRef.current!.dispatch({
       effects: [
-        themeExtensionsCompartment.reconfigure(
-          themeExtensionsForOptions(options)
-        ),
-        structureHighlightingCompartment.reconfigure(
-          codeStructure(options.codeStructureSettings)
-        ),
-		dndStructureHighlightingCompartment.reconfigure(
+        dndStructureHighlightingCompartment.reconfigure(
             dndStructure({dragSmallStatements: false, indentHandles: false})
         ),
+        compartment.reconfigure([
+          client
+            ? languageServer(client, uri, intl, logging, {
+                signatureHelp: {
+                  automatic: parameterHelpOption === "automatic",
+                },
+              })
+            : [],
+          codeStructure(options.codeStructureSettings),
+          themeExtensionsForOptions(options),
+        ]),
       ],
     });
-  }, [options]);
+  }, [options, parameterHelpOption, client, intl, logging, uri]);
 
   const { location } = selection;
   useEffect(() => {
@@ -215,10 +209,10 @@ const CodeMirror = ({
       const id = (event as CustomEvent).detail.id;
       setRouterState(
         {
-          tab: "reference",
-          reference: { id },
+          tab: "api",
+          api: { id },
         },
-        "toolkit-from-code"
+        "documentation-from-code"
       );
       const view = viewRef.current!;
       // Put the focus back in the text editor so the docs are immediately useful.

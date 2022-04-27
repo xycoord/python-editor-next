@@ -11,7 +11,7 @@ import { defaultHighlightStyle } from "@codemirror/highlight";
 import { history, historyKeymap } from "@codemirror/history";
 import { python } from "@codemirror/lang-python";
 import { indentOnInput, indentUnit } from "@codemirror/language";
-import { lintKeymap } from "@codemirror/lint";
+import { lintKeymap } from "./lint/lint";
 import { Compartment, EditorState, Extension, Prec } from "@codemirror/state";
 import {
   drawSelection,
@@ -23,6 +23,8 @@ import {
 import { dndSupport } from "./dnd";
 import { dropCursor } from "./dropcursor";
 import highlightStyle from "./highlightStyle";
+import { popupPlugin } from "./popup";
+import { dropdowns } from "./dropdown-config";
 
 const customTabBinding: KeyBinding = {
   key: "Tab",
@@ -30,7 +32,7 @@ const customTabBinding: KeyBinding = {
   shift: indentLess,
 };
 
-export const themeExtensionsCompartment = new Compartment();
+export const compartment = new Compartment();
 
 const indentSize = 4;
 export const editorConfig: Extension = [
@@ -67,4 +69,7 @@ export const editorConfig: Extension = [
   indentUnit.of(" ".repeat(indentSize)),
   python(),
   dndSupport(),
+  dropdowns(),
+  popupPlugin,
+
 ];
