@@ -7,7 +7,7 @@
  import { useIntl } from "react-intl";
  import HeadedScrollablePanel from "../common/HeadedScrollablePanel";
  import AreaHeading from "../common/AreaHeading";
- import CodeEmbed from "./explore/CodeEmbed";
+ import CodeEmbed from "./common/CodeEmbed";
  import { Divider } from "@chakra-ui/react";
  
  const SkeletonArea = () => {
