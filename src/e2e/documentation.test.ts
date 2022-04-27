@@ -11,17 +11,17 @@ describe("Browser - toolkit tabs", () => {
   afterEach(app.screenshot.bind(app));
   afterAll(app.dispose.bind(app));
 
-  it("Reference toolkit navigation", async () => {
-    await app.switchTab("Reference");
-    await app.findToolkitTopLevelHeading(
-      "Reference",
-      "Reference documentation for micro:bit MicroPython"
+  it("API toolkit navigation", async () => {
+    await app.switchTab("API");
+    await app.findDocumentationTopLevelHeading(
+      "API",
+      "API documentation for micro:bit MicroPython"
     );
   });
 
   it("Insert code", async () => {
-    await app.switchTab("Explore");
-    await app.selectToolkitSection("Display");
+    await app.switchTab("Reference");
+    await app.selectDocumentationSection("Display");
     await app.selectAllInEditor();
     await app.typeInEditor("# Initial document");
 
@@ -31,13 +31,13 @@ describe("Browser - toolkit tabs", () => {
   });
 
   it("Insert code after dropdown choice", async () => {
-    await app.switchTab("Explore");
-    await app.selectToolkitSection("Display");
+    await app.switchTab("Reference");
+    await app.selectDocumentationSection("Display");
     await app.selectAllInEditor();
     await app.typeInEditor("# Initial document");
 
     await app.selectToolkitDropDownOption(
-      "Use the dropdown to try different images:",
+      "Select image:",
       "9" // "Image.SILLY"
     );
     await app.insertToolkitCode("Images: built-in");
@@ -49,10 +49,10 @@ describe("Browser - toolkit tabs", () => {
     await app.selectAllInEditor();
     await app.typeInEditor("#1\n#2\n#3\n");
     await app.findVisibleEditorContents("#2");
-    await app.switchTab("Explore");
-    await app.selectToolkitSection("Display");
+    await app.switchTab("Reference");
+    await app.selectDocumentationSection("Display");
 
-    await app.dragDropToolkitCode("Scroll", 2);
+    await app.dragDropCodeEmbed("Scroll", 2);
 
     // There's some weird trailing whitespace in this snippet that needs fixing in the content.
     const expected =
@@ -64,9 +64,23 @@ describe("Browser - toolkit tabs", () => {
   it("Searches and navigates to the first result", async () => {
     await app.searchToolkits("loop");
     await app.selectFirstSearchResult();
-    await app.findToolkitTopLevelHeading(
+    await app.findDocumentationTopLevelHeading(
       "Loops",
       "Count and repeat sets of instructions"
     );
+  });
+
+  it("Ideas tab navigation", async () => {
+    await app.switchTab("Ideas");
+    await app.findDocumentationTopLevelHeading(
+      "Ideas",
+      "Try out these projects, modify them and get inspired"
+    );
+  });
+
+  it("Select an idea", async () => {
+    const ideaName = "Emotion badge";
+    await app.selectDocumentationIdea(ideaName);
+    await app.findDocumentationTopLevelHeading(ideaName);
   });
 });
