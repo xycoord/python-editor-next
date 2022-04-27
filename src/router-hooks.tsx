@@ -6,7 +6,7 @@
  * Which UI state is encoded into the URL might be subject to change in future
  * based on user feedback and discussion.
  *
- * (c) 2021, Micro:bit Educational Foundation and contributors
+ * (c) 2021-2022, Micro:bit Educational Foundation and contributors
  *
  * SPDX-License-Identifier: MIT
  */
@@ -35,10 +35,10 @@ const anchorForParam = (param: string | null): Anchor | undefined =>
 
 export class RouterParam<T> {
   static tab: RouterParam<string> = new RouterParam("tab");
+  static api: RouterParam<Anchor> = new RouterParam("api");
   static reference: RouterParam<Anchor> = new RouterParam("reference");
-  static explore: RouterParam<Anchor> = new RouterParam("explore");
   static skeleton: RouterParam<Anchor> = new RouterParam("skeleton");
-
+  static idea: RouterParam<Anchor> = new RouterParam("idea");
 
   private constructor(public id: keyof RouterState) {}
 
@@ -51,11 +51,15 @@ export class RouterParam<T> {
 export interface RouterState {
   tab?: string;
   skeleton?: Anchor;
-  explore?: Anchor;
   reference?: Anchor;
+  api?: Anchor;
+  idea?: Anchor;
 }
 
-type NavigationSource = "toolkit-user" | "toolkit-search" | "toolkit-from-code";
+type NavigationSource =
+  | "documentation-user"
+  | "documentation-search"
+  | "documentation-from-code";
 
 type RouterContextValue = [
   RouterState,
@@ -68,9 +72,10 @@ const parse = (search: string): RouterState => {
   const params = new URLSearchParams(search);
   return {
     tab: params.get("tab") ?? undefined,
+    api: anchorForParam(params.get("api")),
     reference: anchorForParam(params.get("reference")),
-    explore: anchorForParam(params.get("explore")),
     skeleton: anchorForParam(params.get("skeleton")),
+    idea: anchorForParam(params.get("idea")),
   };
 };
 
@@ -125,7 +130,8 @@ export const RouterProvider = ({ children }: { children: ReactNode }) => {
       if (source) {
         logging.event({
           type: source,
-          message: newState.skeleton?.id || newState.explore?.id || newState.reference?.id,
+          message:
+            newState.reference?.id || newState.api?.id || newState.idea?.id || newState.skeleton?.id,
         });
       }
       const url = toUrl(newState);

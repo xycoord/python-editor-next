@@ -12,6 +12,7 @@ export const themeExtensions = (fontSize: string) => {
       fontSize,
       fontFamily,
       padding: 0,
+	  zIndex: 0,
     },
     ".cm-gutters": {
       // Make it easier to copy code dragging from the left without line numbers.
@@ -24,8 +25,17 @@ export const themeExtensions = (fontSize: string) => {
       border: "unset",
       color: "var(--chakra-colors-gray-600)",
     },
+    // Widths to accomodate two gutters (lint and line numbers).
+    ".cm-gutter.cm-gutter-lint": {
+      width: "1.8rem",
+      minWidth: "unset",
+    },
     ".cm-gutter": {
-      width: "5rem",
+      minWidth: "2.2rem",
+    },
+    // Don't show markers for diagnostics at info level.
+    ".cm-lint-marker-info": {
+      display: "none",
     },
     ".cm-activeLine": {
       // Can't use background colour for conflicting purposes.

@@ -8,7 +8,7 @@
   "about-comic": [
     {
       "type": 0,
-      "value": "Three panel comic titled \"MicroPython Rocks\" by Mike Rowbit. A cartoon snake introduces Damien, saying \"Meet Damien... He created MicroPython.\". Two snakes discuss MicroPython. The yellow snake says \"MicroPython is designed to work on very small computers.\" \"Like the BBC micro:bit\" the purple snake replies.\" The yellows snake continues \"But Python can run anywhere.\". The purple snake agrees, saying \"Like on this rack of severs that run huge websites\". The background behind the snakes shows a server rack."
+      "value": "Three panel comic titled \"MicroPython Rocks\" by Mike Rowbit. A cartoon snake introduces Damien, saying \"Meet Damien... He created MicroPython.\". Two snakes discuss MicroPython. The yellow snake says \"MicroPython is designed to work on very small computers.\" \"Like your BBC micro:bit\" the purple snake replies.\" The yellows snake continues \"But Python can run anywhere.\". The purple snake agrees, saying \"Like on this rack of servers that run huge websites\". The background behind the snakes shows a server rack."
     }
   ],
   "about-microbit": [
@@ -59,6 +59,24 @@
       "value": "Read more about MicroPython"
     }
   ],
+  "add-action": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
+  "add-file-action": [
+    {
+      "type": 0,
+      "value": "Add file"
+    }
+  ],
+  "add-python": [
+    {
+      "type": 0,
+      "value": "Add a new Python file to your project"
+    }
+  ],
   "added-change": [
     {
       "type": 0,
@@ -69,10 +87,32 @@
       "value": "changeName"
     }
   ],
+  "added-file": [
+    {
+      "type": 0,
+      "value": "Added "
+    },
+    {
+      "type": 1,
+      "value": "filename"
+    }
+  ],
   "already-exists": [
     {
       "type": 0,
       "value": "This file already exists"
+    }
+  ],
+  "api-description": [
+    {
+      "type": 0,
+      "value": "API documentation for micro:bit MicroPython"
+    }
+  ],
+  "api-tab": [
+    {
+      "type": 0,
+      "value": "API"
     }
   ],
   "apidocs-baseclass": [
@@ -311,34 +351,6 @@
       "value": "Copy"
     }
   ],
-  "create-action": [
-    {
-      "type": 0,
-      "value": "Create"
-    }
-  ],
-  "create-file-action": [
-    {
-      "type": 0,
-      "value": "Create new file"
-    }
-  ],
-  "create-python": [
-    {
-      "type": 0,
-      "value": "Create a new Python file"
-    }
-  ],
-  "created-file": [
-    {
-      "type": 0,
-      "value": "Created "
-    },
-    {
-      "type": 1,
-      "value": "filename"
-    }
-  ],
   "delete-action": [
     {
       "type": 0,
@@ -375,12 +387,6 @@
     {
       "type": 0,
       "value": "Disconnect from the micro:bit"
-    }
-  ],
-  "documentation": [
-    {
-      "type": 0,
-      "value": "Documentation"
     }
   ],
   "download-action": [
@@ -439,12 +445,6 @@
       "value": "Edit project name"
     }
   ],
-  "explore-tab": [
-    {
-      "type": 0,
-      "value": "Explore"
-    }
-  ],
   "failed-to-build-hex": [
     {
       "type": 0,
@@ -459,18 +459,6 @@
     {
       "type": 0,
       "value": " file actions"
-    }
-  ],
-  "files-tab": [
-    {
-      "type": 0,
-      "value": "Files"
-    }
-  ],
-  "files-tab-description": [
-    {
-      "type": 0,
-      "value": "View, create, add and edit the files in your project"
     }
   ],
   "flash-action": [
@@ -515,6 +503,12 @@
       "value": "Help"
     }
   ],
+  "help-support": [
+    {
+      "type": 0,
+      "value": "Help & support"
+    }
+  ],
   "help-translate": [
     {
       "type": 0,
@@ -545,10 +539,16 @@
       "value": "Simple"
     }
   ],
-  "hints-and-tips": [
+  "ideas-tab": [
     {
       "type": 0,
-      "value": "Hints and tips"
+      "value": "Ideas"
+    }
+  ],
+  "ideas-tab-description": [
+    {
+      "type": 0,
+      "value": "Try out these projects, modify them and get inspired"
     }
   ],
   "insert-code-action": [
@@ -645,6 +645,12 @@
       "value": "micro:bit board with the 5 by 5 LED grid showing a heart"
     }
   ],
+  "micropython-documentation": [
+    {
+      "type": 0,
+      "value": "MicroPython documentation"
+    }
+  ],
   "micropython-history": [
     {
       "type": 0,
@@ -685,6 +691,12 @@
     {
       "type": 0,
       "value": "More"
+    }
+  ],
+  "more-download-options": [
+    {
+      "type": 0,
+      "value": "More download options"
     }
   ],
   "name-not-blank": [
@@ -749,6 +761,32 @@
       "value": "Options"
     }
   ],
+  "parameter-help": [
+    {
+      "type": 0,
+      "value": "Parameter help"
+    }
+  ],
+  "parameter-help-automatic": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
+  "parameter-help-manual": [
+    {
+      "type": 0,
+      "value": "Manual ("
+    },
+    {
+      "type": 1,
+      "value": "shortcut"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "permanently-delete": [
     {
       "type": 0,
@@ -775,16 +813,22 @@
       "value": "Project header"
     }
   ],
-  "projects-tab": [
+  "project-name": [
     {
       "type": 0,
-      "value": "Projects"
+      "value": "Project name"
     }
   ],
-  "projects-tab-description": [
+  "project-tab": [
     {
       "type": 0,
-      "value": "Placeholder for projects with full working code examples"
+      "value": "Project"
+    }
+  ],
+  "project-tab-description": [
+    {
+      "type": 0,
+      "value": "View, create, add and edit the files in your project"
     }
   ],
   "python-powered": [
@@ -821,12 +865,6 @@
     {
       "type": 0,
       "value": "Redo"
-    }
-  ],
-  "reference-description": [
-    {
-      "type": 0,
-      "value": "Reference documentation for micro:bit MicroPython"
     }
   ],
   "reference-tab": [
@@ -896,25 +934,25 @@
   "serial-ctrl-c-action": [
     {
       "type": 0,
-      "value": "Send Ctrl-C for REPL"
+      "value": "Send Ctrl+C for REPL"
     }
   ],
   "serial-ctrl-d-action": [
     {
       "type": 0,
-      "value": "Send Ctrl-D to reset"
-    }
-  ],
-  "serial-ctrl-e-action": [
-    {
-      "type": 0,
-      "value": "Send Ctrl-E for paste mode"
+      "value": "Send Ctrl+D to reset"
     }
   ],
   "serial-expand": [
     {
       "type": 0,
       "value": "Show serial"
+    }
+  ],
+  "serial-flashed": [
+    {
+      "type": 0,
+      "value": "micro:bit flashed"
     }
   ],
   "serial-help-ctrl-c": [
@@ -1031,10 +1069,22 @@
       "value": "Serial hints and tips"
     }
   ],
+  "serial-hints-and-tips": [
+    {
+      "type": 0,
+      "value": "Serial hints and tips"
+    }
+  ],
   "serial-menu": [
     {
       "type": 0,
       "value": "Serial menu"
+    }
+  ],
+  "serial-ready-to-flash": [
+    {
+      "type": 0,
+      "value": "micro:bit ready to flash"
     }
   ],
   "serial-running": [
@@ -1053,6 +1103,12 @@
     {
       "type": 0,
       "value": "Settings"
+    }
+  ],
+  "show-api-documentation": [
+    {
+      "type": 0,
+      "value": "Show API documentation"
     }
   ],
   "show-less": [
@@ -1085,12 +1141,6 @@
     {
       "type": 1,
       "value": "item"
-    }
-  ],
-  "show-reference-documentation": [
-    {
-      "type": 0,
-      "value": "Show reference documentation"
     }
   ],
   "sidebar": [

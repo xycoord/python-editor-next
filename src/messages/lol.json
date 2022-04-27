@@ -59,6 +59,24 @@
       "value": "Реад море абоют МісроПутхон"
     }
   ],
+  "add-action": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
+  "add-file-action": [
+    {
+      "type": 0,
+      "value": "Add new file"
+    }
+  ],
+  "add-python": [
+    {
+      "type": 0,
+      "value": "Add a new Python file to your project"
+    }
+  ],
   "added-change": [
     {
       "type": 0,
@@ -69,10 +87,32 @@
       "value": "changeName"
     }
   ],
+  "added-file": [
+    {
+      "type": 0,
+      "value": "Added "
+    },
+    {
+      "type": 1,
+      "value": "filename"
+    }
+  ],
   "already-exists": [
     {
       "type": 0,
       "value": "Тхіс філе алреаду ексістс"
+    }
+  ],
+  "api-description": [
+    {
+      "type": 0,
+      "value": "API documentation for micro:bit MicroPython"
+    }
+  ],
+  "api-tab": [
+    {
+      "type": 0,
+      "value": "API"
     }
   ],
   "apidocs-baseclass": [
@@ -311,34 +351,6 @@
       "value": "Cопу"
     }
   ],
-  "create-action": [
-    {
-      "type": 0,
-      "value": "Cреате"
-    }
-  ],
-  "create-file-action": [
-    {
-      "type": 0,
-      "value": "Cреате нев філе"
-    }
-  ],
-  "create-python": [
-    {
-      "type": 0,
-      "value": "Cреате а нев Путхон філе"
-    }
-  ],
-  "created-file": [
-    {
-      "type": 0,
-      "value": "Cреатед "
-    },
-    {
-      "type": 1,
-      "value": "filename"
-    }
-  ],
   "delete-action": [
     {
       "type": 0,
@@ -375,12 +387,6 @@
     {
       "type": 0,
       "value": "Діссоннест фром тхе місро:біт"
-    }
-  ],
-  "documentation": [
-    {
-      "type": 0,
-      "value": "Досюментатіон"
     }
   ],
   "download-action": [
@@ -439,12 +445,6 @@
       "value": "Eдіт проджест наме"
     }
   ],
-  "explore-tab": [
-    {
-      "type": 0,
-      "value": "Eксплоре"
-    }
-  ],
   "failed-to-build-hex": [
     {
       "type": 0,
@@ -459,18 +459,6 @@
     {
       "type": 0,
       "value": " філе астіонс"
-    }
-  ],
-  "files-tab": [
-    {
-      "type": 0,
-      "value": "Філес"
-    }
-  ],
-  "files-tab-description": [
-    {
-      "type": 0,
-      "value": "View, create, add and edit the files in your Python Editor project"
     }
   ],
   "flash-action": [
@@ -515,6 +503,12 @@
       "value": "Хелп"
     }
   ],
+  "help-support": [
+    {
+      "type": 0,
+      "value": "Help & support"
+    }
+  ],
   "help-translate": [
     {
       "type": 0,
@@ -545,10 +539,16 @@
       "value": "Сімпле"
     }
   ],
-  "hints-and-tips": [
+  "ideas-tab": [
     {
       "type": 0,
-      "value": "Хінтс анд тіпс"
+      "value": "Ideas"
+    }
+  ],
+  "ideas-tab-description": [
+    {
+      "type": 0,
+      "value": "Placeholder for full working code examples"
     }
   ],
   "insert-code-action": [
@@ -645,6 +645,12 @@
       "value": "місро:біт боард вітх тхе 5 бу 5 ЛEД джрід сховіндж а хеарт"
     }
   ],
+  "micropython-documentation": [
+    {
+      "type": 0,
+      "value": "MicroPython Documentation"
+    }
+  ],
   "micropython-history": [
     {
       "type": 0,
@@ -685,6 +691,12 @@
     {
       "type": 0,
       "value": "Море"
+    }
+  ],
+  "more-download-options": [
+    {
+      "type": 0,
+      "value": "More download options"
     }
   ],
   "name-not-blank": [
@@ -749,6 +761,32 @@
       "value": "Оптіонс"
     }
   ],
+  "parameter-help": [
+    {
+      "type": 0,
+      "value": "Parameter help"
+    }
+  ],
+  "parameter-help-automatic": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
+  "parameter-help-manual": [
+    {
+      "type": 0,
+      "value": "Manual ("
+    },
+    {
+      "type": 1,
+      "value": "shortcut"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "permanently-delete": [
     {
       "type": 0,
@@ -775,16 +813,22 @@
       "value": "Проджест хеадер"
     }
   ],
-  "projects-tab": [
+  "project-name": [
     {
       "type": 0,
-      "value": "Projects"
+      "value": "Project name"
     }
   ],
-  "projects-tab-description": [
+  "project-tab": [
     {
       "type": 0,
-      "value": "Placeholder for projects with full working code examples"
+      "value": "Project"
+    }
+  ],
+  "project-tab-description": [
+    {
+      "type": 0,
+      "value": "View, create, add and edit the files in your project"
     }
   ],
   "python-powered": [
@@ -821,12 +865,6 @@
     {
       "type": 0,
       "value": "Redo"
-    }
-  ],
-  "reference-description": [
-    {
-      "type": 0,
-      "value": "Референсе досюментатіон фор місро:біт МісроПутхон"
     }
   ],
   "reference-tab": [
@@ -887,12 +925,6 @@
       "value": "Search"
     }
   ],
-  "search-open": [
-    {
-      "type": 0,
-      "value": "Open search"
-    }
-  ],
   "serial-collapse": [
     {
       "type": 0,
@@ -911,16 +943,16 @@
       "value": "Сенд Cтрл-Д то ресет"
     }
   ],
-  "serial-ctrl-e-action": [
-    {
-      "type": 0,
-      "value": "Сенд Cтрл-E фор пасте моде"
-    }
-  ],
   "serial-expand": [
     {
       "type": 0,
       "value": "Схов серіал"
+    }
+  ],
+  "serial-flashed": [
+    {
+      "type": 0,
+      "value": "micro:bit flashed"
     }
   ],
   "serial-help-ctrl-c": [
@@ -1037,10 +1069,22 @@
       "value": "Серіал хінтс анд тіпс"
     }
   ],
+  "serial-hints-and-tips": [
+    {
+      "type": 0,
+      "value": "Serial hints and tips"
+    }
+  ],
   "serial-menu": [
     {
       "type": 0,
       "value": "Серіал меню"
+    }
+  ],
+  "serial-ready-to-flash": [
+    {
+      "type": 0,
+      "value": "micro:bit ready to flash"
     }
   ],
   "serial-running": [
@@ -1059,6 +1103,12 @@
     {
       "type": 0,
       "value": "Сеттінджс"
+    }
+  ],
+  "show-api-documentation": [
+    {
+      "type": 0,
+      "value": "Show API documentation"
     }
   ],
   "show-less": [
@@ -1091,12 +1141,6 @@
     {
       "type": 1,
       "value": "item"
-    }
-  ],
-  "show-reference-documentation": [
-    {
-      "type": 0,
-      "value": "Схов референсе досюментатіон"
     }
   ],
   "sidebar": [

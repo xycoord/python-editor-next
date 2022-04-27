@@ -43,7 +43,7 @@ interface ImportedName {
 }
 
 // CM has more options than this.
-class AliasesNotSupportedError extends Error {}
+class AliasesNotSupportedError extends Error { }
 
 /**
  * Calculate the changes needed to insert the given code into the editor.
@@ -61,16 +61,23 @@ export const calculateChanges = (
   state: EditorState,
   source: string,
   type: CodeInsertType,
-  line?: number
+  line?: number,
+  pos?: number
 ) => {
-  const parser = python().language.parser;
-  const sourceTree = parser.parse(source);
-  const sourceImports = topLevelImports(sourceTree, (from, to) =>
-    source.slice(from, to)
-  );
+  let sourceImports: ImportNode[] = []
+
+  if (type === "example" || type === "call") {
+    const parser = python().language.parser;
+    const sourceTree = parser.parse(source);
+    sourceImports = topLevelImports(sourceTree, (from, to) =>
+      source.slice(from, to)
+    );
+  }
+
   const sourceImportsTo =
     sourceImports[sourceImports.length - 1]?.node?.to ?? 0;
-  const mainCode = source.slice(sourceImportsTo).trim();
+  // Remove all new lines at the start and all white spaces at the end, remove indents later
+  let mainCode = source.slice(sourceImportsTo).replace(/^\n+|\s+$/g, "");
   const requiredImports = sourceImports.flatMap(
     convertImportNodeToRequiredImports
   );
@@ -95,12 +102,13 @@ export const calculateChanges = (
   let mainPreceedingWhitespace = "";
   let mainChange: SimpleChangeSpec | undefined;
   let mainIndent = "";
+  let extraLines = 0;
   if (mainCode) {
     let mainFrom: number;
     if (line !== undefined) {
       // Tweak so the addition preview is under the mouse even if we added imports.
       line = Math.max(1, line - importLines);
-      const extraLines = line - state.doc.lines;
+      extraLines = line - state.doc.lines;
       if (extraLines > 0) {
         mainFrom = state.doc.length;
         mainPreceedingWhitespace = "\n".repeat(extraLines);
@@ -112,8 +120,32 @@ export const calculateChanges = (
       mainFrom = skipWhitespaceLines(state.doc, importInsertPoint.from);
     }
 
-    const insertLine = state.doc.lineAt(mainFrom);
-    mainIndent = insertLine.text.match(/^(\s*)/)?.[0] ?? "";
+    const commonIndent = mainCode.match(/^(\s*)/)?.[0] ?? "";
+    mainCode = mainCode.split("\n")
+      .map(line => line.replace(new RegExp("^" + commonIndent), ""))
+      .join("\n");
+
+    const insertLine = state.doc.lineAt(mainFrom)
+    const insertLineIndentLength = insertLine.text.match(/^(\s*)/)?.[0].length ?? 0
+    const previousLine = state.doc.line(Math.max(insertLine.number - 1, 1))
+    const previousLineIndentLength = previousLine.text.match(/^(\s*)/)?.[0].length ?? 0
+    const previousLineEndsInColon = /:(#.*)?(\s*)$/.test(previousLine.text)
+
+    let colOffset;
+    if (pos && line && line <= state.doc.lines) {
+      colOffset = pos - state.doc.line(line).from
+    } else {
+      colOffset = 0
+    }
+
+    let indentLength = Math.floor((2+colOffset) / 4) * 4
+    indentLength = Math.max(indentLength, Math.min(insertLineIndentLength, previousLineIndentLength))
+    indentLength = Math.min(
+      indentLength,
+      Math.max(insertLineIndentLength, previousLineIndentLength + (previousLineEndsInColon ? 4 : 0))
+    )
+    mainIndent = " ".repeat(indentLength)
+
     mainChange = {
       from: mainFrom,
       insert: mainPreceedingWhitespace + indentBy(mainCode, mainIndent) + "\n",

@@ -1,8 +1,8 @@
 [Settings]
 [build]
-command = "npm run ci"
+command = "npm run build"
 [build.environment]
-  CI = "true"
+  CI = "false"
 [[redirects]]
   from = "/*"
   to = "/index.html"

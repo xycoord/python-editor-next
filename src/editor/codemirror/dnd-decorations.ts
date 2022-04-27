@@ -12,6 +12,7 @@ import {
 } from "@codemirror/view";
 import { RangeSetBuilder } from "@codemirror/rangeset";
 import { StateEffect } from "@codemirror/state";
+import { makeShadow, dndShadowsTheme } from "./dnd-shadows";
 
 export const timeoutEffect = StateEffect.define<{}>({});
 
@@ -21,9 +22,24 @@ export class DndDecorationsViewPlugin {
   previewPos = new Set<number>();
   droppedRecentPos = new Set<number>();
   droppedDonePos = new Set<number>();
+  underlayLayer: HTMLElement;
 
   constructor(view: EditorView, private timeout: number = 100) {
     this.decorations = this.dndDecorationsForLines(view);
+
+    this.underlayLayer = view.scrollDOM.appendChild(
+          document.createElement("div")
+        );
+    this.underlayLayer.className = "cm-cs--dnd-under-layer";
+    this.underlayLayer.setAttribute("aria-hidden", "true");
+    this.underlayLayer.id = "dnd-underlay-layer"
+    this.underlayLayer.setAttribute("dnd-pointer-events", "none")
+    this.underlayLayer.style.zIndex = "-5"
+    this.underlayLayer.style.position = "absolute"
+    //WHAT IF THE GUTTER IS LARGER???
+    this.underlayLayer.style.left = "93px"
+    this.underlayLayer.style.width = "100%"
+    this.underlayLayer.style.height = "100%"
   }
 
   update({ docChanged, transactions, changes, state, view }: ViewUpdate) {
@@ -35,9 +51,10 @@ export class DndDecorationsViewPlugin {
       const isPreview = transactions.some((t) => t.isUserEvent("dnd.preview"));
       const isDrop = transactions.some((t) => t.isUserEvent("dnd.drop"));
       if (isPreview || isDrop) {
-        changes.iterChangedRanges((_fromA, _toA, fromB, toB) => {
+        changes.iterChangedRanges((_fromA, toA, fromB, toB) => {
           const start = state.doc.lineAt(fromB);
           const end = state.doc.lineAt(toB);
+           
           for (let l = start.number; l < end.number; ++l) {
             const line = state.doc.line(l);
             if (line.text.trim()) {
@@ -48,6 +65,8 @@ export class DndDecorationsViewPlugin {
               }
             }
           }
+          makeShadow(view, state, isPreview, isDrop, 
+            this.underlayLayer, fromB, toB)
         });
       }
 
@@ -102,20 +121,24 @@ const droppedDone = Decoration.line({
   attributes: { class: "cm-dropped--done" },
 });
 
-const baseColor = "#f7febf";
+// const baseColor = "#f7febf";
 
 export const dndDecorations = () => [
   EditorView.theme({
-    ".cm-preview": {
-      backgroundColor: `${baseColor}55`,
-    },
-    ".cm-dropped--recent": {
-      backgroundColor: `${baseColor}dd`,
-    },
-    ".cm-dropped--done": {
-      transition: "background-color ease-in 2.9s",
-    },
+    // ".cm-preview": {
+    //   backgroundColor: `${baseColor}55`,
+    // },
+    // ".cm-dropped--recent": {
+    //   backgroundColor: `${baseColor}dd`,
+    // },
+    // ".cm-dropped--done": {
+    //   transition: "background-color ease-in 2.9s",
+    // },
+    ".cm-gutters": {
+      zIndex: "-6"
+    }
   }),
+  dndShadowsTheme,
   ViewPlugin.fromClass(DndDecorationsViewPlugin, {
     decorations: (v) => v.decorations,
   }),
