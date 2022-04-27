@@ -159,6 +159,7 @@ const dndHandlers = () => {
         if (!view.state.facet(EditorView.editable) || !dragContext) {
           return;
         }
+        document.getElementById("dnd-underlay-layer")!.innerHTML = ""
 
         if (event.target === view.contentDOM) {
           event.preventDefault();
