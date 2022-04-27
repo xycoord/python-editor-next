@@ -23,6 +23,8 @@ import {
 import { dndSupport } from "./dnd";
 import { dropCursor } from "./dropcursor";
 import highlightStyle from "./highlightStyle";
+import { popupPlugin } from "./popup";
+import { dropdowns } from "./dropdown-config";
 
 const customTabBinding: KeyBinding = {
   key: "Tab",
@@ -67,4 +69,7 @@ export const editorConfig: Extension = [
   indentUnit.of(" ".repeat(indentSize)),
   python(),
   dndSupport(),
+  dropdowns(),
+  popupPlugin,
+
 ];

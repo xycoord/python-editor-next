@@ -1,5 +1,3 @@
-import { stat } from "fs";
-
 /**
  * A CoreMirror view extension providing structural highlighting using
  * CodeMirror's syntax tree.

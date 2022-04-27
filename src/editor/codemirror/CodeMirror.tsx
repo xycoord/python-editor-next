@@ -26,7 +26,7 @@ import { compartment, editorConfig } from "./config";
 import { languageServer } from "./language-server/view";
 import { codeStructure, CodeStructureSettings } from "./structure-highlighting";
 import themeExtensions from "./themeExtensions";
-import interact from "@replit/codemirror-interact";
+
 
 interface CodeMirrorProps {
   className?: string;
