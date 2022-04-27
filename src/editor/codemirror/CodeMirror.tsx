@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { highlightActiveLineGutter, lineNumbers } from "@codemirror/gutter";
+import { highlightActiveLineGutter, lineNumbers} from "@codemirror/gutter";
 import { redoDepth, undoDepth } from "@codemirror/history";
 import { lintGutter } from "./lint/lint";
 import { EditorSelection, EditorState, Extension } from "@codemirror/state";
@@ -24,6 +24,11 @@ import {
 import "./CodeMirror.css";
 import { compartment, editorConfig } from "./config";
 import { languageServer } from "./language-server/view";
+import {
+	dndStructure,
+	// DndStructureSettings,
+	dndStructureHighlightingCompartment,
+} from "./dnd-extension";
 import { codeStructure, CodeStructureSettings } from "./structure-highlighting";
 import themeExtensions from "./themeExtensions";
 
@@ -108,6 +113,10 @@ const CodeMirror = ({
           highlightActiveLineGutter(),
           highlightActiveLine(),
           // Extensions we enable/disable based on props.
+          dndStructureHighlightingCompartment.of(
+            //Changing the settings here doesn't seem to have any impact
+            dndStructure({dragSmallStatements:false, indentHandles: false})
+          ),
           compartment.of([
             client
               ? languageServer(client, uri, intl, logging, {
@@ -155,6 +164,9 @@ const CodeMirror = ({
   useEffect(() => {
     viewRef.current!.dispatch({
       effects: [
+        dndStructureHighlightingCompartment.reconfigure(
+            dndStructure({dragSmallStatements: false, indentHandles: false})
+        ),
         compartment.reconfigure([
           client
             ? languageServer(client, uri, intl, logging, {

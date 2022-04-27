@@ -12,6 +12,7 @@ export const themeExtensions = (fontSize: string) => {
       fontSize,
       fontFamily,
       padding: 0,
+	  zIndex: 0,
     },
     ".cm-gutters": {
       // Make it easier to copy code dragging from the left without line numbers.

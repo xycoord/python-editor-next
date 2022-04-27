@@ -25,6 +25,7 @@ interface LastDragPos {
   /**
    * The last drag position.
    */
+  pos: number;
   line: number;
   /**
    * The inverse set of changes to the changes made for preview.
@@ -38,6 +39,10 @@ export type CodeInsertType =
    */
   | "example"
   /**
+   * Rearragement of code by dragging and dropping in the editor.
+   */
+  | "rearrangement"
+  /**
    * A function call.
    */
   | "call";
@@ -46,6 +51,9 @@ export interface DragContext {
   code: string;
   type: CodeInsertType;
   id?: string;
+  undoToMerge?: ChangeSet;
+  redoToMerge?: ChangeSet;
+  dropCallback?: () => void;
 }
 
 let dragContext: DragContext | undefined;
@@ -84,8 +92,10 @@ const clearSuppressChildDragEnterLeave = (view: EditorView) => {
   findWrappingSection(view).classList.remove("cm-drag-in-progress");
 };
 
+
 const dndHandlers = () => {
   let lastDragPos: LastDragPos | undefined;
+  let lastTransaction: Transaction | undefined;
 
   const revertPreview = (view: EditorView) => {
     if (lastDragPos) {
@@ -110,25 +120,28 @@ const dndHandlers = () => {
 
           const visualLine = view.visualLineAtHeight(event.y);
           const line = view.state.doc.lineAt(visualLine.from);
+          const pos = view.posAtCoords(event, false);
 
-          if (line.number !== lastDragPos?.line) {
+          if (line.number !== lastDragPos?.line || pos !== lastDragPos?.pos) {
             debug("  dragover", line);
             revertPreview(view);
 
-            const transaction = calculateChanges(
+            lastTransaction = calculateChanges(
               view.state,
               dragContext.code,
               dragContext.type,
-              line.number
+              line.number,
+              pos
             );
             lastDragPos = {
+              pos: pos,
               line: line.number,
-              previewUndo: transaction.changes.invert(view.state.doc),
+              previewUndo: lastTransaction.changes.invert(view.state.doc),
             };
             // Take just the changes, skip the selection updates we perform on drop.
             view.dispatch({
               userEvent: "dnd.preview",
-              changes: transaction.changes,
+              changes: lastTransaction.changes,
               annotations: [Transaction.addToHistory.of(false)],
             });
           }
@@ -146,11 +159,13 @@ const dndHandlers = () => {
         if (!view.state.facet(EditorView.editable) || !dragContext) {
           return;
         }
+        document.getElementById("dnd-underlay-layer")!.innerHTML = ""
 
         if (event.target === view.contentDOM) {
           event.preventDefault();
           clearSuppressChildDragEnterLeave(view);
           revertPreview(view);
+          lastTransaction = undefined;
           debug(
             "  dragleave",
             {
@@ -171,9 +186,14 @@ const dndHandlers = () => {
         }
       },
       drop(event, view) {
+        if (dragContext && dragContext.dropCallback) {
+          dragContext.dropCallback();
+        }
+
         if (!view.state.facet(EditorView.editable) || !dragContext) {
           return;
         }
+
         deployment.logging.event({
           type: "code-drop",
           message: dragContext.id,
@@ -182,19 +202,33 @@ const dndHandlers = () => {
         clearSuppressChildDragEnterLeave(view);
         event.preventDefault();
 
-        const visualLine = view.visualLineAtHeight(event.y);
-        const line = view.state.doc.lineAt(visualLine.from);
-
         revertPreview(view);
-        view.dispatch(
-          calculateChanges(
-            view.state,
-            dragContext.code,
-            dragContext.type,
-            line.number
-          )
-        );
+
+        // To have a single undo event, we need to undo the undo actions and then 
+        // compose the redo actions and the drop action into a single ChangeSet.
+        if (dragContext.undoToMerge) {
+          view.dispatch({
+            userEvent: "dnd-undo",
+            changes: dragContext?.undoToMerge,
+            annotations: [Transaction.addToHistory.of(false)],
+          })
+        }
+
+        let changes;
+        if (lastTransaction && dragContext.redoToMerge) {
+          console.log("yay");
+          changes = dragContext.redoToMerge.compose(lastTransaction.changes);
+        }
+
+        //make changes
+        view.dispatch({
+          userEvent: `dnd.drop.${dragContext.type}`,
+          changes: changes,
+          selection: lastTransaction?.selection,
+        });
         view.focus();
+
+        lastTransaction = undefined;
       },
     }),
   ];
