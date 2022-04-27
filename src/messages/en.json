@@ -1099,6 +1099,24 @@
       "value": "Sidebar"
     }
   ],
+  "skeleton-tab-description": [
+    {
+      "type": 0,
+      "value": "Skeleton code snippets for micro:bit MicroPython"
+    }
+  ],
+  "skeleton-tab-heading": [
+    {
+      "type": 0,
+      "value": "Skeleton Code Snippets"
+    }
+  ],
+  "skeleton-tab": [
+    {
+      "type": 0,
+      "value": "Skeleton"
+    }
+  ],
   "software-versions": [
     {
       "type": 0,

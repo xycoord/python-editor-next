@@ -10,7 +10,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import {
+ import {
   createContext,
   ReactNode,
   useCallback,
@@ -37,6 +37,8 @@ export class RouterParam<T> {
   static tab: RouterParam<string> = new RouterParam("tab");
   static reference: RouterParam<Anchor> = new RouterParam("reference");
   static explore: RouterParam<Anchor> = new RouterParam("explore");
+  static skeleton: RouterParam<Anchor> = new RouterParam("skeleton");
+
 
   private constructor(public id: keyof RouterState) {}
 
@@ -48,6 +50,7 @@ export class RouterParam<T> {
 
 export interface RouterState {
   tab?: string;
+  skeleton?: Anchor;
   explore?: Anchor;
   reference?: Anchor;
 }
@@ -67,6 +70,7 @@ const parse = (search: string): RouterState => {
     tab: params.get("tab") ?? undefined,
     reference: anchorForParam(params.get("reference")),
     explore: anchorForParam(params.get("explore")),
+    skeleton: anchorForParam(params.get("skeleton")),
   };
 };
 
@@ -121,7 +125,7 @@ export const RouterProvider = ({ children }: { children: ReactNode }) => {
       if (source) {
         logging.event({
           type: source,
-          message: newState.explore?.id || newState.reference?.id,
+          message: newState.skeleton?.id || newState.explore?.id || newState.reference?.id,
         });
       }
       const url = toUrl(newState);
