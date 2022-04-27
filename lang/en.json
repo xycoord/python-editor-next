@@ -547,6 +547,18 @@
     "defaultMessage": "Sidebar",
     "description": "Aria label for the area on the left"
   },
+  "skeleton-tab-description": {
+    "defaultMessage": "Common code structures for micro:bit MicroPython",
+    "description": "Description at the top of the Skeleton tab"
+  },
+  "skeleton-tab-heading": {
+    "defaultMessage": "Skeleton Code Snippets",
+    "description": "Heading at the top of the Skeleton tab"
+  },
+  "skeleton-tab": {
+    "defaultMessage": "Skeleton",
+    "description": "Skeleton tab button text"
+  },
   "software-versions": {
     "defaultMessage": "Software versions",
     "description": "Heading for a table of software versions in the about dialog"
