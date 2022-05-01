@@ -35,28 +35,71 @@ export const makeShadow =
     // to is the start of the next line so we take 1
     let endline = state.doc.lineAt(to).number - 1
 
-    //remove leading and trailing whitespace
-    //the changes often add blank lines, this ignores them
+    startline = trimLeadingBlankLines(state, startline, endline)
+    endline = trimTrailingBlankLines(state, startline, endline)
+
+    let top = view.defaultLineHeight * (startline - 1)
+    let height = view.defaultLineHeight * (endline + 1 - startline)
+
+    const startlinetext = state.doc.line(startline).text
+    const isBlock = startlinetext.trim().endsWith(":")
+
+    const tabSize = 4
+    const numOfIndents = countIndent(tabSize, startlinetext)
+    const blockIndent = numOfIndents * tabSize * view.defaultCharacterWidth 
+
+    const boxShadow = document.createElement("div") 
+      boxShadow.classList.add("cm-dnd-shadow","cm-dnd-boxshadow")
+      boxShadow.style.left = blockIndent + 19 + "px"
+      boxShadow.style.top = top + "px"
+      boxShadow.style.height = height + "px"
+
+    const handleShadow = document.createElement("div") 
+      handleShadow.classList.add("cm-dnd-shadow","cm-dnd-handleshadow")
+      handleShadow.style.top = top + "px"
+      handleShadow.style.height = view.defaultLineHeight + "px"
+      handleShadow.style.left = blockIndent + "px"
+
+    if(previewRemoved) {
+      handleShadow.classList.add("cm-dnd-boxshadow--up")
+      boxShadow.classList.add("cm-dnd-boxshadow--up")
+    } else {
+      handleShadow.classList.add("cm-dnd-boxshadow--transition")
+      boxShadow.classList.add("cm-dnd-boxshadow--transiton")
+      setTimeout(() => {
+        handleShadow.classList.add("cm-dnd-boxshadow--up")
+        boxShadow.classList.add("cm-dnd-boxshadow--up")
+      } , 1);
+    }
+
+    underlayLayer.appendChild(boxShadow)
+    if (isBlock) underlayLayer.appendChild(handleShadow)
+  }
+}
+
+//the changes often add blank lines, these ignore them
+const trimLeadingBlankLines = 
+  (state:EditorState, startline: number, endline: number): number => {
     let line = state.doc.line(startline)
     while (startline < endline && !line.text.trim()) {
       startline = startline + 1
       line = state.doc.line(startline)
     }
-    line = state.doc.line(endline)
+    return startline
+  }
+const trimTrailingBlankLines =
+  (state: EditorState, startline: number, endline: number): number => {
+    let line = state.doc.line(endline)
     while (endline > startline && !line.text.trim()) {
       endline = endline - 1
       line = state.doc.line(endline)
     }
+    return endline
+  }
 
-
-    let top = view.defaultLineHeight * (startline - 1)
-    let height = view.defaultLineHeight * (endline + 1 - startline)
-    
-
-    //calculate indent
-    let startlinetext = state.doc.line(startline).text
+const countIndent =
+  (tabSize: number, startlinetext: string): number => {
     let numOfIndents = 0
-    const tabSize = 4
     while (true) {
       if (startlinetext.startsWith(" ".repeat(tabSize))){
         startlinetext = startlinetext.slice(tabSize)
@@ -65,38 +108,8 @@ export const makeShadow =
       } else break
       numOfIndents += 1
     }
-    console.log("numINd", numOfIndents)
-
-    let blockIndent = numOfIndents * tabSize * view.defaultCharacterWidth 
-
-    let box = document.createElement("div") 
-    box.classList.add("cm-dnd-shadow","cm-dnd-boxshadow")
-    box.style.left = blockIndent + 19 + "px"
-    box.style.top = top + "px"
-    box.style.height = height + "px"
-
-    let handleShadow = document.createElement("div") 
-    handleShadow.classList.add("cm-dnd-shadow","cm-dnd-handleshadow")
-    handleShadow.style.top = top + "px"
-    handleShadow.style.height = view.defaultLineHeight + "px"
-    handleShadow.style.left = blockIndent + "px"
-
-    if(previewRemoved) {
-      handleShadow.classList.add("cm-dnd-boxshadow--up")
-      box.classList.add("cm-dnd-boxshadow--up")
-    } else {
-      handleShadow.classList.add("cm-dnd-boxshadow--transition")
-      box.classList.add("cm-dnd-boxshadow--transiton")
-      setTimeout(() => {
-        handleShadow.classList.add("cm-dnd-boxshadow--up")
-        box.classList.add("cm-dnd-boxshadow--up")
-      } , 1);
-    }
-
-    underlayLayer.appendChild(box)
-    underlayLayer.appendChild(handleShadow)
+    return numOfIndents
   }
-}
 
 export const dndShadowsTheme = EditorView.theme({
   ".cm-dnd-shadow": {

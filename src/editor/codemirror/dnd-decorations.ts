@@ -65,6 +65,7 @@ export class DndDecorationsViewPlugin {
               }
             }
           }
+          
           makeShadow(view, state, isPreview, isDrop, 
             this.underlayLayer, fromB, toB)
         });
