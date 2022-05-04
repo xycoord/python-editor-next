@@ -15,7 +15,7 @@ export const baseTheme = EditorView.baseTheme({
 	position: "absolute",
     top: 0,
 	  height: "100%",
-    width: "100%",
+    width: "calc(100% - 76px)", //dodgy approximation
 	  margin: "auto",
     left: "95px", 
     zIndex: 201,

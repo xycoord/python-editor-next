@@ -105,13 +105,13 @@ const CodeMirror = ({
         doc: defaultValue,
         extensions: [
           notify,
-          editorConfig,
           // Extensions only relevant for editing:
           // Order of lintGutter and lineNumbers determines how they are displayed.
           lintGutter(),
           lineNumbers(),
           highlightActiveLineGutter(),
           highlightActiveLine(),
+          editorConfig,
           // Extensions we enable/disable based on props.
           dndStructureHighlightingCompartment.of(
             //Changing the settings here doesn't seem to have any impact

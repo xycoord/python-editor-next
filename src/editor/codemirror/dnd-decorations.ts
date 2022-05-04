@@ -26,20 +26,24 @@ export class DndDecorationsViewPlugin {
 
   constructor(view: EditorView, private timeout: number = 100) {
     this.decorations = this.dndDecorationsForLines(view);
-
-    this.underlayLayer = view.scrollDOM.appendChild(
-          document.createElement("div")
-        );
+    this.underlayLayer = document.createElement("div")
+    let gutters = view.scrollDOM.querySelector(".cm-gutters") as HTMLElement
+    if (!gutters) return
+    view.scrollDOM.appendChild(this.underlayLayer);
     this.underlayLayer.className = "cm-cs--dnd-under-layer";
     this.underlayLayer.setAttribute("aria-hidden", "true");
     this.underlayLayer.id = "dnd-underlay-layer"
     this.underlayLayer.setAttribute("dnd-pointer-events", "none")
-    this.underlayLayer.style.zIndex = "-5"
-    this.underlayLayer.style.position = "absolute"
+    
     //WHAT IF THE GUTTER IS LARGER???
-    this.underlayLayer.style.left = "76px"
-    this.underlayLayer.style.width = "100%"
-    this.underlayLayer.style.height = "100%"
+    //The gutter seems to be rendered after this, why?
+    let gutterWidth = 63.990
+    let gutterPadding = 16
+    let weirdOffset = - 3
+    let totalOffset = gutterWidth + gutterPadding + weirdOffset
+    this.underlayLayer.style.left = totalOffset + "px"
+    this.underlayLayer.style.width = `calc(100% - ${totalOffset}px)`
+
   }
 
   update({ docChanged, transactions, changes, state, view }: ViewUpdate) {
@@ -47,7 +51,7 @@ export class DndDecorationsViewPlugin {
       this.previewPos.clear();
       this.droppedRecentPos.clear();
       this.droppedDonePos.clear();
-
+  
       const isPreview = transactions.some((t) => t.isUserEvent("dnd.preview"));
       const isDrop = transactions.some((t) => t.isUserEvent("dnd.drop"));
       if (isPreview || isDrop) {
@@ -137,6 +141,11 @@ export const dndDecorations = () => [
     // },
     ".cm-gutters": {
       zIndex: "-6"
+    },
+    ".cm-cs--dnd-under-layer": {
+      zIndex: "-5",
+      position: "absolute",
+      height: "100%"
     }
   }),
   dndShadowsTheme,
