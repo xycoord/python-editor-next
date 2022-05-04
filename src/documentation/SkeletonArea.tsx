@@ -24,31 +24,31 @@
        <List flex="1 1 auto" m={3}>
          <ListItem key={"for loop"}>
            <Text  p={5}>
-             <CodeEmbed code={"for i in range(0):\n   pass" }/>
+             <CodeEmbed code={"for i in range(0):\n    pass" }/>
            </Text>
            <Divider borderWidth="1px" />
          </ListItem>
          <ListItem key={"while loop"}>
            <Text  p={5}>
-             <CodeEmbed code={"while False:\n   pass" }/>
+             <CodeEmbed code={"while False:\n    pass" }/>
            </Text>
            <Divider borderWidth="1px" />
          </ListItem>
          <ListItem key={"if stmt"}>
            <Text  p={5}>
-             <CodeEmbed code={"if False:\n   pass" }/>
+             <CodeEmbed code={"if False:\n    pass" }/>
            </Text>
            <Divider borderWidth="1px" />
          </ListItem>
          <ListItem key={"ifel stmt"}>
            <Text  p={5}>
-             <CodeEmbed code={"if False:\n   pass\nelse:\n   pass" }/>
+             <CodeEmbed code={"if False:\n    pass\nelse:\n    pass" }/>
            </Text>
            <Divider borderWidth="1px" />
          </ListItem>
          <ListItem key={"ifelifel stmt"}>
            <Text  p={5}>
-             <CodeEmbed code={"if False:\n   pass\nelif False:\n   pass\nelse:\n   pass" }/>
+             <CodeEmbed code={"if False:\n    pass\nelif False:\n    pass\nelse:\n    pass" }/>
            </Text>
            <Divider borderWidth="1px"/>
          </ListItem>
