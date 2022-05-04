@@ -215,9 +215,12 @@ const dndHandlers = () => {
         }
 
         let changes;
-        if (lastTransaction && dragContext.redoToMerge) {
-          console.log("yay");
-          changes = dragContext.redoToMerge.compose(lastTransaction.changes);
+        if (lastTransaction) {
+          changes = lastTransaction.changes;
+          if (dragContext.redoToMerge) {
+            console.log("yay");
+            changes = dragContext.redoToMerge.compose(changes);
+          }
         }
 
         //make changes
