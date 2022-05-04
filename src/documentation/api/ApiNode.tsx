@@ -11,7 +11,8 @@ import { pythonSnippetMediaType } from "../../common/mediaTypes";
 import {
   debug as dndDebug,
   DragContext,
-  setDragContext,
+  startDrag,
+  endDrag
 } from "../../editor/codemirror/dnd";
 import { splitDocString } from "../../editor/codemirror/language-server/docstrings";
 import {
@@ -352,7 +353,7 @@ const DraggableSignature = ({
       dndDebug("dragstart");
       event.dataTransfer.dropEffect = "copy";
       const context = getDragContext(fullName, kind);
-      setDragContext(context);
+      startDrag(context);
       event.dataTransfer.setData(pythonSnippetMediaType, context.code);
       if (dragImage.current) {
         event.dataTransfer.setDragImage(dragImage.current, 0, 0);
@@ -363,7 +364,7 @@ const DraggableSignature = ({
 
   const handleDragEnd = useCallback((event: React.DragEvent) => {
     dndDebug("dragend");
-    setDragContext(undefined);
+    endDrag();
   }, []);
 
   const highlight = useDisclosure();

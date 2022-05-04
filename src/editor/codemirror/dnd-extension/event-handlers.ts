@@ -1,6 +1,6 @@
 import { EditorView } from "@codemirror/view"
 import { ChangeSet, Transaction } from "@codemirror/state";
-import { debug as dndDebug, setDragContext } from "../dnd";
+import { debug as dndDebug, endDrag, startDrag } from "../dnd";
 
 // Used to check whether item was successfully dropped
 let dropped = false;
@@ -30,7 +30,7 @@ const handleDragStart = (view: EditorView, start: number, end: number) => {
 
   dndDebug("dragstart")
 
-  setDragContext({
+  startDrag({
     code: draggedText,
     type: "rearrangement",
     id: "pSlug", // What does this do?
@@ -42,15 +42,13 @@ const handleDragStart = (view: EditorView, start: number, end: number) => {
 
 const handleDrop = (view: EditorView) => {
   dndDebug("dragend");
-  //reset the dnd.ts dragging
-  setDragContext(undefined);
+  endDrag()
   if (!dropped) {
     view.dispatch({
       changes: notDroppedUndo,
       annotations: [Transaction.addToHistory.of(false)],
     })
   }
-  document.getElementById("dnd-overlay-layer")?.setAttribute("dnd-pointer-events", "all")
 }
 
 export { handleDragStart, handleDrop }

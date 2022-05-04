@@ -15,7 +15,7 @@ import { useScrollablePanelAncestor } from "../../common/ScrollablePanel";
 import { zIndexCodePopUp } from "../../common/zIndex";
 import { useActiveEditorActions } from "../../editor/active-editor-hooks";
 import CodeMirrorView from "../../editor/codemirror/CodeMirrorView";
-import { debug as dndDebug, setDragContext } from "../../editor/codemirror/dnd";
+import { debug as dndDebug, endDrag, startDrag} from "../../editor/codemirror/dnd";
 import { useLogging } from "../../logging/logging-hooks";
 import DragHandle from "../common/DragHandle";
 import { useCodeDragImage } from "../documentation-hooks";
@@ -208,7 +208,7 @@ const Code = forwardRef<CodeProps, "pre">(
         });
         dndDebug("dragstart");
         event.dataTransfer.dropEffect = "copy";
-        setDragContext({
+        startDrag({
           code: full,
           type: "example",
           id: parentSlug,
@@ -224,7 +224,7 @@ const Code = forwardRef<CodeProps, "pre">(
       (event: React.DragEvent) => {
         onCodeDragEnd();
         dndDebug("dragend");
-        setDragContext(undefined);
+        endDrag();
       },
       [onCodeDragEnd]
     );
