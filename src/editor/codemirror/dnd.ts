@@ -68,6 +68,9 @@ let dragContext: DragContext | undefined;
  */
 export const setDragContext = (context: DragContext | undefined) => {
   dragContext = context;
+  //This line feels out of place since it is not explicitly in the funciton name
+  // We need it to make it so that none of the handles are actually registering pointer events
+  document.getElementById("dnd-overlay-layer")?.setAttribute("dnd-pointer-events", "none")
 };
 
 // We add the class to the parent element that we own as otherwise CM

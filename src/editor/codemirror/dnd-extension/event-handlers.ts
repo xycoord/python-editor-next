@@ -38,9 +38,6 @@ const handleDragStart = (view: EditorView, start: number, end: number) => {
     undoToMerge: notDroppedUndo,
     dropCallback: () => { dropped = true; }
   });
-
-  document.getElementById("dnd-overlay-layer")?.setAttribute("dnd-pointer-events", "none")
-
 }
 
 const handleDrop = (view: EditorView) => {
