@@ -140,7 +140,8 @@ export const dndDecorations = () => [
     //   transition: "background-color ease-in 2.9s",
     // },
     ".cm-gutters": {
-      zIndex: "-6"
+      paddingRight: "8px",
+      boxShadow: "-5px 0 28px 5px rgba(0,0,0,0.25), -5px 0 10px 5px rgba(0,0,0,0.22)"
     },
     ".cm-cs--dnd-under-layer": {
       zIndex: "-5",

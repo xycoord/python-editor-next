@@ -17,8 +17,8 @@ export const baseTheme = EditorView.baseTheme({
 	  height: "100%",
     width: "calc(100% - 76px)", //dodgy approximation
 	  margin: "auto",
-    left: "95px", 
-    zIndex: 201,
+    left: "calc(95px + 8px)", 
+    zIndex: 150,
     pointerEvents: "none"
   },
   ".cm-cs--dnd-dragline": {
@@ -64,6 +64,6 @@ export const baseTheme = EditorView.baseTheme({
 //using theme here seems dodgy, it is needed to superseed default padding:0
 export const theme = EditorView.theme({
   ".cm-content": {
-    paddingLeft: draghandle_width
+    paddingLeft: `calc(${draghandle_width} + 8px)`
   }
 });
