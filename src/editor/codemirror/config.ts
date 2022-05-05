@@ -44,7 +44,7 @@ export const editorConfig: Extension = [
     // Disable Grammarly.
     "data-gramm": "false",
   }),
-  dropCursor(),
+  // dropCursor(),
   highlightSpecialChars(),
   history(),
   drawSelection(),
